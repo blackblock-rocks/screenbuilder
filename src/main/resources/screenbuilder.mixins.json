@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "rocks.blackblock.screenbuilder.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ScreenHandlerAccessor"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
