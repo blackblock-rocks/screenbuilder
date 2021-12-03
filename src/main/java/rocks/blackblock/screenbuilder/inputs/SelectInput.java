@@ -47,7 +47,7 @@ public class SelectInput extends BaseInput {
         SelectInput that = this;
 
         ScreenBuilder sb = new ScreenBuilder("select_widget");
-        sb.setNamespace("blackblock");
+        sb.setNamespace("bbsb");
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);
@@ -109,7 +109,7 @@ public class SelectInput extends BaseInput {
         }
 
         GUI = new ScreenBuilder("select_widget");
-        GUI.setNamespace("blackblock");
+        GUI.setNamespace("bbsb");
         GUI.useCustomTexture(true);
 
         GUI.register();

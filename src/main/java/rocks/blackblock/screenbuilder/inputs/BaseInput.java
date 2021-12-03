@@ -102,7 +102,7 @@ public abstract class BaseInput extends BasescreenFactory {
         BaseInput that = this;
 
         ScreenBuilder sb = new ScreenBuilder(name);
-        sb.setNamespace("blackblock");
+        sb.setNamespace("bbsb");
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);

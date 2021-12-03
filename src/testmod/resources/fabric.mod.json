@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "screenbuilder-testmod",
+  "id": "testmod",
   "version": "${version}",
 
   "name": "Screenbuilder (Test Mod)",
@@ -26,6 +26,6 @@
     "fabric": "*",
     "minecraft": ">=1.18",
     "java": ">=17",
-    "screenbuilder": ">=0.1.0"
+    "bbsb": ">=0.1.0"
   }
 }

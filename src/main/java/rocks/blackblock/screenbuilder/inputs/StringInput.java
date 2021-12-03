@@ -53,7 +53,7 @@ public class StringInput extends BaseInput {
 
         GUI = new ScreenBuilder("string_input");
         GUI.useAnvil();
-        GUI.setNamespace("blackblock");
+        GUI.setNamespace("bbsb");
         GUI.useCustomTexture(true);
 
         GUI.addButton(2).addLeftClickListener((screen, slot) -> {

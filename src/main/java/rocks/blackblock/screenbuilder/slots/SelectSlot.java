@@ -330,7 +330,7 @@ public class SelectSlot extends ListenerWidgetSlot implements NamedScreenHandler
      */
     public static ScreenBuilder createScreenBuilder() {
         ScreenBuilder sb = new ScreenBuilder("select_widget");
-        sb.setNamespace("blackblock");
+        sb.setNamespace("bbsb");
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         return sb;

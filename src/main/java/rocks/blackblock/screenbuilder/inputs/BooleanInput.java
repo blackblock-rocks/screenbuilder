@@ -77,7 +77,7 @@ public class BooleanInput extends BasescreenFactory {
         this.working_value = this.value;
 
         ScreenBuilder sb = new ScreenBuilder("empty");
-        sb.setNamespace("blackblock");
+        sb.setNamespace("bbsb");
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);
@@ -133,7 +133,7 @@ public class BooleanInput extends BasescreenFactory {
         }
 
         GUI = new ScreenBuilder("empty");
-        GUI.setNamespace("blackblock");
+        GUI.setNamespace("bbsb");
         GUI.useCustomTexture(true);
 
         GUI.register();

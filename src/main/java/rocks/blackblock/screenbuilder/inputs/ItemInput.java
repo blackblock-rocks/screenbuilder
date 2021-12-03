@@ -205,7 +205,7 @@ public class ItemInput extends BaseInput {
         }
 
         GUI = new ScreenBuilder("item_input");
-        GUI.setNamespace("blackblock");
+        GUI.setNamespace("bbsb");
         GUI.useCustomTexture(true);
 
         GUI.register();

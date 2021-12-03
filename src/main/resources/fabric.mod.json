@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "screenbuilder",
+  "id": "bbsb",
   "version": "${version}",
 
-  "name": "Screenbuilder",
+  "name": "BlackBlock Screenbuilder",
   "description": "This library allows you to quickly create server-side GUIs for Minecraft Fabric",
   "authors": [
     "Skerit"

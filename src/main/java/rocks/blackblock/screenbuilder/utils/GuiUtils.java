@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiUtils {
-    public static final String MOD_ID = "blackblock";
+    public static final String MOD_ID = "bbsb";
     private static final HashMap<String, Item> items = new HashMap();
 
     public static List<Slot> removePlayerSlots(List<Slot> base) {
