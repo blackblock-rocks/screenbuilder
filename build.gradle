@@ -99,11 +99,19 @@ jar {
 	}
 }
 
+def env = System.getenv()
+
 // configure the maven publication
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			from components.java
+			// add all the jars that should be included when publishing to maven
+			artifact(remapJar) {
+				builtBy remapJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
 		}
 	}
 
@@ -113,5 +121,18 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+		repositories {
+			if (env.MAVEN_URL) {
+				maven {
+					credentials {
+						username env.MAVEN_USERNAME
+						password env.MAVEN_PASSWORD
+					}
+					url env.MAVEN_URL
+				}
+			} else {
+				mavenLocal()
+			}
+		}
 	}
 }
