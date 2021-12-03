@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "screenbuilder",
+  "id": "screenbuilder-testmod",
   "version": "${version}",
 
-  "name": "Screenbuilder",
+  "name": "Screenbuilder (Test Mod)",
   "description": "This library allows you to quickly create server-side GUIs for Minecraft Fabric",
   "authors": [
     "Skerit"
@@ -14,27 +14,18 @@
   },
 
   "license": "LGPLv3",
-  "icon": "assets/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "polymc": [
-      "rocks.blackblock.screenbuilder.polymc.ScreenBuilderPoly"
+    "main": [
+      "rocks.blackblock.screenbuilder.testmod.ScreenbuilderTest"
     ]
   },
-  "mixins": [
-    "screenbuilder.mixins.json"
-  ],
-
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",
     "minecraft": ">=1.18",
-    "java": ">=17"
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ]
-    }
+    "java": ">=17",
+    "screenbuilder": ">=0.1.0"
   }
 }

@@ -1,0 +1,13 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "particle": "testmod:block/cardboard_side",
+        "down": "testmod:block/cardboard_side",
+        "up": "testmod:block/cardboard_top",
+
+        "north": "testmod:block/cardboard_side",
+        "east": "testmod:block/cardboard_side",
+        "south": "testmod:block/cardboard_side",
+        "west": "testmod:block/cardboard_side"
+    }
+}

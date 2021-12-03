@@ -1,0 +1,12 @@
+{
+    "item.blackblock.gui_number": "Number",
+    "item.blackblock.gui_boolean": "Boolean",
+    "item.blackblock.gui_text": "Text",
+    "item.blackblock.gui_true": "True",
+    "item.blackblock.gui_false": "False",
+    "item.blackblock.gui_recycle": "Refresh",
+    "item.blackblock.gui_edit": "Edit",
+    "item.blackblock.gui_plus": "Add",
+    "item.blackblock.gui_checkbox_unchecked": "False",
+    "item.blackblock.gui_checkbox_checked": "True"
+}

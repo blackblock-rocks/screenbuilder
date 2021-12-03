@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
 	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
@@ -19,6 +21,24 @@ repositories {
 	maven { url 'https://jitpack.io' }
 }
 
+sourceSets {
+	testmod {
+		runtimeClasspath += main.runtimeClasspath
+		compileClasspath += main.compileClasspath
+	}
+}
+
+loom {
+	runs {
+		testmodServer {
+			server()
+			ideConfigGenerated project.rootProject == project
+			name = "Test Mod Server"
+			source sourceSets.testmod
+		}
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -29,6 +49,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
+
+	testmodImplementation sourceSets.main.output
 }
 
 processResources {
@@ -38,6 +60,26 @@ processResources {
 		expand "version": project.version
 	}
 }
+
+task testmodJar(type: Jar, dependsOn: testmodClasses) {
+	archiveBaseName = 'screenbuildertest'
+	archiveClassifier = 'dev'
+	from(sourceSets.testmod.output) {
+		include 'fabric.mod.json'
+		expand 'version': project.version
+	}
+	from(sourceSets.testmod.output) {
+		exclude 'fabric.mod.json'
+	}
+}
+
+task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
+	archiveBaseName = 'screenbuildertest'
+	input = testmodJar.archiveFile
+	addNestedDependencies = false
+}
+
+build.dependsOn(remapTestmodJar)
 
 tasks.withType(JavaCompile).configureEach {
 	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
