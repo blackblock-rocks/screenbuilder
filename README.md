@@ -14,6 +14,12 @@
 
 This library allows you to quickly create server-side GUIs for Minecraft Fabric.
 
+It is meant to be used together with [PolyMC](https://github.com/TheEpicBlock/PolyMc), which automatically translates custom items & blocks to textured vanilla items so vanilla clients can see them with a resource pack.
+
+Screenbuilder currently only supports 9x6 inventory screens (which are the biggest ones available in-game).
+These can then be textured by using the "custom item" trick: an item in the top left slot is retextured to a GUI, which then overflows its slot and is overlayed over the entire inventory.
+(Using font magic instead might be added later, but for now this works perfectly for my usecase).
+
 ## Example
 
 There's a short example in the `testmod` directory: there I created a "cardboard box" which acts as a small shulker box:
