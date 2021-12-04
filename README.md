@@ -12,7 +12,7 @@
 
 ## Introduction
 
-This library allows you to quickly create server-side GUIs for Minecraft Fabric.
+This library allows you to quickly create server-side GUIs for Minecraft Fabric, without the client needing any mod.
 
 It is meant to be used together with [PolyMC](https://github.com/TheEpicBlock/PolyMc), which automatically translates custom items & blocks to textured vanilla items so vanilla clients can see them with a resource pack.
 
@@ -26,7 +26,11 @@ There's a short example in the `testmod` directory: there I created a "cardboard
 
 ![Cardboard Box GUI](img/cardboard_box.png)
 
-It's a pretty basic example. The more complex ones (that use boolean inputs, select inputs, ...) are harder to show because of how interweaved it is with my personal mods.
+This was a pretty basic example, here is a GIF of a more complex one that uses selects & string inputs:
+
+![Inputs example](img/inputs_01.gif)
+
+It's harder to show example code of this because of how interweaved it is with my personal mods.
 But I'll try to create some more examples ASAP.
 
 Here's a small code example though:
