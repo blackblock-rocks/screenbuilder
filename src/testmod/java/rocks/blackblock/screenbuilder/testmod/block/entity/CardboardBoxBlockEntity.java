@@ -210,10 +210,20 @@ public class CardboardBoxBlockEntity extends BlockEntity implements BaseInventor
             return GUI;
         }
 
+        // Names do not have to be unique
         GUI = new ScreenBuilder("cardboard");
+
         GUI.setNamespace("testmod");
+
+        // By just providing a boolean value of `true`,
+        // it will automatically create a GUI item & look for the texture in
+        // {namespace}/textures/gui/{name}.png - So in this case that will be
+        // testmod/textures/gui/cardboard.png
         GUI.useCustomTexture(true);
 
+        // GUIs are always made based on 9x6 inventories.
+        // The first number (in buildSlot call) is the index of the slot on the screen,
+        // the second number (mapInventory) is the index inside the inventory to link this slot to
         GUI.buildSlot(12).mapInventory(0).deny(ScreenbuilderTest.CARDBOARD_BOX_BLOCK_ITEM);
         GUI.buildSlot(13).mapInventory(1).deny(ScreenbuilderTest.CARDBOARD_BOX_BLOCK_ITEM);
         GUI.buildSlot(14).mapInventory(2).deny(ScreenbuilderTest.CARDBOARD_BOX_BLOCK_ITEM);
