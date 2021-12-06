@@ -20,6 +20,20 @@ Screenbuilder currently only supports 9x6 inventory screens (which are the bigge
 These can then be textured by using the "custom item" trick: an item in the top left slot is retextured to a GUI, which then overflows its slot and is overlayed over the entire inventory.
 (Using font magic instead might be added later, but for now this works perfectly for my usecase).
 
+## Usage
+
+You can add Screenbuilder to your dependencies like this:
+
+```
+repositories {
+	maven { url 'https://maven.blackblock.rocks/releases' }
+}
+
+dependencies {
+	modImplementation include("rocks.blackblock:screenbuilder:0.1.0")
+}
+```
+
 ## Example
 
 There's a short example in the `testmod` directory: there I created a "cardboard box" which acts as a small shulker box:
