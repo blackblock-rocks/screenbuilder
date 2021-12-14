@@ -138,10 +138,11 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
+     * @version  0.1.1
      */
     default ItemStack removeStack(int slot, int amount) {
         ItemStack result = Inventories.splitStack(this.getContents(), slot, amount);
+        this.onStackRemoved(slot, result);
         this.fireContentChangedEvents();
         return result;
     }
@@ -151,12 +152,24 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
+     * @version  0.1.1
      */
     default ItemStack removeStack(int slot) {
         ItemStack result = Inventories.removeStack(this.getContents(), slot);
+        this.onStackRemoved(slot, result);
         this.fireContentChangedEvents();
         return result;
+    }
+
+    /**
+     * Called after an itemstack has been removed from a slot (through a `removeStack` call)
+     * but called before contentChangeEvents are fired
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    default void onStackRemoved(int slot, ItemStack removed_stack) {
+        // NOOP
     }
 
     /**
