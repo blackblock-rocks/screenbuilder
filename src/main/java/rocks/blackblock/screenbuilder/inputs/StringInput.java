@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.inputs;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.RenamedEventListener;
 
@@ -53,7 +54,7 @@ public class StringInput extends BaseInput {
 
         GUI = new ScreenBuilder("string_input");
         GUI.useAnvil();
-        GUI.setNamespace("bbsb");
+        GUI.setNamespace(BBSB.NAMESPACE);
         GUI.useCustomTexture(true);
 
         GUI.addButton(2).addLeftClickListener((screen, slot) -> {

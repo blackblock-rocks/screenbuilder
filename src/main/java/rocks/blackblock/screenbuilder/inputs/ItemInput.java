@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.inputs;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
@@ -205,7 +206,7 @@ public class ItemInput extends BaseInput {
         }
 
         GUI = new ScreenBuilder("item_input");
-        GUI.setNamespace("bbsb");
+        GUI.setNamespace(BBSB.NAMESPACE);
         GUI.useCustomTexture(true);
 
         GUI.register();

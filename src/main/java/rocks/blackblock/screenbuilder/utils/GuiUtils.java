@@ -7,6 +7,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.inputs.BooleanInput;
 import rocks.blackblock.screenbuilder.inputs.ItemInput;
 import rocks.blackblock.screenbuilder.inputs.StringInput;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiUtils {
-    public static final String MOD_ID = "bbsb";
     private static final HashMap<String, Item> items = new HashMap();
 
     public static List<Slot> removePlayerSlots(List<Slot> base) {
@@ -62,8 +62,16 @@ public class GuiUtils {
             return items.get(name);
         }
 
-        Identifier identifier = new Identifier(MOD_ID, name);
-        Item item = Registry.register(Registry.ITEM, identifier, new GuiItem());
+        return createGuiItem(name);
+    }
+
+    /**
+     * Create a GUI item
+     */
+    public static GuiItem createGuiItem(String name) {
+
+        Identifier identifier = BBSB.id(name);
+        GuiItem item = Registry.register(Registry.ITEM, identifier, new GuiItem());
 
         setGuiItem(name, item);
 
@@ -73,4 +81,5 @@ public class GuiUtils {
     public static void setGuiItem(String name, Item item) {
         items.put(name, item);
     }
+
 }

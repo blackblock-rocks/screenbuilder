@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.inputs;
 
 import net.minecraft.item.ItemStack;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.BooleanEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
@@ -77,7 +78,7 @@ public class BooleanInput extends BasescreenFactory {
         this.working_value = this.value;
 
         ScreenBuilder sb = new ScreenBuilder("empty");
-        sb.setNamespace("bbsb");
+        sb.setNamespace(BBSB.NAMESPACE);
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);
@@ -133,7 +134,7 @@ public class BooleanInput extends BasescreenFactory {
         }
 
         GUI = new ScreenBuilder("empty");
-        GUI.setNamespace("bbsb");
+        GUI.setNamespace(BBSB.NAMESPACE);
         GUI.useCustomTexture(true);
 
         GUI.register();

@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.inputs;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
@@ -47,7 +48,7 @@ public class SelectInput extends BaseInput {
         SelectInput that = this;
 
         ScreenBuilder sb = new ScreenBuilder("select_widget");
-        sb.setNamespace("bbsb");
+        sb.setNamespace(BBSB.NAMESPACE);
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);
@@ -109,7 +110,7 @@ public class SelectInput extends BaseInput {
         }
 
         GUI = new ScreenBuilder("select_widget");
-        GUI.setNamespace("bbsb");
+        GUI.setNamespace(BBSB.NAMESPACE);
         GUI.useCustomTexture(true);
 
         GUI.register();

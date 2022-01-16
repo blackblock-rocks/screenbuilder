@@ -1,12 +1,13 @@
 {
-    "item.blackblock.gui_number": "Number",
-    "item.blackblock.gui_boolean": "Boolean",
-    "item.blackblock.gui_text": "Text",
-    "item.blackblock.gui_true": "True",
-    "item.blackblock.gui_false": "False",
-    "item.blackblock.gui_recycle": "Refresh",
-    "item.blackblock.gui_edit": "Edit",
-    "item.blackblock.gui_plus": "Add",
-    "item.blackblock.gui_checkbox_unchecked": "False",
-    "item.blackblock.gui_checkbox_checked": "True"
+    "item.bbsb.gui_number": "Number",
+    "item.bbsb.gui_boolean": "Boolean",
+    "item.bbsb.gui_text": "Text",
+    "item.bbsb.gui_true": "True",
+    "item.bbsb.gui_false": "False",
+    "item.bbsb.gui_recycle": "Refresh",
+    "item.bbsb.gui_edit": "Edit",
+    "item.bbsb.gui_plus": "Add",
+    "item.bbsb.gui_checkbox_unchecked": "False",
+    "item.bbsb.gui_checkbox_checked": "True",
+    "item.bbsb.gui_if": "If"
 }

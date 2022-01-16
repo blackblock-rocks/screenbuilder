@@ -9,6 +9,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.inputs.BaseInput;
@@ -330,7 +331,7 @@ public class SelectSlot extends ListenerWidgetSlot implements NamedScreenHandler
      */
     public static ScreenBuilder createScreenBuilder() {
         ScreenBuilder sb = new ScreenBuilder("select_widget");
-        sb.setNamespace("bbsb");
+        sb.setNamespace(BBSB.NAMESPACE);
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         return sb;

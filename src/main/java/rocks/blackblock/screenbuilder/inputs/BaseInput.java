@@ -1,5 +1,6 @@
 package rocks.blackblock.screenbuilder.inputs;
 
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
@@ -102,7 +103,7 @@ public abstract class BaseInput extends BasescreenFactory {
         BaseInput that = this;
 
         ScreenBuilder sb = new ScreenBuilder(name);
-        sb.setNamespace("bbsb");
+        sb.setNamespace(BBSB.NAMESPACE);
         sb.useCustomTexture(true);
         sb.loadTextureItem();
         sb.setCloneSlots(false);
