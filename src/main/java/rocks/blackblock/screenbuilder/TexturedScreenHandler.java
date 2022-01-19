@@ -15,8 +15,10 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.inventories.BaseInventory;
 import rocks.blackblock.screenbuilder.items.GuiItem;
@@ -25,6 +27,7 @@ import rocks.blackblock.screenbuilder.slots.BaseSlot;
 import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.slots.WidgetSlot;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
@@ -1076,6 +1079,31 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public String getRenamedValue() {
         return this.renamed_value;
+    }
+
+    /**
+     * Get the Text instance for use as the DisplayName that
+     * actually contains all the texture & text data
+     *
+     * @since     0.1.1
+     */
+    public TextBuilder getTextBuilder() {
+
+        NamedScreenHandlerFactory factory = this.getOriginFactory();
+        Text title = null;
+
+        if (factory != null) {
+            title = factory.getDisplayName();
+        }
+
+        TextBuilder builder = new TextBuilder();
+
+        if (this.builder.font_texture != null) {
+            System.out.println("Adding font texture to builder: " + this.builder.font_texture);
+            this.builder.font_texture.addToBuilder(builder);
+        }
+
+        return builder;
     }
 
     @Override

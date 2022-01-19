@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.slots.*;
+import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -91,9 +92,28 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     // The type of screen
     protected ScreenHandlerType<?> screen_type = ScreenHandlerType.GENERIC_9X6;
 
+    // The font texture to use
+    protected GuiTexture font_texture = null;
+
     public ScreenBuilder(String name) {
         this.name = name;
         this.slots = DefaultedList.ofSize(9*6, AIR_SLOT);
+    }
+
+    /**
+     * Set the custom texture for this screen for use with magic fonts
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.0
+     * @version  0.1.0
+     *
+     * @param    texture_path   The texture to use
+     * @param    x              The x coordinate of where the original texture starts
+     * @param    y              The y coordinate of where the original texture starts
+     */
+    public GuiTexture useFontTexture(Identifier texture_path, int x, int y) {
+        this.font_texture = GuiTexture.get(texture_path, x, y);
+        return this.font_texture;
     }
 
     /**
@@ -645,7 +665,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
         this.has_been_registered = true;
 
-        this.loadTextureItem();
+        //this.loadTextureItem();
 
         screen_builders.add(this);
     }

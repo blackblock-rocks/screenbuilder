@@ -1,9 +1,14 @@
 package rocks.blackblock.screenbuilder;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
+import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
+
+import java.util.Optional;
 
 public class BBSB implements ModInitializer {
 
@@ -42,6 +47,7 @@ public class BBSB implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
+        System.out.println("!!! BBSB has loaded !!!");
+        System.out.println(" -- LH04: " + Font.LH04);
     }
 }
