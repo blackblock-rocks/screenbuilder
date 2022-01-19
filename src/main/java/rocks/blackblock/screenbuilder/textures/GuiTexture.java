@@ -188,7 +188,7 @@ public class GuiTexture {
      */
     public int getOriginalContainerTitleStartX() {
         // @TODO: get for any type of container!
-        return 16;
+        return 8;
     }
 
     /**
@@ -197,13 +197,12 @@ public class GuiTexture {
      * @return
      */
     public int getOriginalContainerTitleStartY() {
-        // Might be 14, and I only think it's 13 because ascent values are weird?
         return 13;
     }
 
     public int getInitialCursorAdjustmentX() {
         // Subtract the position of the container thingy
-        return 0 - this.getOriginalContainerTitleStartX();
+        return 0 - (this.getOriginalContainerTitleStartX() + this.original_x);
     }
 
     public void addToBuilder(TextBuilder builder) {
@@ -242,7 +241,7 @@ public class GuiTexture {
         }
 
         if (initial_cursor_adjustment != 0) {
-            //builder.moveCursor(-this.original_x);
+            builder.moveCursor(-initial_cursor_adjustment);
         }
 
         builder.moveCursor(-width);

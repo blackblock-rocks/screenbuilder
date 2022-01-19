@@ -73,6 +73,9 @@ public class GuiTexturePiece {
 
         result += this.parent.getOriginalContainerTitleStartY();
 
+        // I think 1 always needs to be subtraced if it's negative?
+        result -= 1;
+
         System.out.println("Ascent of gui piece is: " + result);
 
         return result;

@@ -18,6 +18,12 @@ import java.util.Map;
  */
 public class Font {
 
+    // The default width of a character
+    private static final int DEFAULT_WIDTH = 6;
+
+    // All the registered fonts
+    private static final Map<String,Font> registeredFonts = new HashMap<>();
+
     // Register the default Minecraft font
     public static final Font DEFAULT = new Font("minecraft:default", 8);
 
@@ -41,9 +47,6 @@ public class Font {
             0,
             DEFAULT
     );
-
-    // All the registered fonts
-    private static final Map<String,Font> registeredFonts = new HashMap<>();
 
     protected Style font_style;
     protected Identifier identifier;
@@ -185,7 +188,7 @@ public class Font {
             if (parent != null) {
                 result = parent.getWidth(character, false);
             } else {
-                result = 6;
+                result = DEFAULT_WIDTH;
             }
         }
 
