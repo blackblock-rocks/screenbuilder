@@ -297,14 +297,22 @@ public class Font {
         DEFAULT.registerWidth('~', 7);
 
         SPACE.registerWidth('-', -6765);
-        /*
+
         SPACE.registerWidth('①', -1);
         SPACE.registerWidth('②', -2);
         SPACE.registerWidth('③', -3);
         SPACE.registerWidth('④', -4);
         SPACE.registerWidth('⑤', -5);
         SPACE.registerWidth('⑥', -6);
-        */
+        SPACE.registerWidth('⑦', -7);
+        SPACE.registerWidth('⑧', -8);
+        SPACE.registerWidth('⑨', -9);
+
+        SPACE.registerWidth('❶', -10);
+        SPACE.registerWidth('❷', -20);
+        SPACE.registerWidth('❸', -30);
+        SPACE.registerWidth('❹', -40);
+        SPACE.registerWidth('❺', -50);
 
         SPACE.registerWidth('1', 2584);
         SPACE.registerWidth('2', 987);

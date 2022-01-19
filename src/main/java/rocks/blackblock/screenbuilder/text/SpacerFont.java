@@ -20,6 +20,9 @@ public class SpacerFont extends Font {
     // A sorted map of all the positive space
     private Map<Integer, Character> sorted_positive_space_map = null;
 
+    // A sorted map of all the negaitve space
+    private Map<Integer, Character> sorted_negative_space_map = null;
+
     public SpacerFont(@NotNull String id, int height) {
         super(id, height);
     }
@@ -63,6 +66,26 @@ public class SpacerFont extends Font {
     }
 
     /**
+     * Get the sorted negative space map (shorted absolute width goes first)
+     * @version   0.1.1
+     */
+    public Map<Integer, Character> getSortedNegativeSpaceMap() {
+
+        if (this.sorted_negative_space_map == null) {
+            this.sorted_negative_space_map = this.negative_space_map.entrySet().stream()
+                    .sorted(Comparator.comparing(e -> -e.getKey()))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> {throw new AssertionError();},
+                            LinkedHashMap::new)
+                    );
+        }
+
+        return this.sorted_negative_space_map;
+    }
+
+    /**
      * Get the char to use for the given width
      *
      * @param width     the wanted width of the character
@@ -96,21 +119,57 @@ public class SpacerFont extends Font {
 
         StringBuilder builder = new StringBuilder();
 
+        int wanted_change = wanted_position - current_position;
+
         System.out.println("Wanted: " + wanted_position + " - Current position: " + current_position);
 
         // If we have a negative moment, add negative spaces first
         if (wanted_position < current_position) {
 
-            // Add more negative space while the movement is still positive
-            while (current_position > wanted_position) {
-                for (int width : negative_space_map.keySet()) {
+            // See if we can do it with just one char
+            for (int width : negative_space_map.keySet()) {
+                if (wanted_change == width) {
                     current_position = current_position + width;
                     current_char = negative_space_map.get(width);
-
                     builder.append(current_char);
+                    break;
+                }
+            }
 
-                    if (current_position <= wanted_position) {
+            // Add the smallest negative change first if it immediately takes us back far enough
+            if (current_position > wanted_position) {
+                for (int width : this.getSortedNegativeSpaceMap().keySet()) {
+                    temp_calc = current_position + width;
+
+                    if (temp_calc <= wanted_position) {
+                        current_position = current_position + width;
+                        current_char = negative_space_map.get(width);
+                        builder.append(current_char);
                         break;
+                    }
+                }
+            }
+
+            // Keep on adding the highest amount of negative space as long as needed
+            if (current_position > wanted_position) {
+
+                // The bullshit you have to do to just reverse something
+                List<Integer> list = new ArrayList(this.getSortedNegativeSpaceMap().keySet());
+                Collections.sort(list, Collections.reverseOrder());
+                Set<Integer> keys = new LinkedHashSet(list);
+
+                for (int width : keys) {
+                    while (current_position > wanted_position) {
+                        temp_calc = current_position + width;
+
+                        if (temp_calc <= wanted_position) {
+                            current_position = current_position + width;
+                            current_char = negative_space_map.get(width);
+                            builder.append(current_char);
+                        } else {
+                            // Can't add it, so we have to break out
+                            break;
+                        }
                     }
                 }
             }

@@ -65,6 +65,78 @@
         },
         {
             "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -9,
+            "chars": [
+                "⑦"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -10,
+            "chars": [
+                "⑧"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -11,
+            "chars": [
+                "⑨"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -12,
+            "chars": [
+                "❶"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -22,
+            "chars": [
+                "❷"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -32,
+            "chars": [
+                "❸"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -42,
+            "chars": [
+                "❹"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -52,
+            "chars": [
+                "❺"
+            ]
+        },
+        {
+            "type": "bitmap",
             "file": "bbsb:font/space_nosplit.png",
             "ascent": -32768,
             "height": -1,
