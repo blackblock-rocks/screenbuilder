@@ -158,18 +158,19 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
-     * Enable the default custom texture for this GUI, at the first slot.
-     * In order to use a custom texture, you have to sacrifice an inventory slot.
+     * Enable the default custom texture for this GUI.
+     * This used to use the inventory-slot method, but has now switched to the font method.
      * You'll have to put the item texture in "{modid}/gui/{name}"
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    enable    Enable or disable custom texture
      */
     public void useCustomTexture(boolean enable) {
-        this.useCustomTexture(enable, 0, 0);
+        //this.useCustomTexture(enable, 0, 0);
+        Identifier identifier = new Identifier(this.namespace, "gui/" + this.name);
+        this.useFontTexture(identifier, 0, 0);
     }
 
     /**

@@ -34,6 +34,9 @@ public class GuiTexture {
     // Some calculations can be stored here, in case there needs to be some sharing
     private static HashMap<Identifier, GuiTexture> textures = new HashMap<>();
 
+    // A running counter of registered gui textures
+    private static int gui_counter = 0;
+
     // The pieces of this texture
     private ArrayList<GuiTexturePiece> pieces = new ArrayList<>();
 
@@ -58,12 +61,14 @@ public class GuiTexture {
     // The width of the texture
     private int width = 0;
 
+    // The counter of this index
+    private final int gui_nr;
+
     public GuiTexture(Identifier texture_path, int original_x, int original_y) {
         this.texture_path = texture_path;
         this.original_x = original_x;
         this.original_y = original_y;
-
-        System.out.println("Created GuiTexture: " + texture_path);
+        this.gui_nr = gui_counter++;
 
         this.calculate();
     }
@@ -91,6 +96,24 @@ public class GuiTexture {
      */
     public static void addToResourcePack(ResourcePackMaker pack) {
         GUI_FONT.addToResourcePack(pack);
+    }
+
+    /**
+     * Get the gui number
+     *
+     * @since   0.1.1
+     */
+    public int getGuiNumber() {
+        return this.gui_nr;
+    }
+
+    /**
+     * Get the texture identifier
+     *
+     * @since   0.1.1
+     */
+    public Identifier getTextureIdentifier() {
+        return this.texture_path;
     }
 
     /**

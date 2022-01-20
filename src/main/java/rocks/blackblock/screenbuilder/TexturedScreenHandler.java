@@ -8,6 +8,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;
@@ -141,7 +142,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
@@ -166,11 +166,33 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Refresh the screen by re-opening it
+     * (This is an example implementation, this can actually be used to update the screen)
+     *
+     * @since   0.1.1
+     */
+    private void refresh() {
+
+        PlayerEntity player = this.getPlayer();
+
+        if (player instanceof ServerPlayerEntity sp) {
+
+            TextBuilder builder = this.getTextBuilder();
+            Text title = builder.build();
+
+            // Send the "OpenSCreen" packet to the client, with the existing sync id.
+            sp.networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, this.getType(), title));
+
+            // Always sync the state afterwards, that's needed to keep the contents of the cursor
+            this.syncState();
+        }
+    }
+
+    /**
      * Get the attached PlayerInventory
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public PlayerInventory getPlayerInventory() {
         return this.player_inventory;
@@ -1099,7 +1121,6 @@ public class TexturedScreenHandler extends ScreenHandler {
         TextBuilder builder = new TextBuilder();
 
         if (this.builder.font_texture != null) {
-            System.out.println("Adding font texture to builder: " + this.builder.font_texture);
             this.builder.font_texture.addToBuilder(builder);
         }
 

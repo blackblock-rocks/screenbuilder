@@ -1,5 +1,7 @@
 package rocks.blackblock.screenbuilder.textures;
 
+import net.minecraft.util.Identifier;
+
 import java.awt.image.BufferedImage;
 
 public class GuiTexturePiece {
@@ -47,7 +49,9 @@ public class GuiTexturePiece {
      * Get the path to the file of this piece
      */
     public String getPath() {
-        String result = "gui/" + this.index + ".png";
+        Identifier texture = this.parent.getTextureIdentifier();
+        String texture_name = texture.getNamespace() + "_" + this.parent.getGuiNumber() + "_" + this.index;
+        String result = "gui/" + texture_name + ".png";
         return result;
     }
 
@@ -74,7 +78,9 @@ public class GuiTexturePiece {
         result += this.parent.getOriginalContainerTitleStartY();
 
         // I think 1 always needs to be subtraced if it's negative?
-        result -= 1;
+        if (result < 0) {
+            result -= 1;
+        }
 
         System.out.println("Ascent of gui piece is: " + result);
 
