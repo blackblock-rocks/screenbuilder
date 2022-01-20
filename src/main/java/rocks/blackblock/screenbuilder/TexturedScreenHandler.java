@@ -67,12 +67,14 @@ public class TexturedScreenHandler extends ScreenHandler {
     // The current renamed string (for anvil guis)
     private String renamed_value = null;
 
+    // The current title
+    private Text current_title = null;
+
     /**
      * Constructed without an attached inventory
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    sync_id             The identifier used to communicate between client & server
      * @param    builder             The ScreenBuilder with the screen definitions
@@ -80,7 +82,7 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     protected TexturedScreenHandler(int sync_id, ScreenBuilder builder, PlayerEntity player, PlayerInventory player_inventory) {
         // Instantiate with a fake server-side inventory then
-        this(sync_id, builder, player, player_inventory, new SimpleInventory(9*6));
+        this(sync_id, builder, player, player_inventory, new SimpleInventory(builder.getScreenTypeSlotCount()));
     }
 
     /**
@@ -186,6 +188,16 @@ public class TexturedScreenHandler extends ScreenHandler {
             // Always sync the state afterwards, that's needed to keep the contents of the cursor
             this.syncState();
         }
+    }
+
+    /**
+     * Set the current title of the screen
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void setCurrentTitle(Text title) {
+        this.current_title = title;
     }
 
     /**
@@ -1111,20 +1123,28 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public TextBuilder getTextBuilder() {
 
-        NamedScreenHandlerFactory factory = this.getOriginFactory();
-        Text title = null;
+        // See if we already know the title
+        Text title = this.current_title;
 
-        if (factory != null) {
-            title = factory.getDisplayName();
+        // If we don't, get it from the factory
+        if (title == null) {
+            NamedScreenHandlerFactory factory = this.getOriginFactory();
+
+            if (factory != null) {
+                title = factory.getDisplayName();
+            }
         }
 
-        TextBuilder builder = new TextBuilder();
+        TextBuilder text_builder = new TextBuilder(this.builder);
 
+        // If the screenbuilder has a font texture, use it now
         if (this.builder.font_texture != null) {
-            this.builder.font_texture.addToBuilder(builder);
+            this.builder.font_texture.addToBuilder(text_builder);
         }
 
-        return builder;
+        text_builder.setTitle(title);
+
+        return text_builder;
     }
 
     @Override

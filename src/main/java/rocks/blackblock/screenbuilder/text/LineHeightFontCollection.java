@@ -115,6 +115,22 @@ public class LineHeightFontCollection {
     }
 
     /**
+     * Convert the given pixels into a line index
+     *
+     * @param   y   The y position
+     *
+     * @since   0.1.1
+     */
+    public int convertYToLine(int y) {
+        int total_height = this.original_height + this.line_gap;
+        int result = y / total_height;
+
+        System.out.println("Converting Y pixel " + y + " to line " + result + " (total height of line: " + total_height + ")");
+
+        return result;
+    }
+
+    /**
      * Get the font for the given line index
      *
      * @param   line_index   The line index to get the font for

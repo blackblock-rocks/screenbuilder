@@ -137,6 +137,24 @@
         },
         {
             "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -130,
+            "chars": [
+                "⓵"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -258,
+            "chars": [
+                "⓶"
+            ]
+        },
+        {
+            "type": "bitmap",
             "file": "bbsb:font/space_nosplit.png",
             "ascent": -32768,
             "height": -1,

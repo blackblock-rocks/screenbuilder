@@ -25,6 +25,7 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
+import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.slots.*;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
@@ -89,30 +90,76 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     // Should the slots be cloned?
     protected boolean clone_slots = true;
 
-    // The type of screen
-    protected ScreenHandlerType<?> screen_type = ScreenHandlerType.GENERIC_9X6;
+    // The type of screen to use on the client-side
+    protected ScreenHandlerType<?> screen_type;
+
+    // The info on the screen type
+    protected ScreenInfo screen_info;
 
     // The font texture to use
     protected GuiTexture font_texture = null;
 
+    /**
+     * Create a new ScreenBuilder with the 9x6 generic container
+     *
+     * @param   name
+     *
+     * @since   0.1.0
+     */
     public ScreenBuilder(String name) {
+        this(name, ScreenHandlerType.GENERIC_9X6);
+    }
+
+    /**
+     * Create a new ScreenBuilder with the given screen_type
+     *
+     * @param   name
+     * @param   screen_type
+     *
+     * @since   0.1.1
+     */
+    public ScreenBuilder(String name, ScreenHandlerType<?> screen_type) {
         this.name = name;
-        this.slots = DefaultedList.ofSize(9*6, AIR_SLOT);
+        this.setType(screen_type);
+    }
+
+    /**
+     * Get the amount of slots the underlying screen type has
+     *
+     * @since   0.1.1
+     */
+    public int getScreenTypeSlotCount() {
+        return this.screen_info.getSlotCount();
+    }
+
+    /**
+     * Get the ScreenInfo for this screen type
+     *
+     * @since   0.1.1
+     */
+    public ScreenInfo getScreenInfo() {
+        return this.screen_info;
     }
 
     /**
      * Set the custom texture for this screen for use with magic fonts
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
-     * @since    0.1.0
-     * @version  0.1.0
+     * @since    0.1.1
      *
      * @param    texture_path   The texture to use
      * @param    x              The x coordinate of where the original texture starts
      * @param    y              The y coordinate of where the original texture starts
      */
     public GuiTexture useFontTexture(Identifier texture_path, int x, int y) {
-        this.font_texture = GuiTexture.get(texture_path, x, y);
+
+        // Make sure the item-based texture is disabled
+        this.texture_path = null;
+
+        // Get the GuiTexture instance to use
+        this.font_texture = GuiTexture.get(texture_path, x, y).setScreenBuilder(this);
+
+        // And return it
         return this.font_texture;
     }
 
@@ -168,7 +215,13 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @param    enable    Enable or disable custom texture
      */
     public void useCustomTexture(boolean enable) {
-        //this.useCustomTexture(enable, 0, 0);
+
+        if (!enable) {
+            this.font_texture = null;
+            this.texture_path = null;
+            return;
+        }
+
         Identifier identifier = new Identifier(this.namespace, "gui/" + this.name);
         this.useFontTexture(identifier, 0, 0);
     }
@@ -263,10 +316,11 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ScreenBuilder setType(ScreenHandlerType<?> type) {
         this.screen_type = type;
+        this.screen_info = ScreenInfo.get(screen_type);
+        this.slots = DefaultedList.ofSize(this.getScreenTypeSlotCount(), AIR_SLOT);
         return this;
     }
 
@@ -275,10 +329,8 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ScreenBuilder useAnvil() {
-        this.slots = DefaultedList.ofSize(3, AIR_SLOT);
         return this.setType(ScreenHandlerType.ANVIL);
     }
 
@@ -548,7 +600,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @param    player_inventory
      */
     public TexturedScreenHandler createScreenHandler(int sync_id, PlayerEntity player, PlayerInventory player_inventory) {
-        return new TexturedScreenHandler(sync_id, this, player, player_inventory, new SimpleInventory(9*6));
+        return new TexturedScreenHandler(sync_id, this, player, player_inventory, new SimpleInventory(this.getScreenTypeSlotCount()));
     }
 
     /**

@@ -75,7 +75,7 @@ public class GuiTexturePiece {
             result += original_y;
         }
 
-        result += this.parent.getOriginalContainerTitleStartY();
+        result += this.parent.getOriginalScreenTitleY();
 
         // I think 1 always needs to be subtraced if it's negative?
         if (result < 0) {

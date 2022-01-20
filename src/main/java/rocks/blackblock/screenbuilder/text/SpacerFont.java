@@ -121,8 +121,6 @@ public class SpacerFont extends Font {
 
         int wanted_change = wanted_position - current_position;
 
-        System.out.println("Wanted: " + wanted_position + " - Current position: " + current_position);
-
         // If we have a negative moment, add negative spaces first
         if (wanted_position < current_position) {
 
@@ -175,11 +173,8 @@ public class SpacerFont extends Font {
             }
         }
 
-        System.out.println(" »» Position after negative space: " + current_position);
-
         if (wanted_position > current_position) {
             for (int width : this.getSortedPositiveSpaceMap().keySet()) {
-                System.out.println(" »» Testing Width: " + width);
 
                 while (current_position < wanted_position) {
                     temp_calc = current_position + width;
@@ -189,8 +184,6 @@ public class SpacerFont extends Font {
                         current_position = temp_calc;
                         current_char = positive_space_map.get(width);
                         builder.append(current_char);
-
-                        System.out.println(" »»»» Adding " + width + ": " + current_position);
                     } else {
                         // We can't add it, so we have to break out
                         break;
@@ -202,8 +195,6 @@ public class SpacerFont extends Font {
                 }
             }
         }
-
-        System.out.println(" -- Final: " + current_position + " -- with string: " + builder.toString());
 
         return this.getText(builder.toString());
     }

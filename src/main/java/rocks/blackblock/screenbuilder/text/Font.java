@@ -298,6 +298,7 @@ public class Font {
 
         SPACE.registerWidth('-', -6765);
 
+        // Small negative movements
         SPACE.registerWidth('①', -1);
         SPACE.registerWidth('②', -2);
         SPACE.registerWidth('③', -3);
@@ -308,12 +309,18 @@ public class Font {
         SPACE.registerWidth('⑧', -8);
         SPACE.registerWidth('⑨', -9);
 
+        // Full negative movements (decimals)
         SPACE.registerWidth('❶', -10);
         SPACE.registerWidth('❷', -20);
         SPACE.registerWidth('❸', -30);
         SPACE.registerWidth('❹', -40);
         SPACE.registerWidth('❺', -50);
 
+        // Doubling negative movements
+        SPACE.registerWidth('⓵', -128);
+        SPACE.registerWidth('⓶', -256);
+
+        // Positive movements
         SPACE.registerWidth('1', 2584);
         SPACE.registerWidth('2', 987);
         SPACE.registerWidth('3', 377);
