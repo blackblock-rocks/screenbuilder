@@ -180,7 +180,8 @@ public class LineHeightFontCollection {
 
     /**
      * Get the font-id for the given line index
-     * @version   0.1.1
+     *
+     * @since   0.1.1
      */
     public String getFontIdForLine(int line_index) {
         return "bbsb:lh" + this.getLineHeightString() + "/l"+line_index;
@@ -205,7 +206,5 @@ public class LineHeightFontCollection {
             GuiUtils.writeToPath(path, json);
         }
     }
-
-
 
 }

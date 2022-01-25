@@ -104,6 +104,4 @@ public class GuiFont extends Font {
             GuiUtils.writeToPath(buildLocation.resolve(path), piece.getImage());
         }
     }
-
-
 }

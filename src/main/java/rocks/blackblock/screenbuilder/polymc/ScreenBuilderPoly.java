@@ -6,6 +6,7 @@ import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
+import rocks.blackblock.screenbuilder.text.PixelFontCollection;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
 /**
@@ -47,6 +48,8 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
         for (LineHeightFontCollection fc : LineHeightFontCollection.collection.values()) {
             fc.addToResourcePack(pack);
         }
+
+        PixelFontCollection.PX01.addToResourcePack(pack);
 
         GuiTexture.addToResourcePack(pack);
     }

@@ -13,12 +13,13 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
 	maven { url 'https://jitpack.io' }
+
+	flatDir {
+		dirs '../chunker/build/libs/'
+	}
+
+	maven { url 'https://maven.blackblock.rocks/releases' }
 }
 
 sourceSets {
@@ -49,6 +50,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
+
+	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
 
 	testmodImplementation sourceSets.main.output
 }

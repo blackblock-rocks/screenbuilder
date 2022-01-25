@@ -1,8 +1,15 @@
 package rocks.blackblock.screenbuilder.text;
 
 import net.minecraft.text.*;
+import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +34,23 @@ public class TextBuilder {
     // The current Y-start coordinate
     private int y_origin = 0;
 
+    // The default color, if it is known
+    private TextColor default_color = null;
+
+    // The default font, if it is known
+    private Identifier default_font = null;
+
     // The title to use
     private Text title = null;
 
     // All the text pieces added so far
     private final List<Text> text_list = new ArrayList<>();
+
+    // All the text groups
+    private final List<TextGroup> groups = new ArrayList<>();
+
+    // The current text group
+    private TextGroup current_group = null;
 
     // The screenbuilder instance, if any
     private ScreenBuilder screen_builder;
@@ -54,6 +73,77 @@ public class TextBuilder {
      */
     public TextBuilder(ScreenBuilder builder) {
         this.screen_builder = builder;
+        this.createNewGroup();
+    }
+
+    /**
+     * Create a new group
+     *
+     * @since   0.1.1
+     */
+    public TextGroup createNewGroup() {
+        this.current_group = new TextGroup(this);
+        this.groups.add(this.current_group);
+        return this.current_group;
+    }
+
+    /**
+     * Make sure we're on a group with the given style
+     *
+     * @since   0.1.1
+     */
+    public TextGroup ensureGroup(Style style) {
+
+        if (style == null) {
+            return this.current_group;
+        }
+
+        if (this.current_group.usesStyle(style)) {
+            return this.current_group;
+        }
+
+        TextGroup result = this.createNewGroup();
+        result.setStyle(style);
+
+        return result;
+    }
+
+    /**
+     * Get the default color
+     *
+     * @since   0.1.1
+     */
+    public TextColor getDefaultColor() {
+        return this.default_color;
+    }
+
+    /**
+     * Set the default color
+     *
+     * @since   0.1.1
+     */
+    public TextBuilder setDefaultColor(TextColor color) {
+        this.default_color = color;
+        return this;
+    }
+
+    /**
+     * Get the default font
+     *
+     * @since   0.1.1
+     */
+    public Identifier getDefaultFont() {
+        return this.default_font;
+    }
+
+    /**
+     * Set the default font
+     *
+     * @since   0.1.1
+     */
+    public TextBuilder setDefaultFont(Identifier font) {
+        this.default_font = font;
+        return this;
     }
 
     /**
@@ -160,6 +250,15 @@ public class TextBuilder {
         }
 
         return font;
+    }
+
+    /**
+     * Get the current text group
+     *
+     * @since   0.1.1
+     */
+    public TextGroup getCurrentGroup() {
+        return this.current_group;
     }
 
     /**
@@ -361,5 +460,109 @@ public class TextBuilder {
         result += "}";
 
         return result;
+    }
+
+    /**
+     * Return the JSON representation
+     *
+     * @since   0.1.1
+     */
+    public String getJsonString() {
+        return Text.Serializer.toJson(this.build());
+    }
+
+    /**
+     * Print a texture to the screen
+     *
+     * @param texture_path
+     * @param x
+     * @param y
+     *
+     * @since   0.1.1
+     */
+    public void printTexture(Identifier texture_path, int x, int y) {
+
+        InputStream image_stream = GuiTexture.getFileStream(texture_path);
+        byte[] data;
+        BufferedImage source_image = null;
+
+        try {
+            data = image_stream.readAllBytes();
+            source_image = ImageIO.read(new ByteArrayInputStream(data));
+        } catch (Exception e) {
+            System.out.println("Error loading image: " + texture_path);
+            return;
+        }
+
+        this.printImage(source_image, x, y);
+
+    }
+
+    /**
+     * Print an image to the screen
+     *
+     * @param image
+     * @param dx
+     * @param dy
+     *
+     * @since   0.1.1
+     */
+    public void printImage(BufferedImage image, int dx, int dy) {
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        Color original_top_color;
+        Color replacement_top_color;
+        Color original_bottom_color;
+        Color replacement_bottom_color;
+        Character pixel_char = null;
+
+        this.moveCursorUnsafe(dx);
+
+        for (int y = 0; y < height; y += 2) {
+
+            // Because each pixel prints an invisible pixel on the right,
+            // we need to print the line in 2 passes
+            for (int pass = 0; pass < 2; pass++) {
+                String pass_line = "";
+                int line_index = (dy + y) / 2;
+                Font font = PixelFontCollection.PX01.getFontForLine(line_index);
+                int placed = 0;
+
+                for (int x = 0 - pass; x < width; x += 2) {
+
+                    if (x < 0) {
+                        // This will move it 1 pixel to the right
+                        pass_line += '9';
+                        continue;
+                    }
+
+                    original_top_color = new Color(image.getRGB(x, y));
+                    original_bottom_color = new Color(image.getRGB(x, y + 1));
+
+                    replacement_top_color = PixelFontCollection.getNearestColor(original_top_color);
+                    replacement_bottom_color = PixelFontCollection.getNearestColor(original_bottom_color);
+
+                    pixel_char = PixelFontCollection.PX01.getCharacter(replacement_top_color, replacement_bottom_color);
+
+                    if (pixel_char == null) {
+                        pixel_char = '8';
+                    }
+
+                    pass_line += pixel_char;
+                    placed++;
+                }
+
+                this.insertUnsafe(pass_line, font);
+
+                // Move the cursor back to the start of the line.
+                // Move it back 1 more pixel after the second pass
+                this.moveCursorUnsafe(0 - (placed * 2) - 1 * pass);
+            }
+        }
+
+        this.moveCursorUnsafe(-dx);
+
     }
 }

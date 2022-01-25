@@ -244,6 +244,26 @@ public class Font {
     }
 
     /**
+     * Add the given text to the text builder
+     *
+     * @param   builder  The builder to add to
+     * @param   text     The String to turn into Text
+     */
+    public void addTo(TextBuilder builder, String text) {
+        this.addTo(builder.getCurrentGroup(), text);
+    }
+
+    /**
+     * Add the given text to the text group, or a parent
+     *
+     * @param   group    The group to add to
+     * @param   text     The String to turn into Text
+     */
+    public void addTo(TextGroup group, String text) {
+        group.ensureGroup(this.font_style).append(text);
+    }
+
+    /**
      * Get the string representation of this font
      *
      * @since   0.1.1

@@ -1,0 +1,13 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/pixel.png",
+            "ascent": -32768,
+            "height": -1,
+            "chars": [
+                "9"
+            ]
+        }
+    ]
+}

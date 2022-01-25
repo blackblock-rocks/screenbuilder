@@ -12,6 +12,8 @@ public class LineHeightFont extends Font {
     /**
      * Creates a font that inherits its character widths from a parent font
      * Used for fonts that share the same textures with another one
+     *
+     * @since   0.1.1
      */
     public LineHeightFont(LineHeightFontCollection collection, int line_index) {
         super(collection.getFontIdForLine(line_index), collection.getOriginalHeight(), collection.getParentFont());
