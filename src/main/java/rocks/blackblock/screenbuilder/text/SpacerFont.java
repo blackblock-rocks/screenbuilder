@@ -99,8 +99,21 @@ public class SpacerFont extends Font {
      *
      * @param wanted_position     the wanted movement in pixels
      */
-    public BaseText convertMovement(int wanted_position) {
-        return this.convertMovement(wanted_position, 0);
+    public String getMovementString(int wanted_position) {
+        return this.getMovementString(wanted_position, 0);
+    }
+
+    /**
+     * Add the given movement to the builder
+     *
+     * @param builder             the builder to add the movement to
+     * @param wanted_position     the wanted movement in pixels
+     * @param current_position    the starting position
+     */
+    public void addMovementToBuilder(TextBuilder builder, int wanted_position, int current_position) {
+        String movement = this.getMovementString(wanted_position, current_position);
+
+        this.addTo(builder, movement);
     }
 
     /**
@@ -109,7 +122,7 @@ public class SpacerFont extends Font {
      * @param wanted_position     the wanted movement in pixels
      * @param current_position    the starting position
      */
-    public BaseText convertMovement(int wanted_position, int current_position) {
+    public String getMovementString(int wanted_position, int current_position) {
 
         // The temp calculation
         int temp_calc;
@@ -196,7 +209,7 @@ public class SpacerFont extends Font {
             }
         }
 
-        return this.getText(builder.toString());
+        return builder.toString();
     }
 
 }

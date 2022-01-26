@@ -127,6 +127,10 @@ public class TextGroup {
      */
     public TextGroup setStyle(Style style) {
 
+        if (style == null) {
+            return this;
+        }
+
         TextColor new_color = style.getColor();
 
         if (new_color != null) {
@@ -150,14 +154,14 @@ public class TextGroup {
     public boolean usesStyle(Style style) {
 
         TextColor current_color = this.getColor();
-        TextColor new_color = style.getColor();
+        TextColor new_color = style == null ? null : style.getColor();
 
         if (new_color != null && !new_color.equals(current_color)) {
             return false;
         }
 
         Identifier current_font = this.getFont();
-        Identifier new_font = style.getFont();
+        Identifier new_font = style == null ? null : style.getFont();
 
         if (new_font != null && !new_font.equals(current_font)) {
             return false;
@@ -184,6 +188,7 @@ public class TextGroup {
 
         TextGroup child = new TextGroup(this.builder, this);
         this.children.add(child);
+        child.setStyle(style);
 
         return child;
     }
@@ -268,7 +273,8 @@ public class TextGroup {
 
         if (style == null) {
             if (this.main_text != null && !this.main_text.isEmpty()) {
-                text.append(this.main_text);
+                MiniText mini_text = new MiniText(this.main_text);
+                text.append(mini_text);
             }
         } else {
             String main_text = this.main_text;
@@ -278,6 +284,7 @@ public class TextGroup {
             }
 
             text = new LiteralText(main_text);
+            text.setStyle(style);
             parent_text.append(text);
         }
 

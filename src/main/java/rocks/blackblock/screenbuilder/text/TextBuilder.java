@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.text;
 
 import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
@@ -276,7 +277,7 @@ public class TextBuilder {
         int width = font.getWidth(text);
 
         if (width != 0) {
-            this.text_list.add(Font.SPACE.convertMovement(0, width));
+            Font.SPACE.addMovementToBuilder(this, 0, width);
         }
 
         return this;
@@ -303,12 +304,9 @@ public class TextBuilder {
      */
     public TextBuilder print(String text, Font font) {
 
-        Text t = font.getText(text);
-
-        this.text_list.add(t);
+        font.addTo(this, text);
 
         int width = font.getWidth(text);
-
         this.cursor += width;
 
         return this;
@@ -324,8 +322,7 @@ public class TextBuilder {
      */
     public TextBuilder insertUnsafe(String text, Font font) {
 
-        Text t = font.getText(text);
-        this.text_list.add(t);
+        font.addTo(this, text);
 
         return this;
     }
@@ -340,22 +337,19 @@ public class TextBuilder {
         Text text = null;
         Font font = Font.getLhFont(this.line);
 
-        text = font.getText(line);
 
         //text = text.getWithStyle(text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("HI " + this.line)))).get(0);
 
         this.line++;
-        
-        // Only add text to the list if it has been initialized
-        if (text != null) {
-            this.text_list.add(text);
 
-            int width = Font.DEFAULT.getWidth(line);
+        font.addTo(this, line);
 
-            if (width != 0) {
-                this.text_list.add(Font.SPACE.convertMovement(0, width));
-            }
+        int width = Font.DEFAULT.getWidth(line);
+
+        if (width != 0) {
+            Font.SPACE.addMovementToBuilder(this, 0, width);
         }
+
         
         return this;
     }
@@ -367,8 +361,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder moveCursor(int move_x) {
-        BaseText move = Font.SPACE.convertMovement(move_x, 0);
-        this.text_list.add(move);
+        Font.SPACE.addMovementToBuilder(this, move_x, 0);
         this.cursor += move_x;
         return this;
     }
@@ -380,8 +373,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder moveCursorUnsafe(int move_x) {
-        BaseText move = Font.SPACE.convertMovement(move_x, 0);
-        this.text_list.add(move);
+        Font.SPACE.addMovementToBuilder(this, move_x, 0);
         return this;
     }
 
@@ -396,8 +388,7 @@ public class TextBuilder {
         x = this.translateX(x);
 
         if (this.cursor != x) {
-            BaseText move = Font.SPACE.convertMovement(x, this.cursor);
-            this.text_list.add(move);
+            Font.SPACE.addMovementToBuilder(this, x, this.cursor);
             this.cursor = x;
         }
 
@@ -418,12 +409,16 @@ public class TextBuilder {
      *
      * @since   0.1.1
      */
-    public BaseText build() {
+    public Text build() {
+
+        if (this.groups.size() == 1) {
+            return this.groups.get(0).build();
+        }
 
         LiteralText text = new LiteralText("");
 
-        for (Text t : this.text_list) {
-            text.append(t);
+        for (TextGroup group : this.groups) {
+            group.buildInto(text);
         }
 
         //System.out.println("Built text: " + Text.Serializer.toJson(text));
@@ -439,7 +434,6 @@ public class TextBuilder {
 
             text.append(title_with_font);
         }
-
 
         return text;
     }
@@ -517,6 +511,9 @@ public class TextBuilder {
         Color original_bottom_color;
         Color replacement_bottom_color;
         Character pixel_char = null;
+
+        TextGroup group = this.ensureGroup(Style.EMPTY.withFont(Font.SPACE.identifier).withColor(TextColor.fromFormatting(Formatting.WHITE)));
+        this.current_group = group;
 
         this.moveCursorUnsafe(dx);
 

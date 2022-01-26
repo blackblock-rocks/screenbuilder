@@ -6,7 +6,8 @@
     "mixins": [
         "ScreenHandlerAccessor",
         "ServerPlayerEntityMixin",
-        "ServerPlayNetworkHandlerMixin"
+        "ServerPlayNetworkHandlerMixin",
+        "TextSerializerMixin"
     ],
     "client": [],
     "injectors": {
