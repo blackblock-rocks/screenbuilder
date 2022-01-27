@@ -256,7 +256,7 @@ public class GuiTexture extends BaseTexture {
         // Make sure the cursor is at the wanted position
         builder.setCursor(initial_cursor_adjustment);
 
-        for (GuiTexturePiece piece : this.pieces) {
+        for (TexturePiece piece : this.pieces) {
             count++;
 
             if (count > 0) {

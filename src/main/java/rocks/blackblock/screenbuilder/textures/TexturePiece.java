@@ -1,18 +1,17 @@
 package rocks.blackblock.screenbuilder.textures;
 
-import net.minecraft.data.client.model.Texture;
 import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
 
-public class GuiTexturePiece {
+public class TexturePiece {
 
     private final BaseTexture parent;
     private final int index;
     private final char character;
     private BufferedImage image = null;
 
-    public GuiTexturePiece(BaseTexture parent, int index, char character) {
+    public TexturePiece(BaseTexture parent, int index, char character) {
         this.parent = parent;
         this.index = index;
         this.character = character;
@@ -20,6 +19,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the index of this piece
+     *
+     * @since   0.1.1
      */
     public int getIndex() {
         return index;
@@ -27,6 +28,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the character of this piece
+     *
+     * @since   0.1.1
      */
     public char getCharacter() {
         return character;
@@ -34,6 +37,8 @@ public class GuiTexturePiece {
 
     /**
      * Set the image of this piece
+     *
+     * @since   0.1.1
      */
     public void setImage(BufferedImage image) {
         this.image = image;
@@ -41,6 +46,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the image of this piece
+     *
+     * @since   0.1.1
      */
     public BufferedImage getImage() {
         return image;
@@ -48,6 +55,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the path to the file of this piece
+     *
+     * @since   0.1.1
      */
     public String getPath() {
         Identifier texture = this.parent.getTextureIdentifier();
@@ -58,6 +67,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the filename to use inside the font's json definition
+     *
+     * @since   0.1.1
      */
     public String getJsonFilename() {
         String result = "bbsb:" + this.getPath();
@@ -66,6 +77,8 @@ public class GuiTexturePiece {
 
     /**
      * Calculate the font's ascent
+     *
+     * @since   0.1.1
      */
     public int getAscent() {
         return this.parent.getAscent();
@@ -73,6 +86,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the height of this piece
+     *
+     * @since   0.1.1
      */
     public int getHeight() {
         return image.getHeight();
@@ -80,6 +95,8 @@ public class GuiTexturePiece {
 
     /**
      * Get the width of this piece
+     *
+     * @since   0.1.1
      */
     public int getWidth() {
         return image.getWidth();

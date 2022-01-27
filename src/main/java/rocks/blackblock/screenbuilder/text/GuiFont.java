@@ -1,13 +1,10 @@
 package rocks.blackblock.screenbuilder.text;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
-import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
-import rocks.blackblock.screenbuilder.textures.GuiTexture;
-import rocks.blackblock.screenbuilder.textures.GuiTexturePiece;
+import rocks.blackblock.screenbuilder.textures.TexturePiece;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import java.nio.file.Path;
@@ -22,7 +19,7 @@ import java.util.ArrayList;
  */
 public class GuiFont extends Font {
 
-    private ArrayList<GuiTexturePiece> texture_pieces = new ArrayList<>();
+    private ArrayList<TexturePiece> texture_pieces = new ArrayList<>();
     private int index = 0;
 
     public GuiFont(String name) {
@@ -46,7 +43,7 @@ public class GuiFont extends Font {
      * Add a texture piece to the list
      * @since   0.1.1
      */
-    public void registerTexturePiece(GuiTexturePiece piece) {
+    public void registerTexturePiece(TexturePiece piece) {
         this.texture_pieces.add(piece);
     }
 
@@ -61,7 +58,7 @@ public class GuiFont extends Font {
 
         System.out.println("Adding pieces " + this.texture_pieces.size());
 
-        for (GuiTexturePiece piece : this.texture_pieces) {
+        for (TexturePiece piece : this.texture_pieces) {
             JsonObject provider = new JsonObject();
 
             provider.addProperty("type", "bitmap");
@@ -98,7 +95,7 @@ public class GuiFont extends Font {
 
         // @TODO: add the images of the texture pieces to the pack
 
-        for (GuiTexturePiece piece : this.texture_pieces) {
+        for (TexturePiece piece : this.texture_pieces) {
             String path = "assets/bbsb/textures/" + piece.getPath();
             System.out.println("Adding texture to: " + path);
             GuiUtils.writeToPath(buildLocation.resolve(path), piece.getImage());

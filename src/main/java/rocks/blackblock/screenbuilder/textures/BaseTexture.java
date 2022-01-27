@@ -43,7 +43,7 @@ public abstract class BaseTexture {
     protected Integer gui_nr = null;
 
     // The pieces of this texture
-    protected ArrayList<GuiTexturePiece> pieces = new ArrayList<>();
+    protected ArrayList<TexturePiece> pieces = new ArrayList<>();
 
     /**
      * Set the texture
@@ -140,6 +140,8 @@ public abstract class BaseTexture {
 
     /**
      * Calculate all the pieces of this texture
+     *
+     * @since   0.1.1
      */
     protected void calculate() {
 
@@ -214,7 +216,7 @@ public abstract class BaseTexture {
                 piece_image.setRGB(piece_width - 1, 0, 0x01000001);
             }
 
-            GuiTexturePiece piece = new GuiTexturePiece(this, i, GUI_FONT.getNextChar());
+            TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
             this.pieces.add(piece);
             GUI_FONT.registerTexturePiece(piece);
             piece.setImage(piece_image);

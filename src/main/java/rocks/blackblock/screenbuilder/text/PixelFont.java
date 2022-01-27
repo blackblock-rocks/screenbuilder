@@ -3,7 +3,6 @@ package rocks.blackblock.screenbuilder.text;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.util.Formatting;
-import rocks.blackblock.screenbuilder.textures.GuiTexturePiece;
 
 public class PixelFont extends Font {
 
