@@ -35,6 +35,7 @@ public class BBSB implements ModInitializer {
     public static final GuiItem GUI_GT = GuiItem.create("gt");
     public static final GuiItem GUI_GTE = GuiItem.create("gte");
     public static final GuiItem GUI_ARROW_LEFT = GuiItem.create("arrow_left");
+    public static final GuiItem GUI_TRANSPARENT = GuiItem.create("transparent");
 
     /**
      * Create an identifier

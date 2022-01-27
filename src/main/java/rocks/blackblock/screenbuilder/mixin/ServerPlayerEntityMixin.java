@@ -51,6 +51,7 @@ public abstract class ServerPlayerEntityMixin {
 
             TextBuilder textBuilder = texturedScreenHandler.getTextBuilder();
 
+            /*
             System.out.println("Printing do.png?");
             textBuilder.printTexture(new Identifier("bbsb:item/icons/do"), 0, 0);
 
@@ -80,6 +81,7 @@ public abstract class ServerPlayerEntityMixin {
             textBuilder.printImage(lump.getImage(), 16, 48);
 
             System.out.println(" »» TextBuilder json: " + textBuilder.getJsonString());
+            */
 
             return textBuilder.build();
         }

@@ -7,6 +7,7 @@ import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.PixelFontCollection;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
 /**
@@ -51,6 +52,6 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
 
         PixelFontCollection.PX01.addToResourcePack(pack);
 
-        GuiTexture.addToResourcePack(pack);
+        BaseTexture.addToResourcePack(pack);
     }
 }

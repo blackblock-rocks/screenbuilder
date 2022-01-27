@@ -1,17 +1,18 @@
 package rocks.blackblock.screenbuilder.textures;
 
+import net.minecraft.data.client.model.Texture;
 import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
 
 public class GuiTexturePiece {
 
-    private final GuiTexture parent;
+    private final BaseTexture parent;
     private final int index;
     private final char character;
     private BufferedImage image = null;
 
-    public GuiTexturePiece(GuiTexture parent, int index, char character) {
+    public GuiTexturePiece(BaseTexture parent, int index, char character) {
         this.parent = parent;
         this.index = index;
         this.character = character;
@@ -67,24 +68,7 @@ public class GuiTexturePiece {
      * Calculate the font's ascent
      */
     public int getAscent() {
-
-        int result = 0;
-        int original_y = this.parent.getOriginalY();
-
-        if (original_y != 0) {
-            result += original_y;
-        }
-
-        result += this.parent.getOriginalScreenTitleY();
-
-        // I think 1 always needs to be subtraced if it's negative?
-        if (result < 0) {
-            result -= 1;
-        }
-
-        System.out.println("Ascent of gui piece is: " + result);
-
-        return result;
+        return this.parent.getAscent();
     }
 
     /**

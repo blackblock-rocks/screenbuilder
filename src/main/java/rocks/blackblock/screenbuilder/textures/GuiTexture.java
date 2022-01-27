@@ -1,18 +1,9 @@
 package rocks.blackblock.screenbuilder.textures;
 
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
-import rocks.blackblock.screenbuilder.text.GuiFont;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -22,25 +13,10 @@ import java.util.HashMap;
  * @since    0.1.1
  * @version  0.1.1
  */
-public class GuiTexture {
-
-    // The max allowed width of a piece of GUI
-    private static final int MAX_WIDTH = 128;
-
-    // The "font" to use for textures
-    public static final GuiFont GUI_FONT = new GuiFont("bbsb:gui");
+public class GuiTexture extends BaseTexture {
 
     // Some calculations can be stored here, in case there needs to be some sharing
     private static HashMap<Identifier, GuiTexture> textures = new HashMap<>();
-
-    // A running counter of registered gui textures
-    private static int gui_counter = 0;
-
-    // The pieces of this texture
-    private ArrayList<GuiTexturePiece> pieces = new ArrayList<>();
-
-    // The identifier/path to the original texture
-    private Identifier texture_path = null;
 
     // The X coordinate of the original texture
     private int original_x = 0;
@@ -54,29 +30,27 @@ public class GuiTexture {
     // The Y coordinate of where text can start
     private Integer text_y = null;
 
-    // The height of the texture
-    private int height = 0;
-
-    // The width of the texture
-    private int width = 0;
-
-    // The counter of this index
-    private final int gui_nr;
-
     // The screenbuilder this is used for
     private ScreenBuilder screenbuilder = null;
 
     public GuiTexture(Identifier texture_path, int original_x, int original_y) {
-        this.texture_path = texture_path;
+        super(texture_path, false);
         this.original_x = original_x;
         this.original_y = original_y;
-        this.gui_nr = gui_counter++;
 
         this.calculate();
     }
 
+    /**
+     * Make a copy of the given GuiTexture
+     *
+     * @param   original
+     *
+     * @since   0.1.1
+     */
     public GuiTexture(GuiTexture original) {
-        this.texture_path = original.texture_path;
+        super(original.texture_path, false);
+
         this.original_x = original.original_x;
         this.original_y = original.original_y;
         this.gui_nr = original.gui_nr;
@@ -111,13 +85,6 @@ public class GuiTexture {
     }
 
     /**
-     * Add all GuiTexture resources to the given data pack
-     */
-    public static void addToResourcePack(ResourcePackMaker pack) {
-        GUI_FONT.addToResourcePack(pack);
-    }
-
-    /**
      * Create and return a copy of this instance
      *
      * @since   0.1.1
@@ -145,24 +112,6 @@ public class GuiTexture {
         GuiTexture result = this.copy();
         result.setScreenBuilder(screenbuilder);
         return result;
-    }
-
-    /**
-     * Get the gui number
-     *
-     * @since   0.1.1
-     */
-    public int getGuiNumber() {
-        return this.gui_nr;
-    }
-
-    /**
-     * Get the texture identifier
-     *
-     * @since   0.1.1
-     */
-    public Identifier getTextureIdentifier() {
-        return this.texture_path;
     }
 
     /**
@@ -224,90 +173,6 @@ public class GuiTexture {
     }
 
     /**
-     * Calculate all the pieces of this texture
-     */
-    public void calculate() {
-
-        byte[] data;
-
-        try {
-            data = getFileStream(this.texture_path).readAllBytes();
-        } catch (Exception e) {
-            System.out.println("Failed to load GUI texture file: " + this.texture_path);
-            return;
-        }
-
-        BufferedImage source_image = null;
-
-        try {
-            source_image = ImageIO.read(new ByteArrayInputStream(data));
-        } catch (Exception e) {
-            System.out.println("Failed to read GUI texture data: " + this.texture_path);
-            return;
-        }
-
-        this.height = source_image.getHeight();
-        this.width = source_image.getWidth();
-
-        // Calculate the amount of pieces we need
-        int pieces = (int) Math.ceil((double) this.width / (double) MAX_WIDTH);
-
-        for (int i = 0; i < pieces; i++) {
-            int piece_width = Math.min(MAX_WIDTH, this.width - i * MAX_WIDTH);
-
-            BufferedImage piece_image = new BufferedImage(piece_width, this.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics piece_graphics = piece_image.getGraphics();
-
-            piece_graphics.drawImage(
-                    source_image,
-                    // Destination coordinates
-                    0, 0,
-                    piece_width, this.height,
-
-                    // Source coordinates
-                    i * MAX_WIDTH, 0,
-                    (i * MAX_WIDTH) + piece_width, this.height,
-                    null
-            );
-
-            boolean has_transparent_last_column = true;
-
-            // Iterate over all the pixels in the last column.
-            // If all the pixels are transparent,
-            // we will make the top-right pixel a tiny bit opaque
-            for (int y = 0; y < this.height; y++) {
-                int pixel = piece_image.getRGB(piece_width - 1, y);
-
-                int alpha = (pixel & 0xff000000) >>> 24;
-
-                if (alpha != 0) {
-                    has_transparent_last_column = false;
-                    break;
-                }
-            }
-
-            // If the last column is totally transparent,
-            // make the top-right pixel a tiny bit opaque
-            if (has_transparent_last_column) {
-                piece_image.setRGB(piece_width - 1, 0, 0x01000001);
-            }
-
-            GuiTexturePiece piece = new GuiTexturePiece(this, i, GUI_FONT.getNextChar());
-            this.pieces.add(piece);
-            GUI_FONT.registerTexturePiece(piece);
-            piece.setImage(piece_image);
-        }
-    }
-
-    public static InputStream getFileStream(Identifier texture_path) {
-        String namespace = texture_path.getNamespace();
-
-        String path = "assets/" + namespace + "/textures/" + texture_path.getPath() + ".png";
-
-        return GuiUtils.findModResource(namespace, path);
-    }
-
-    /**
      * Return the X-coordinate where the title starts in the original, unmodded container
      * (Probably a generic inventory container screen)
      * @return
@@ -344,6 +209,28 @@ public class GuiTexture {
     public int getInitialCursorAdjustmentX() {
         // Subtract the position of the container thingy
         return 0 - (this.getOriginalScreenTitleX() + this.original_x);
+    }
+
+    /**
+     * Calculate the font's ascent
+     */
+    public int getAscent() {
+
+        int result = 0;
+        int original_y = this.getOriginalY();
+
+        if (original_y != 0) {
+            result += original_y;
+        }
+
+        result += this.getOriginalScreenTitleY();
+
+        // I think 1 always needs to be subtraced if it's negative?
+        if (result < 0) {
+            result -= 1;
+        }
+
+        return result;
     }
 
     /**
