@@ -70,8 +70,6 @@ public class PixelFont extends Font {
 
         providers.add(provider);
 
-        System.out.println("Added pixel font: " + this.line_index);
-
         return root;
     }
 

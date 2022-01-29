@@ -214,6 +214,7 @@ public class GuiTexture extends BaseTexture {
     /**
      * Calculate the font's ascent
      */
+    @Override
     public int getAscent() {
 
         int result = 0;
@@ -224,11 +225,6 @@ public class GuiTexture extends BaseTexture {
         }
 
         result += this.getOriginalScreenTitleY();
-
-        // I think 1 always needs to be subtraced if it's negative?
-        if (result < 0) {
-            result -= 1;
-        }
 
         return result;
     }
@@ -241,6 +237,7 @@ public class GuiTexture extends BaseTexture {
      *
      * @since   0.1.1
      */
+    //@Override
     public void addToBuilder(TextBuilder builder) {
 
         String str = "";
@@ -251,7 +248,7 @@ public class GuiTexture extends BaseTexture {
         int initial_cursor_adjustment = this.getInitialCursorAdjustmentX();
 
         // Get the current cursor position
-        int start_cursor = builder.getCursor();
+        int start_cursor = builder.getRawCursorPosition();
 
         // Make sure the cursor is at the wanted position
         builder.setCursor(initial_cursor_adjustment);
@@ -268,11 +265,11 @@ public class GuiTexture extends BaseTexture {
             width += piece.getWidth();
         }
 
-        builder.moveCursorUnsafe(-width + 1);
+        builder.moveCursorUnsafe(-width - 1);
 
         // The cursor is now back at the start position,
         // so make that the new origin
-        builder.setCurrentOriginPosition(builder.getCursor(), -this.original_y);
+        builder.setCurrentOriginPosition(builder.getRawCursorPosition(), -this.original_y);
 
         builder.setCursor(this.getTextX());
         builder.setY(this.getTextY() - this.original_y);

@@ -5,6 +5,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
+import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.PixelFontCollection;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
@@ -49,8 +50,6 @@ public class BBSB implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        System.out.println("!!! BBSB has loaded !!!");
-        System.out.println(" -- LH04: " + Font.LH04);
-        System.out.println(" -- PIXEL: " + PixelFontCollection.PX01);
+        ScreenbuilderCommands.registerCommands();
     }
 }

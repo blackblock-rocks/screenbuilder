@@ -29,6 +29,7 @@ import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.slots.WidgetSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
@@ -173,7 +174,7 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @since   0.1.1
      */
-    private void refresh() {
+    public void refresh() {
 
         PlayerEntity player = this.getPlayer();
 
@@ -1027,6 +1028,15 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Get the screenbuilder instance
+     *
+     * @since   0.1.1
+     */
+    public ScreenBuilder getScreenBuilder() {
+        return this.builder;
+    }
+
+    /**
      * Show another screen
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -1126,6 +1136,9 @@ public class TexturedScreenHandler extends ScreenHandler {
         // See if we already know the title
         Text title = this.current_title;
 
+        // Create the text builder
+        TextBuilder text_builder = new TextBuilder(this);
+
         // If we don't, get it from the factory
         if (title == null) {
             NamedScreenHandlerFactory factory = this.getOriginFactory();
@@ -1133,14 +1146,14 @@ public class TexturedScreenHandler extends ScreenHandler {
             if (factory != null) {
                 title = factory.getDisplayName();
             }
+
+            if (title == null && this.builder != null) {
+                title = this.builder.getDisplayName();
+            }
         }
 
-        TextBuilder text_builder = new TextBuilder(this.builder);
+        this.builder.addToTextBuilder(text_builder);
 
-        // If the screenbuilder has a font texture, use it now
-        if (this.builder.font_texture != null) {
-            this.builder.font_texture.addToBuilder(text_builder);
-        }
 
         text_builder.setTitle(title);
 

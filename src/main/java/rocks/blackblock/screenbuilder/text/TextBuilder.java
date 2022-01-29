@@ -4,6 +4,7 @@ import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
 import javax.imageio.ImageIO;
@@ -11,6 +12,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +31,7 @@ public class TextBuilder {
     private int line = 0;
 
     // The current X-index the cursor is on
-    private int cursor = 0;
+    private int raw_x = 0;
 
     // The current X-start coordinate
     private int x_origin = 0;
@@ -56,13 +60,16 @@ public class TextBuilder {
     // The screenbuilder instance, if any
     private ScreenBuilder screen_builder;
 
+    // The textured screen handler instance, if any
+    private TexturedScreenHandler screen_handler;
+
     /**
      * Create a simple TextBuilder instance
      *
      * @since   0.1.1
      */
     public TextBuilder() {
-        this(null);
+        this((ScreenBuilder) null);
     }
 
     /**
@@ -78,6 +85,18 @@ public class TextBuilder {
     }
 
     /**
+     * Create a TextBuilder instance with the given TexturedScreenHandler
+     *
+     * @param   screen_handler
+     *
+     * @since   0.1.1
+     */
+    public TextBuilder(TexturedScreenHandler screen_handler) {
+        this(screen_handler.getScreenBuilder());
+        this.screen_handler = screen_handler;
+    }
+
+    /**
      * Create a new group
      *
      * @since   0.1.1
@@ -86,6 +105,33 @@ public class TextBuilder {
         this.current_group = new TextGroup(this);
         this.groups.add(this.current_group);
         return this.current_group;
+    }
+
+    /**
+     * Set the ScreenBuilder instance
+     *
+     * @since   0.1.1
+     */
+    public void setScreenBuilder(ScreenBuilder builder) {
+        this.screen_builder = builder;
+    }
+
+    /**
+     * Get the ScreenBuilder instance
+     *
+     * @since   0.1.1
+     */
+    public ScreenBuilder getScreenBuilder() {
+        return this.screen_builder;
+    }
+
+    /**
+     * Get the TexturedScreenHandler instance
+     *
+     * @since   0.1.1
+     */
+    public TexturedScreenHandler getScreenHandler() {
+        return this.screen_handler;
     }
 
     /**
@@ -153,7 +199,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder makeCurrentPositionOrigin() {
-        this.x_origin = this.cursor;
+        this.x_origin = this.raw_x;
         this.y_origin = this.line;
 
         return this;
@@ -197,6 +243,24 @@ public class TextBuilder {
      */
     public int translateY(int y) {
         return y + this.y_origin;
+    }
+
+    /**
+     * Untranslate the given X coordinate compared to the current X-origin
+     *
+     * @since   0.1.1
+     */
+    public int untranslateX(int x) {
+        return x - this.x_origin;
+    }
+
+    /**
+     * Untranslate the given Y coordinate compared to the current X-origin
+     *
+     * @since   0.1.1
+     */
+    public int untranslateY(int y) {
+        return y - this.y_origin;
     }
 
     /**
@@ -307,7 +371,7 @@ public class TextBuilder {
         font.addTo(this, text);
 
         int width = font.getWidth(text);
-        this.cursor += width;
+        this.raw_x += width;
 
         return this;
     }
@@ -362,7 +426,7 @@ public class TextBuilder {
      */
     public TextBuilder moveCursor(int move_x) {
         Font.SPACE.addMovementToBuilder(this, move_x, 0);
-        this.cursor += move_x;
+        this.raw_x += move_x;
         return this;
     }
 
@@ -384,24 +448,41 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder setCursor(int x) {
-
         x = this.translateX(x);
+        return this.setRawCursor(x);
+    }
 
-        if (this.cursor != x) {
-            Font.SPACE.addMovementToBuilder(this, x, this.cursor);
-            this.cursor = x;
+    /**
+     * Set the raw cursor to this absolute horizontal position
+     *
+     * @since   0.1.1
+     */
+    public TextBuilder setRawCursor(int x) {
+
+        if (this.raw_x != x) {
+            Font.SPACE.addMovementToBuilder(this, x, this.raw_x);
+            this.raw_x = x;
         }
 
         return this;
     }
 
     /**
-     * Get the current cursor position
+     * Get the current cursor position (possible translated back)
      *
      * @since   0.1.1
      */
     public int getCursor() {
-        return this.cursor;
+        return this.untranslateX(this.raw_x);
+    }
+
+    /**
+     * Get the current raw cursor position
+     *
+     * @since   0.1.1
+     */
+    public int getRawCursorPosition() {
+        return this.raw_x;
     }
 
     /**
@@ -411,7 +492,7 @@ public class TextBuilder {
      */
     public Text build() {
 
-        if (this.groups.size() == 1) {
+        if (this.groups.size() == 1 && this.title == null) {
             return this.groups.get(0).build();
         }
 
@@ -428,12 +509,27 @@ public class TextBuilder {
             this.setCursor(0);
 
             Font font = this.getCurrentFont();
-            Text title_with_font = this.title.getWithStyle(font.font_style).get(0);
+            MutableText title_with_font = this.title.shallowCopy();
+            title_with_font.setStyle(font.font_style);
 
             //System.out.println("Title with font: " + Text.Serializer.toJson(title_with_font));
 
             text.append(title_with_font);
         }
+
+        //System.out.println("Built text: " + Text.Serializer.toJson(text));
+
+        String json_string = Text.Serializer.toJson(text);
+
+        Path path = Paths.get("/tmp/mc_textbuilder.json");
+        byte[] strToBytes = json_string.getBytes();
+
+        try {
+            Files.write(path, strToBytes);
+        } catch (Exception e) {
+
+        }
+
 
         return text;
     }
@@ -493,6 +589,17 @@ public class TextBuilder {
     }
 
     /**
+     * Ensure we're in a SPACE font group
+     *
+     * @since   0.1.1
+     */
+    public TextGroup ensureSpaceGroup() {
+        TextGroup group = this.ensureGroup(Style.EMPTY.withFont(Font.SPACE.identifier).withColor(TextColor.fromFormatting(Formatting.WHITE)));
+        this.current_group = group;
+        return group;
+    }
+
+    /**
      * Print an image to the screen
      *
      * @param image
@@ -512,8 +619,7 @@ public class TextBuilder {
         Color replacement_bottom_color;
         Character pixel_char = null;
 
-        TextGroup group = this.ensureGroup(Style.EMPTY.withFont(Font.SPACE.identifier).withColor(TextColor.fromFormatting(Formatting.WHITE)));
-        this.current_group = group;
+        TextGroup group = this.ensureSpaceGroup();
 
         this.moveCursorUnsafe(dx);
 

@@ -3,6 +3,7 @@ package rocks.blackblock.screenbuilder.textures;
 import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.text.GuiFont;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import javax.imageio.ImageIO;
@@ -102,12 +103,49 @@ public abstract class BaseTexture {
     }
 
     /**
+     * Get the minimum width a piece can be
+     *
+     * @since   0.1.1
+     */
+    public int getPreferredPieceWidth() {
+
+        if (this.getPreferredAmountOfPieces() != null) {
+            return this.width / this.getPreferredAmountOfPieces();
+        }
+
+        return this.getMaxPieceWidth();
+    }
+
+    /**
+     * Get the minimum amount of pieces this texture should have
+     *
+     * @since   0.1.1
+     */
+    public Integer getPreferredAmountOfPieces() {
+        return null;
+    }
+
+    /**
      * Get the amount of pieces this texture should have
      *
      * @since   0.1.1
      */
     public int getAmountOfPieces() {
-        return (int) Math.ceil((double) this.width / (double) this.getMaxPieceWidth());
+        Integer min_amount = this.getPreferredAmountOfPieces();
+        int max_amount = (int) Math.ceil((double) this.width / (double) this.getPreferredPieceWidth());
+
+        if (min_amount != null && min_amount > max_amount) {
+            return min_amount;
+        }
+
+        return max_amount;
+    }
+
+    /**
+     * Get the width of a piece
+     */
+    public int getPieceWidth() {
+        return this.getPieceWidth(0);
     }
 
     /**
@@ -116,8 +154,23 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public int getPieceWidth(int piece_index) {
-        int max_width = this.getMaxPieceWidth();
-        return Math.min(max_width, this.width - piece_index * max_width);
+
+        return (int) Math.ceil((double) this.width / (double) this.getAmountOfPieces());
+
+        /*
+        int preferred_width = this.getPreferredPieceWidth();
+        return Math.min(preferred_width, this.width - piece_index * preferred_width);
+
+         */
+    }
+
+    /**
+     * Get the target image width
+     *
+     * @since   0.1.1
+     */
+    public int getTargetImageWidth() {
+        return this.getPieceWidth(0) * this.getAmountOfPieces();
     }
 
     /**
@@ -176,6 +229,62 @@ public abstract class BaseTexture {
         // Calculate the amount of pieces we need
         int pieces = this.getAmountOfPieces();
 
+        int target_width = this.getTargetImageWidth();
+        int piece_width = this.getPieceWidth(0);
+
+        // Create the target image (the widths remain the same)
+        BufferedImage target_image = new BufferedImage(target_width, this.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics target_graphics = target_image.getGraphics();
+
+        for (int i = 0; i < pieces; i++) {
+
+            int x_start = i * piece_width;
+            int x_end = x_start + piece_width;
+
+            target_graphics.drawImage(
+                    source_image,
+                    // Destination coordinates
+                    x_start, 0,
+                    x_end, this.height,
+
+                    // Source coordinates
+                    x_start, 0,
+                    x_end, this.height,
+                    null
+            );
+
+            boolean has_transparent_last_column = true;
+
+            // Iterate over all the pixels in the last column.
+            // If all the pixels are transparent,
+            // we will make the top-right pixel a tiny bit opaque
+            for (int y = 0; y < this.height; y++) {
+                int pixel = target_image.getRGB(x_end - 1, y);
+
+                int alpha = (pixel & 0xff000000) >>> 24;
+
+                if (alpha != 0) {
+                    has_transparent_last_column = false;
+                    break;
+                }
+            }
+
+            // If the last column is totally transparent,
+            // make the top-right pixel a tiny bit opaque
+            if (has_transparent_last_column) {
+                target_image.setRGB(x_end - 1, 0, 0x01000001);
+            }
+
+            TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
+            piece.setUsesSharedImage(true);
+            this.pieces.add(piece);
+            GUI_FONT.registerTexturePiece(piece);
+            piece.setImage(target_image);
+        }
+
+
+        // Old code that used a different image per piece
+        /*
         for (int i = 0; i < pieces; i++) {
             int piece_width = this.getPieceWidth(i);
 
@@ -220,7 +329,126 @@ public abstract class BaseTexture {
             this.pieces.add(piece);
             GUI_FONT.registerTexturePiece(piece);
             piece.setImage(piece_image);
+        }*/
+    }
+
+    /**
+     * Add this texture to the given TextBuilder
+     * This will also move the cursor position to the left
+     *
+     * @param   builder
+     *
+     * @since   0.1.1
+     */
+    public void addToBuilder(TextBuilder builder, int x) {
+        this.addToBuilder(builder, x, this.getAmountOfPieces());
+    }
+
+    /**
+     * Add this texture to the given TextBuilder
+     * This will also move the cursor position to the left
+     *
+     * @param   builder
+     *
+     * @since   0.1.1
+     */
+    public void addToBuilder(TextBuilder builder, int x, int amount_of_pieces_to_add) {
+
+        String str = "";
+        int count = -1;
+
+        // Get the current cursor position
+        int start_cursor = builder.getRawCursorPosition();
+
+        // Make sure the cursor is at the wanted position
+        builder.setCursor(x);
+
+        // Get the amount of pieces
+        int total_piece_count = this.pieces.size();
+
+        int piece_count = amount_of_pieces_to_add;
+
+        if (piece_count > total_piece_count) {
+            piece_count = total_piece_count;
         }
+
+        // Should we mix texture pieces & negative spaces?
+        boolean print_mixed = true;
+        if (this.getPieceWidth() == 1 && piece_count > 6) {
+            print_mixed = false;
+        }
+
+        if (print_mixed) {
+            int width = 0;
+
+            for (TexturePiece piece : this.pieces) {
+                count++;
+
+                if (count > 0) {
+                    // There is always a 1 pixel gap between characters
+                    builder.moveCursorUnsafe(-1);
+                }
+
+                // Make sure we don't print too many pieces
+                if (count >= piece_count) {
+                    break;
+                }
+
+                builder.insertUnsafe("" + piece.getCharacter(), GUI_FONT);
+                width += piece.getWidth();
+            }
+
+            if (count > 0) {
+                // Move the cursor back to where the builder thinks it is
+                builder.moveCursorUnsafe(-width - 1);
+            }
+        } else {
+            // We should print all the even pieces first and then go back for the uneven ones
+            Character pixel_char = null;
+            TexturePiece piece;
+
+            // Because each pixel prints an invisible pixel on the right,
+            // we need to print the line in 2 passes
+            for (int pass = 0; pass < 2; pass++) {
+                StringBuilder pass_line = new StringBuilder();
+                int placed = 0;
+
+                for (int px = -pass; px < piece_count; px += 2) {
+
+                    if (px < 0) {
+                        // Spaces are hardcoded, so we can use that to move forward 4 pixels
+                        pass_line.append(' ');
+                        continue;
+                    }
+
+                    piece = this.pieces.get(px);
+                    pixel_char = piece.getCharacter();
+                    pass_line.append(pixel_char);
+                    placed++;
+                }
+
+                if (placed > 0) {
+
+                    builder.insertUnsafe(pass_line.toString(), GUI_FONT);
+
+                    int move_back = -(placed * 2) - pass;
+
+                    if (pass == 0) {
+                        // Subtract another 3 pixels so we can use a regular space to move forward next pass
+                        move_back -= 3;
+                    } else {
+                        move_back -= 1;
+                    }
+
+                    // Move the cursor back to the start of the line.
+                    // Move it back 1 more pixel after the second pass
+                    builder.moveCursorUnsafe(move_back);
+                }
+            }
+        }
+
+        // And now move it back to where it was at the beginning
+        builder.setRawCursor(start_cursor);
     }
 
     /**

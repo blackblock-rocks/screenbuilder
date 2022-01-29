@@ -10,11 +10,31 @@ public class TexturePiece {
     private final int index;
     private final char character;
     private BufferedImage image = null;
+    private boolean uses_shared_image = false;
+    private int width = 0;
 
     public TexturePiece(BaseTexture parent, int index, char character) {
         this.parent = parent;
         this.index = index;
         this.character = character;
+    }
+
+    /**
+     * Does this piece use a shared image?
+     *
+     * @since   0.1.1
+     */
+    public void setUsesSharedImage(boolean uses_shared_image) {
+        this.uses_shared_image = uses_shared_image;
+    }
+
+    /**
+     * Does this piece use a shared image?
+     *
+     * @since   0.1.1
+     */
+    public boolean getUsesSharedImage() {
+        return this.uses_shared_image;
     }
 
     /**
@@ -59,8 +79,14 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public String getPath() {
+
         Identifier texture = this.parent.getTextureIdentifier();
-        String texture_name = texture.getNamespace() + "_" + this.parent.getGuiNumber() + "_" + this.index;
+        String texture_name = texture.getNamespace() + "_" + this.parent.getGuiNumber();
+
+        if (!this.uses_shared_image) {
+            texture_name += "_" + this.index;
+        }
+
         String result = "gui/" + texture_name + ".png";
         return result;
     }
@@ -99,6 +125,11 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public int getWidth() {
+
+        if (this.uses_shared_image) {
+            return this.parent.getPieceWidth();
+        }
+
         return image.getWidth();
     }
 

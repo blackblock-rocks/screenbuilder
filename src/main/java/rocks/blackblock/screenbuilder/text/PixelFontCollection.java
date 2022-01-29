@@ -199,65 +199,12 @@ public class PixelFontCollection {
     }
 
     /**
-     * Is the given character right-to-left?
-     *
-     * @param   c   The character to test
-     *
-     * @since   0.1.1
-     */
-    private boolean isRightToLeft(char c) {
-        byte directionality = Character.getDirectionality(c);
-
-        if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT
-                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
-                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING
-                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get the next (safe) character to use in the custom font
      *
      * @since   0.1.1
      */
     private char getNextChar() {
-
-        this.current_char++;
-
-        // Skip the space, because that's a fixed width
-        if (this.current_char == 32) {
-            this.current_char++;
-        } else if (this.current_char == 56) {
-            // Skip 8 & 9
-            this.current_char = 58;
-        } else {
-
-            String test;
-
-            do {
-
-                // Do a directionality test first
-                // (Right-to-left characters break stuff)
-                if (this.isRightToLeft(this.current_char)) {
-                    this.current_char++;
-                    continue;
-                }
-
-                // Skip combining characters too
-                test = "" + this.current_char;
-
-                if (test.matches("\\p{M}")) {
-                    this.current_char++;
-                } else {
-                    break;
-                }
-            } while (true);
-        }
-
+        this.current_char = Font.getNextChar(this.current_char);
         return this.current_char;
     }
 

@@ -281,6 +281,77 @@ public class Font {
         return this.id;
     }
 
+    /**
+     * Is the given character right-to-left?
+     *
+     * @param   c   The character to test
+     *
+     * @since   0.1.1
+     */
+    public static boolean isRightToLeft(char c) {
+        byte directionality = Character.getDirectionality(c);
+
+        if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT
+                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
+                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING
+                || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the next (safe) character to use in the custom font
+     *
+     * @since   0.1.1
+     */
+    public static char getNextChar(char current_char) {
+
+        current_char++;
+
+        // Skip the space & non-breaking space because that's a fixed width
+        if (current_char == 32 || current_char == 160 || current_char == 132) {
+            return getNextChar(current_char);
+        } else if (current_char >= 130 && current_char <= 140) {
+            current_char = 140;
+            return getNextChar(current_char);
+        } else if (current_char >= 155 && current_char <= 160) {
+            current_char = 160;
+            return getNextChar(current_char);
+        } else if (current_char == '\\' || current_char == '§' || current_char == '&') {
+            return getNextChar(current_char);
+        } else if (current_char == 56) {
+            // Skip 8 & 9
+            current_char = 58;
+        } else {
+
+            String test;
+
+            do {
+
+                // Do a directionality test first
+                // (Right-to-left characters break stuff)
+                if (Font.isRightToLeft(current_char)) {
+                    current_char++;
+                    continue;
+                }
+
+                // Skip combining characters too
+                test = "" + current_char;
+
+                if (test.matches("\\p{M}")) {
+                    current_char++;
+                } else {
+                    break;
+                }
+            } while (true);
+        }
+
+        return current_char;
+    }
+
     static {
         // Register default char widths (width = horizontal pixels + 1)
         DEFAULT.registerWidth(' ', 4);

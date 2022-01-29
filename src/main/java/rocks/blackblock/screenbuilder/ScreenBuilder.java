@@ -27,7 +27,9 @@ import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.slots.*;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
+import rocks.blackblock.screenbuilder.widgets.BaseWidget;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -54,6 +56,9 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
     // The optional name of this gui
     private String title;
+
+    // The title text
+    private Text title_text;
 
     // The namespace to use for the item
     private String namespace = null;
@@ -86,6 +91,9 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
     // A function that should be called when something changes
     private Consumer<TexturedScreenHandler> call_on_change = null;
+
+    // All non-slot widgets (font-based widgets)
+    protected HashMap<String, BaseWidget> font_widgets = new HashMap<>();
 
     // Should the slots be cloned?
     protected boolean clone_slots = true;
@@ -160,6 +168,15 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         this.font_texture = GuiTexture.get(texture_path, x, y).setScreenBuilder(this);
 
         // And return it
+        return this.font_texture;
+    }
+
+    /**
+     * Get the GuiTexture
+     *
+     * @since   0.1.1
+     */
+    public GuiTexture getFontTexture() {
         return this.font_texture;
     }
 
@@ -239,6 +256,16 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     public void useCustomTexture(String texture_name) {
         this.useCustomTexture(texture_name, 0, 0);
+    }
+
+    /**
+     * Add a widget to this screen
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void addWidget(String id, BaseWidget widget) {
+        this.font_widgets.put(id, widget);
     }
 
     /**
@@ -778,6 +805,17 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Set the display name
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void setDisplayName(Text display_name) {
+        this.title_text = display_name;
+        this.title = null;
+    }
+
+    /**
      * Return the display name
      * (When ScreenBuilder is used as a factory)
      *
@@ -787,6 +825,10 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     @Override
     public Text getDisplayName() {
+
+        if (this.title_text != null) {
+            return this.title_text;
+        }
 
         String title = this.title;
 
@@ -798,15 +840,46 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Populate the TextBuilder with font texture data
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void addToTextBuilder(TextBuilder text_builder) {
+
+        // Create the root space group
+        text_builder.ensureSpaceGroup();
+
+        // If this screenbuilder has a font texture, use it now
+        if (this.font_texture != null) {
+            this.font_texture.addToBuilder(text_builder);
+        }
+
+        // Iterate over all the key-value font_widgets
+        for (Map.Entry<String, BaseWidget> entry : this.font_widgets.entrySet()) {
+            String id = entry.getKey();
+            BaseWidget widget = entry.getValue();
+            widget.addToTextBuilder(text_builder);
+        }
+
+    }
+
+    /**
      * Create the menu when used as a factory
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     @Nullable
     @Override
     public TexturedScreenHandler createMenu(int sync_id, PlayerInventory inv, PlayerEntity player) {
-        return this.createScreenHandler(sync_id, inv);
+
+        // Create the screen handler
+        TexturedScreenHandler handler = this.createScreenHandler(sync_id, inv);
+
+        // This screenbuilder should be seen as the origin factory
+        handler.setOriginFactory(this);
+
+        return handler;
     }
 }
