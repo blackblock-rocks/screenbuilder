@@ -2,9 +2,14 @@ package rocks.blackblock.screenbuilder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-import io.github.theepicblock.polymc.api.resource.JsonModel;
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
+import io.github.theepicblock.polymc.api.resource.ModdedResources;
+import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
+import io.github.theepicblock.polymc.api.resource.json.JElement;
+import io.github.theepicblock.polymc.api.resource.json.JGuiLight;
+import io.github.theepicblock.polymc.api.resource.json.JModel;
+import io.github.theepicblock.polymc.api.resource.json.JModelOverride;
+import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
+import io.github.theepicblock.polymc.impl.resource.json.JModelWrapper;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -34,6 +39,7 @@ import rocks.blackblock.screenbuilder.widgets.BaseWidget;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -172,6 +178,18 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Set the custom texture for this screen for use with magic fonts
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     *
+     * @param    texture_path   The texture to use
+     */
+    public GuiTexture useFontTexture(Identifier texture_path) {
+        return this.useFontTexture(texture_path, 0, 0);
+    }
+
+    /**
      * Get the GuiTexture
      *
      * @since   0.1.1
@@ -181,21 +199,35 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Set the custom texture to use for this GUI by using a retextured item
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     *
+     * @param    texture_path   The texture to use
+     * @param    slot_x         The X-position of the slot to sacrifice
+     * @param    slot_y         The Y-position of the slot to sacrifice
+     */
+    public void useItemTexture(String texture_path, int slot_x, int slot_y) {
+        this.font_texture = null;
+        this.texture_path = texture_path;
+        this.texture_slot_x = slot_x;
+        this.texture_slot_y = slot_y;
+    }
+
+    /**
      * Set the custom texture to use for this GUI
      * In order to use a custom texture, you have to sacrifice an inventory slot.
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    texture_path   The texture to use
      * @param    slot_x         The X-position of the slot to sacrifice
      * @param    slot_y         The Y-position of the slot to sacrifice
      */
     public void useCustomTexture(String texture_path, int slot_x, int slot_y) {
-        this.texture_path = texture_path;
-        this.texture_slot_x = slot_x;
-        this.texture_slot_y = slot_y;
+        this.useItemTexture(texture_path, slot_x, slot_y);
     }
 
     /**
@@ -213,7 +245,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     public void useCustomTexture(boolean enable, int slot_x, int slot_y) {
         if (enable) {
-            this.useCustomTexture(this.namespace + ":" + "gui/" + this.name, slot_x, slot_y);
+            this.useItemTexture(this.namespace + ":" + "gui/" + this.name, slot_x, slot_y);
         } else {
             this.texture_path = null;
             this.texture_slot_x = null;
@@ -250,12 +282,11 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    texture_name   The texture to use
      */
     public void useCustomTexture(String texture_name) {
-        this.useCustomTexture(texture_name, 0, 0);
+        this.useFontTexture(Identifier.tryParse(texture_name));
     }
 
     /**
@@ -355,10 +386,20 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * Change the type of screen to an anvil
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
-     * @since    0.1.0
+     * @since    0.1.1
      */
     public ScreenBuilder useAnvil() {
-        return this.setType(ScreenHandlerType.ANVIL);
+        var result = this.setType(ScreenHandlerType.ANVIL);
+
+        // When using an anvil, there always has to be an item in the input slot,
+        // or else text input will not work
+        if (this.font_texture != null) {
+            StaticSlot transparent = new StaticSlot();
+            transparent.setStack(BBSB.GUI_TRANSPARENT);
+            this.setSlot(0, transparent);
+        }
+
+        return result;
     }
 
     /**
@@ -757,21 +798,17 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @since    0.1.0
      * @version  0.1.0
      */
-    public void registerPoly(ResourcePackMaker pack) {
+    public void registerPoly(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
 
         if (this.texture_path == null) {
             return;
         }
 
-        JsonModel item_model = new JsonModel();
+        JModel item_model = new JModelWrapper();
         JsonParser parser = new JsonParser();
 
-        // Add an empty overrides array or else it'll throw an error?
-        item_model.overrides = new ArrayList<>();
-
-        item_model.gui_light = "front";
-        item_model.textures = new HashMap<>();
-        item_model.textures.put("gui", this.texture_path);
+        item_model.setGuiLight(JGuiLight.FRONT);
+        item_model.getTextures().put("gui", this.texture_path);
 
         String elements_json = null;
         String display_json = null;
@@ -789,6 +826,13 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         }
 
         JsonElement elements = parser.parse(elements_json);
+
+        List<JElement> j_elements = item_model.getElements();
+
+        // @TODO: Make old-style item guis work again with new polymc
+
+        /*
+
         item_model.elements = elements.getAsJsonArray();
 
         Type display_type = new TypeToken<Map<String, JsonModel.DisplayEntry>>() {}.getType();
@@ -802,6 +846,8 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         Identifier texture_identifier = new Identifier(this.texture_path);
 
         pack.copyTexture(texture_identifier.getNamespace(), texture_identifier.getPath());
+
+        */
     }
 
     /**
@@ -852,7 +898,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
         // If this screenbuilder has a font texture, use it now
         if (this.font_texture != null) {
-            this.font_texture.addToBuilder(text_builder);
+            this.font_texture.addToTextBuilder(text_builder);
         }
 
         // Iterate over all the key-value font_widgets

@@ -275,6 +275,7 @@ public class TextGroup {
             if (this.main_text != null && !this.main_text.isEmpty()) {
                 MiniText mini_text = new MiniText(this.main_text);
                 text.append(mini_text);
+                mini_text.can_be_primitive = true;
             }
         } else {
             String main_text = this.main_text;

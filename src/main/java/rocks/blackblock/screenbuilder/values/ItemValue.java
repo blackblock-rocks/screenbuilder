@@ -271,7 +271,6 @@ public class ItemValue extends Value {
         ScreenBuilder builder = input.getScreenBuilder();
 
         input.setAcceptListener((screen, input1) -> {
-            System.out.println("Accepting!");
 
             that.setValue(input.getValue());
             that.setBooleanData(input.getBooleanValues());

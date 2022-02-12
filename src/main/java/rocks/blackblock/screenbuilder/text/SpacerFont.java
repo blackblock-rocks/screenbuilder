@@ -112,7 +112,6 @@ public class SpacerFont extends Font {
      */
     public void addMovementToBuilder(TextBuilder builder, int wanted_position, int current_position) {
         String movement = this.getMovementString(wanted_position, current_position);
-
         this.addTo(builder, movement);
     }
 

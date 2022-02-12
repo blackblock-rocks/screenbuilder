@@ -200,8 +200,6 @@ public class SelectSlot extends ListenerWidgetSlot implements NamedScreenHandler
 
         select_screen.setSelectListener((screen, stack) -> {
 
-            System.out.println(" -- On SelectInput change: " + stack.getNbt());
-
             if (that.on_select_listener != null) {
                 that.on_select_listener.onSelect(screen, that, stack);
             }

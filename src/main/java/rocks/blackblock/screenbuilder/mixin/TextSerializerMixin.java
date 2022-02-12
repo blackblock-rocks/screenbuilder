@@ -18,7 +18,7 @@ public class TextSerializerMixin {
     @Inject(method = "serialize(Lnet/minecraft/text/Text;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;", at = @At("HEAD"), cancellable = true)
     public void modifySerialize(Text text, Type type, JsonSerializationContext jsonSerializationContext, CallbackInfoReturnable<JsonElement> cir) {
 
-        if (text instanceof MiniText mini_text) {
+        if (text instanceof MiniText mini_text && mini_text.getCanBePrimitive()) {
             JsonPrimitive jsonPrimitive = new JsonPrimitive(mini_text.getRawString());
             cir.setReturnValue(jsonPrimitive);
         }

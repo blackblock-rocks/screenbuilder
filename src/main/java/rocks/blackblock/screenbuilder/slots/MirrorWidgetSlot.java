@@ -50,8 +50,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      */
     public void onLeftClick() {
 
-        System.out.println("Left click on MirrorWidgetSlot");
-
         ItemStack stack = this.active_handler.getCursorStack();
 
         if (stack != null && !stack.isEmpty()) {

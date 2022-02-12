@@ -2,8 +2,11 @@ package rocks.blackblock.screenbuilder.text;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
+import io.github.theepicblock.polymc.api.resource.ModdedResources;
+import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
+import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import net.minecraft.util.Formatting;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.textures.TexturePiece;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
@@ -97,17 +100,16 @@ public class GuiFont extends Font {
     /**
      * Add this font resources to the given data pack
      */
-    public void addToResourcePack(ResourcePackMaker pack) {
-
-        Path buildLocation = pack.getBuildLocation();
+    public void addToResourcePack(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
 
         JsonObject root = this.getJson();
         String json = root.toString();
 
-        String target_path_str = "assets/bbsb/font/gui.json";
-        Path target_path = buildLocation.resolve(target_path_str);
+        String target_path_str = "font/gui.json";
 
-        GuiUtils.writeToPath(target_path, json);
+        pack.setAsset(BBSB.NAMESPACE, target_path_str, (location, gson) -> {
+            GuiUtils.writeToPath(location, json);
+        });
 
         // @TODO: add the images of the texture pieces to the pack
 
@@ -120,8 +122,11 @@ public class GuiFont extends Font {
 
             if (already_registered == null) {
                 registered_piece.put(image_path, true);
-                String path = "assets/bbsb/textures/" + image_path;
-                GuiUtils.writeToPath(buildLocation.resolve(path), piece.getImage());
+                String path = "textures/" + image_path;
+
+                pack.setAsset(BBSB.NAMESPACE, path, (location, gson) -> {
+                    GuiUtils.writeToPath(location, piece.getImage());
+                });
             }
         }
 

@@ -1126,8 +1126,8 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
-     * Get the Text instance for use as the DisplayName that
-     * actually contains all the texture & text data
+     * Get a TextBuilder instance for this screen.
+     * It can then be used to supply the DisplayName.
      *
      * @since     0.1.1
      */
@@ -1153,7 +1153,6 @@ public class TexturedScreenHandler extends ScreenHandler {
         }
 
         this.builder.addToTextBuilder(text_builder);
-
 
         text_builder.setTitle(title);
 

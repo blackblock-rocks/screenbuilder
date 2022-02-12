@@ -18,10 +18,14 @@ public class GuiTexture extends BaseTexture {
     // Some calculations can be stored here, in case there needs to be some sharing
     private static HashMap<Identifier, GuiTexture> textures = new HashMap<>();
 
-    // The X coordinate of the original texture
+    /**
+     * The X coordinate of the original texture inside the replacement
+     */
     private int original_x = 0;
 
-    // The Y coordinate of the original texture
+    /**
+     * The Y coordinate of the original texture inside the replacement
+     */
     private int original_y = 0;
 
     // The X coordinate of where text can start
@@ -231,14 +235,14 @@ public class GuiTexture extends BaseTexture {
 
     /**
      * Add this texture to the given TextBuilder
-     * This will also move the cursor position to the left
+     * This will also change the origin position of the text builder.
      *
      * @param   builder
      *
      * @since   0.1.1
      */
     //@Override
-    public void addToBuilder(TextBuilder builder) {
+    public void addToTextBuilder(TextBuilder builder) {
 
         String str = "";
         int count = -1;
@@ -269,10 +273,14 @@ public class GuiTexture extends BaseTexture {
 
         // The cursor is now back at the start position,
         // so make that the new origin
-        builder.setCurrentOriginPosition(builder.getRawCursorPosition(), -this.original_y);
+        builder.setCurrentOriginPosition(builder.getRawCursorPosition(), -this.getOriginalY() + this.getOriginalScreenTitleY());
 
+        // Move the X-coordinate cursor to where the text should start
         builder.setCursor(this.getTextX());
-        builder.setY(this.getTextY() - this.original_y);
+        builder.setTextStartX(this.getTextX());
+
+        // This isn't really needed?
+        builder.setY(this.getTextY());
 
         // For now we'll assume the first line is only for the title.
         // So move a line down

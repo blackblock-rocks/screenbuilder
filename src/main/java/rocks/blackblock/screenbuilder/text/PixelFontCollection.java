@@ -1,14 +1,16 @@
 package rocks.blackblock.screenbuilder.text;
 
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
+import io.github.theepicblock.polymc.api.resource.ModdedResources;
+import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
+import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import net.minecraft.block.MapColor;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -326,7 +328,24 @@ public class PixelFontCollection {
      *
      * @since   0.1.1
      */
-    public void addToResourcePack(ResourcePackMaker pack) {
+    public void addToResourcePack(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
+
+        for (PixelFont font : this.line_fonts.values()) {
+            String json = font.getJson().toString();
+            String path_str = "font/px" + this.width + "x" + this.height + "/l" + font.getLineIndex() + ".json";
+
+            pack.setAsset(BBSB.NAMESPACE, path_str, (location, gson) -> {
+                GuiUtils.writeToPath(location, json);
+            });
+        }
+
+        pack.setAsset(BBSB.NAMESPACE, "textures/font/pxtop.png", (location, gson) -> {
+            GuiUtils.writeToPath(location, this.positive_pixels);
+        });
+
+
+
+        /*
 
         Path buildLocation = pack.getBuildLocation();
 
@@ -341,6 +360,8 @@ public class PixelFontCollection {
         Path pixel_path = buildLocation.resolve("assets/bbsb/textures/font/pxtop.png");
 
         GuiUtils.writeToPath(pixel_path, this.positive_pixels);
+
+         */
 
     }
 

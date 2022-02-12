@@ -129,8 +129,6 @@ public abstract class Setting {
         NbtCompound nbt = result.getOrCreateNbt();
         nbt.putString("setting_name", this.name);
 
-        System.out.println("Returning... " + result);
-
         return result;
     }
 }

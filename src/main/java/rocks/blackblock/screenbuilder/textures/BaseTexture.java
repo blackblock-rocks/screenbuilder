@@ -1,6 +1,8 @@
 package rocks.blackblock.screenbuilder.textures;
 
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
+import io.github.theepicblock.polymc.api.resource.ModdedResources;
+import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
+import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.text.GuiFont;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
@@ -281,55 +283,6 @@ public abstract class BaseTexture {
             GUI_FONT.registerTexturePiece(piece);
             piece.setImage(target_image);
         }
-
-
-        // Old code that used a different image per piece
-        /*
-        for (int i = 0; i < pieces; i++) {
-            int piece_width = this.getPieceWidth(i);
-
-            BufferedImage piece_image = new BufferedImage(piece_width, this.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics piece_graphics = piece_image.getGraphics();
-
-            piece_graphics.drawImage(
-                    source_image,
-                    // Destination coordinates
-                    0, 0,
-                    piece_width, this.height,
-
-                    // Source coordinates
-                    this.getPieceSourceXStart(i), 0,
-                    this.getPieceSourceXEnd(i), this.height,
-                    null
-            );
-
-            boolean has_transparent_last_column = true;
-
-            // Iterate over all the pixels in the last column.
-            // If all the pixels are transparent,
-            // we will make the top-right pixel a tiny bit opaque
-            for (int y = 0; y < this.height; y++) {
-                int pixel = piece_image.getRGB(piece_width - 1, y);
-
-                int alpha = (pixel & 0xff000000) >>> 24;
-
-                if (alpha != 0) {
-                    has_transparent_last_column = false;
-                    break;
-                }
-            }
-
-            // If the last column is totally transparent,
-            // make the top-right pixel a tiny bit opaque
-            if (has_transparent_last_column) {
-                piece_image.setRGB(piece_width - 1, 0, 0x01000001);
-            }
-
-            TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
-            this.pieces.add(piece);
-            GUI_FONT.registerTexturePiece(piece);
-            piece.setImage(piece_image);
-        }*/
     }
 
     /**
@@ -454,8 +407,8 @@ public abstract class BaseTexture {
     /**
      * Add all Texture resources to the given data pack
      */
-    public static void addToResourcePack(ResourcePackMaker pack) {
-        GUI_FONT.addToResourcePack(pack);
+    public static void addToResourcePack(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
+        GUI_FONT.addToResourcePack(moddedResources, pack, logger);
     }
 
     public static InputStream getFileStream(Identifier texture_path) {

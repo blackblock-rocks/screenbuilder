@@ -39,6 +39,12 @@ public class TextBuilder {
     // The current Y-start coordinate
     private int y_origin = 0;
 
+    // The X coordinate where text can start
+    private int x_text_start = 0;
+
+    // The current line coordinate
+    private int line_origin = 0;
+
     // The default color, if it is known
     private TextColor default_color = null;
 
@@ -200,7 +206,10 @@ public class TextBuilder {
      */
     public TextBuilder makeCurrentPositionOrigin() {
         this.x_origin = this.raw_x;
-        this.y_origin = this.line;
+        this.line_origin = this.line;
+
+        // @TODO: fix
+        this.y_origin = 0;
 
         return this;
     }
@@ -209,11 +218,19 @@ public class TextBuilder {
      * Set the origin position (in pixels) based on the absolute position
      * compared to the original screen
      *
+     * @param   x_pixels   The x position in pixels
+     * @param   y_pixels   The y position in pixels
+     *
      * @since   0.1.1
      */
     public TextBuilder setCurrentOriginPosition(int x_pixels, int y_pixels) {
+
         this.x_origin = x_pixels;
-        this.y_origin = Font.LH04.convertYToLine(y_pixels);
+        this.y_origin = y_pixels;
+
+        //this.line_origin = Font.LH04.convertYToLine(y_pixels);
+        //this.y_origin = y_pixels + y_text;
+
         return this;
     }
 
@@ -225,6 +242,34 @@ public class TextBuilder {
     public TextBuilder setTitle(Text title) {
         this.title = title;
         return this;
+    }
+
+    /**
+     * Set the X text start coordinate
+     * (Compared to the current origin)
+     *
+     * @since   0.1.1
+     */
+    public void setTextStartX(int x) {
+        this.x_text_start = x;
+    }
+
+    /**
+     * Get the X text start coordinate
+     *
+     * @since   0.1.1
+     */
+    public int getTextStartX() {
+        return this.x_text_start;
+    }
+
+    /**
+     * Go to the start X position of where text can be put
+     *
+     * @since   0.1.1
+     */
+    public void moveCursorToTextStart() {
+        this.setCursor(this.x_text_start);
     }
 
     /**
@@ -255,7 +300,7 @@ public class TextBuilder {
     }
 
     /**
-     * Untranslate the given Y coordinate compared to the current X-origin
+     * Untranslate the given Y coordinate compared to the current Y-origin
      *
      * @since   0.1.1
      */
@@ -271,9 +316,32 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder setY(int y) {
-        int line = Font.LH04.convertYToLine(y);
+        int line = this.convertYToLine(y);
         this.line = this.translateY(line);
         return this;
+    }
+
+    /**
+     * Convert a Y value to a line number
+     *
+     * @param   y
+     *
+     * @since   0.1.1
+     */
+    public int convertYToLine(int y) {
+        return Font.LH04.convertYToLine(y);
+    }
+
+    /**
+     * Convert a Y value to a pixel line number
+     *
+     * @param   y
+     *
+     * @since   0.1.1
+     */
+    public int convertYToPixelLine(int y) {
+        int result = y - this.y_origin;
+        return result / 2;
     }
 
     /**
@@ -284,7 +352,8 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder setLine(int line_index) {
-        this.line = this.translateY(line_index);
+        //this.line = this.translateY(line_index);
+        this.line = line_index;
         return this;
     }
 
@@ -498,6 +567,12 @@ public class TextBuilder {
 
         LiteralText text = new LiteralText("");
 
+        // If there is a title, move the cursor to the right start
+        if (this.title != null) {
+            this.setLine(0);
+            this.setCursor(this.x_text_start);
+        }
+
         for (TextGroup group : this.groups) {
             group.buildInto(text);
         }
@@ -505,8 +580,6 @@ public class TextBuilder {
         //System.out.println("Built text: " + Text.Serializer.toJson(text));
 
         if (this.title != null) {
-            this.setLine(0);
-            this.setCursor(0);
 
             Font font = this.getCurrentFont();
             MutableText title_with_font = this.title.shallowCopy();
@@ -529,7 +602,6 @@ public class TextBuilder {
         } catch (Exception e) {
 
         }
-
 
         return text;
     }
@@ -621,7 +693,8 @@ public class TextBuilder {
 
         TextGroup group = this.ensureSpaceGroup();
 
-        this.moveCursorUnsafe(dx);
+        // Make sure the cursor is at the wanted position
+        this.setCursor(dx);
 
         for (int y = 0; y < height; y += 2) {
 
@@ -629,7 +702,9 @@ public class TextBuilder {
             // we need to print the line in 2 passes
             for (int pass = 0; pass < 2; pass++) {
                 String pass_line = "";
-                int line_index = (dy + y) / 2;
+
+                int line_index = this.convertYToPixelLine(dy + y);
+
                 Font font = PixelFontCollection.PX01.getFontForLine(line_index);
                 int placed = 0;
 
@@ -657,15 +732,16 @@ public class TextBuilder {
                     placed++;
                 }
 
-                this.insertUnsafe(pass_line, font);
+                if (placed > 0) {
 
-                // Move the cursor back to the start of the line.
-                // Move it back 1 more pixel after the second pass
-                this.moveCursorUnsafe(0 - (placed * 2) - 1 * pass);
+                    this.insertUnsafe(pass_line, font);
+
+                    // Move the cursor back to the beginning of the image.
+                    // Move it back 1 more pixel after the second pass
+                    this.moveCursorUnsafe(0 - (placed * 2) - 1 * pass);
+                }
             }
         }
-
-        this.moveCursorUnsafe(-dx);
 
     }
 }

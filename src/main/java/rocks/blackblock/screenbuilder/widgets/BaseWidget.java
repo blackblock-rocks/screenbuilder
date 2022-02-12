@@ -5,6 +5,8 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.interfaces.MapWidgetAddedListener;
+import rocks.blackblock.screenbuilder.interfaces.WidgetAddedListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
@@ -37,6 +39,9 @@ public abstract class BaseWidget {
     // The name of this widget
     protected String id = null;
 
+    // The added listener
+    protected WidgetAddedListener added_listener = null;
+
     /**
      * Create the widget
      *
@@ -54,6 +59,11 @@ public abstract class BaseWidget {
      * @since   0.1.1
      */
     protected void createWidgetTexture() {
+
+        if (this.texture_path == null) {
+            return;
+        }
+
         this.widget_texture = new WidgetTexture(this.texture_path, this.parent_gui, this.y, this.getWantedAmountOfTexturePieces());
     }
 
@@ -115,10 +125,30 @@ public abstract class BaseWidget {
 
             if (factory instanceof WidgetDataProvider provider) {
                 this.addWithValue(builder, provider.getWidgetValue(this.id));
+
+                if (this.added_listener != null) {
+                    this.added_listener.onAdded(builder, null);
+                }
+
                 return;
             }
         }
 
-        this.widget_texture.addToBuilder(builder, this.x);
+        if (this.widget_texture != null) {
+            this.widget_texture.addToBuilder(builder, this.x);
+        }
+
+        if (this.added_listener != null) {
+            this.added_listener.onAdded(builder, null);
+        }
+    }
+
+    /**
+     * Set the added listener
+     *
+     * @since   0.1.1
+     */
+    public void setAddedListener(WidgetAddedListener listener) {
+        this.added_listener = listener;
     }
 }

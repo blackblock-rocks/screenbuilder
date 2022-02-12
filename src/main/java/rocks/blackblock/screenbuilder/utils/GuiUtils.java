@@ -170,25 +170,18 @@ public class GuiUtils {
             ModContainer mod = modOpt.get();
             path_in_jar = mod.getPath(path);
 
-            System.out.println("Looking in expected mod '" + namespace + "' for '" + path + "'");
-
             if (Files.exists(path_in_jar)) {
-                System.out.println(" -- Found it!");
                 return path_in_jar;
             }
         }
 
         var mods = loader.getAllMods();
 
-        System.out.println("All mods: " + mods.size() + " -- " + mods);
-
         for (ModContainer mod : mods) {
 
             path_in_jar = mod.getPath(path);
-            System.out.println("Looking in other mod '" + namespace + "' for '" + path + "'");
 
             if (Files.exists(path_in_jar)) {
-                System.out.println(" -- Found it: " + path_in_jar);
                 return path_in_jar;
             }
         }

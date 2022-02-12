@@ -13,11 +13,17 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	maven { url 'https://jitpack.io' }
+
+	// Only during development
+	flatDir {
+		dirs '../PolyMc/build/libs/'
+	}
 
 	flatDir {
 		dirs '../chunker/build/libs/'
 	}
+
+	maven { url 'https://jitpack.io' }
 
 	maven { url 'https://maven.blackblock.rocks/releases' }
 }
@@ -49,7 +55,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
+	modImplementation "com.github.TheEpicBlock:polymc:${project.polymc_version}"
 
 	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
 

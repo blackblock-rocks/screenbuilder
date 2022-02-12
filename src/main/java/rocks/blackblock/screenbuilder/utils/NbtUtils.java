@@ -3,12 +3,41 @@ package rocks.blackblock.screenbuilder.utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.interfaces.CompareForScenario;
 
 public class NbtUtils {
+
+    /**
+     * Get a list without checking the type
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public static NbtList getList(NbtCompound compound, String key) {
+
+        NbtElement element = compound.get(key);
+
+        if (element == null) {
+            return null;
+        }
+
+        return (NbtList) element;
+    }
+
+    /**
+     * Set the title of the given stack
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public static void setTitle(ItemStack stack, Text text) {
+        stack.setCustomName(text);
+    }
+
     /**
      * Append to the actual Lore nbt data
      *
@@ -16,8 +45,8 @@ public class NbtUtils {
      * @since    0.1.0
      */
     public static void appendLore(ItemStack stack, Text text) {
-        NbtCompound display = stack.getOrCreateSubNbt("display");
-        NbtList list = display.getList("Lore", 8);
+        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
+        NbtList list = display.getList(ItemStack.LORE_KEY, 8);
 
         if (list == null) {
             list = new NbtList();
@@ -25,7 +54,22 @@ public class NbtUtils {
 
         list.add(NbtString.of(Text.Serializer.toJson(text)));
 
-        display.put("Lore", list);
+        display.put(ItemStack.LORE_KEY, list);
+    }
+
+    /**
+     * Replace the lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.0
+     */
+    public static void replaceLore(ItemStack stack, Text text) {
+        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
+        NbtList list = new NbtList();
+
+        list.add(NbtString.of(Text.Serializer.toJson(text)));
+
+        display.put(ItemStack.LORE_KEY, list);
     }
 
     /**

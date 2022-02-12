@@ -3,7 +3,10 @@ package rocks.blackblock.screenbuilder.text;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import io.github.theepicblock.polymc.api.resource.ResourcePackMaker;
+import io.github.theepicblock.polymc.api.resource.ModdedResources;
+import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
+import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import java.io.InputStream;
@@ -125,8 +128,6 @@ public class LineHeightFontCollection {
         int total_height = this.original_height + this.line_gap;
         int result = y / total_height;
 
-        System.out.println("Converting Y pixel " + y + " to line " + result + " (total height of line: " + total_height + ")");
-
         return result;
     }
 
@@ -194,8 +195,19 @@ public class LineHeightFontCollection {
      *
      * @since   0.1.1
      */
-    public void addToResourcePack(ResourcePackMaker pack) {
+    public void addToResourcePack(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
 
+        for (LineHeightFont font : this.line_height_fonts.values()) {
+            String json = font.getJson();
+            String path_str = "font/lh" + this.getLineHeightString() + "/l" + font.getLineIndex() + ".json";
+
+            pack.setAsset(BBSB.NAMESPACE, path_str, (location, gson) -> {
+                GuiUtils.writeToPath(location, json);
+            });
+        }
+
+
+        /*
         Path buildLocation = pack.getBuildLocation();
 
         for (LineHeightFont font : this.line_height_fonts.values()) {
@@ -204,7 +216,7 @@ public class LineHeightFontCollection {
 
             Path path = buildLocation.resolve(path_str);
             GuiUtils.writeToPath(path, json);
-        }
+        }*/
     }
 
 }
