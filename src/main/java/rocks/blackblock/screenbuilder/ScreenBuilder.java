@@ -786,6 +786,11 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
         this.has_been_registered = true;
 
+        // Make sure the font texture pieces have been generated
+        if (this.font_texture != null) {
+            this.font_texture.getPieces();
+        }
+
         //this.loadTextureItem();
 
         screen_builders.add(this);

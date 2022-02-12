@@ -38,11 +38,9 @@ public class GuiTexture extends BaseTexture {
     private ScreenBuilder screenbuilder = null;
 
     public GuiTexture(Identifier texture_path, int original_x, int original_y) {
-        super(texture_path, false);
+        super(texture_path);
         this.original_x = original_x;
         this.original_y = original_y;
-
-        this.calculate();
     }
 
     /**
@@ -53,14 +51,14 @@ public class GuiTexture extends BaseTexture {
      * @since   0.1.1
      */
     public GuiTexture(GuiTexture original) {
-        super(original.texture_path, false);
+        super(original.texture_path);
 
         this.original_x = original.original_x;
         this.original_y = original.original_y;
         this.gui_nr = original.gui_nr;
 
         // The pieces aren't cloned
-        this.pieces.addAll(original.pieces);
+        this.setPieces(original.getPieces());
 
         this.width = original.width;
         this.height = original.height;
@@ -257,7 +255,7 @@ public class GuiTexture extends BaseTexture {
         // Make sure the cursor is at the wanted position
         builder.setCursor(initial_cursor_adjustment);
 
-        for (TexturePiece piece : this.pieces) {
+        for (TexturePiece piece : this.getPieces()) {
             count++;
 
             if (count > 0) {

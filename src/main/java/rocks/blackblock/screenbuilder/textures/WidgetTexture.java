@@ -41,10 +41,12 @@ public class WidgetTexture extends BaseTexture {
      * @param   min_pieces     The minimum amount of pieces this widget should be split into
      */
     public WidgetTexture(Identifier texture_path, int target_y, Integer min_pieces) {
-        super(texture_path, false);
+        super(texture_path);
         this.target_y = target_y;
         this.min_pieces = min_pieces;
-        this.calculate();
+
+        // Make sure the pieces are generated
+        this.getPieces();
     }
 
     /**

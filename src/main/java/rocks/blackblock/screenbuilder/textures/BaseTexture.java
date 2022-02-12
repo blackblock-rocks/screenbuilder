@@ -46,7 +46,7 @@ public abstract class BaseTexture {
     protected Integer gui_nr = null;
 
     // The pieces of this texture
-    protected ArrayList<TexturePiece> pieces = new ArrayList<>();
+    private ArrayList<TexturePiece> pieces = null;
 
     /**
      * Set the texture
@@ -54,20 +54,31 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public BaseTexture(Identifier texture_path) {
-        this(texture_path, true);
+        this.texture_path = texture_path;
     }
 
     /**
-     * Set the texture
+     * Get the texture pieces
+     * (Will also call the `calculate` method the first time)
      *
      * @since   0.1.1
      */
-    public BaseTexture(Identifier texture_path, boolean do_calculation) {
-        this.texture_path = texture_path;
+    public ArrayList<TexturePiece> getPieces() {
 
-        if (do_calculation) {
-            this.calculate();
+        if (this.pieces == null) {
+            this.pieces = this.calculate();
         }
+
+        return this.pieces;
+    }
+
+    /**
+     * Set the texture pieces
+     *
+     * @since   0.1.1
+     */
+    public void setPieces(ArrayList<TexturePiece> pieces) {
+        this.pieces = pieces;
     }
 
     /**
@@ -198,8 +209,9 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    protected void calculate() {
+    protected ArrayList<TexturePiece> calculate() {
 
+        ArrayList<TexturePiece> texturePieces = new ArrayList<>();
         byte[] data;
 
         // Only set the gui_nr if it hasn't been assigned one yet
@@ -211,7 +223,7 @@ public abstract class BaseTexture {
             data = getFileStream(this.texture_path).readAllBytes();
         } catch (Exception e) {
             System.out.println("Failed to load texture file: " + this.texture_path);
-            return;
+            return texturePieces;
         }
 
         BufferedImage source_image = null;
@@ -220,7 +232,7 @@ public abstract class BaseTexture {
             source_image = ImageIO.read(new ByteArrayInputStream(data));
         } catch (Exception e) {
             System.out.println("Failed to read texture data: " + this.texture_path);
-            return;
+            return texturePieces;
         }
 
         this.height = source_image.getHeight();
@@ -279,10 +291,12 @@ public abstract class BaseTexture {
 
             TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
             piece.setUsesSharedImage(true);
-            this.pieces.add(piece);
+            texturePieces.add(piece);
             GUI_FONT.registerTexturePiece(piece);
             piece.setImage(target_image);
         }
+
+        return texturePieces;
     }
 
     /**
@@ -317,7 +331,7 @@ public abstract class BaseTexture {
         builder.setCursor(x);
 
         // Get the amount of pieces
-        int total_piece_count = this.pieces.size();
+        int total_piece_count = this.getPieces().size();
 
         int piece_count = amount_of_pieces_to_add;
 
@@ -334,7 +348,7 @@ public abstract class BaseTexture {
         if (print_mixed) {
             int width = 0;
 
-            for (TexturePiece piece : this.pieces) {
+            for (TexturePiece piece : this.getPieces()) {
                 count++;
 
                 if (count > 0) {
@@ -374,7 +388,7 @@ public abstract class BaseTexture {
                         continue;
                     }
 
-                    piece = this.pieces.get(px);
+                    piece = this.getPieces().get(px);
                     pixel_char = piece.getCharacter();
                     pass_line.append(pixel_char);
                     placed++;
