@@ -7,7 +7,6 @@ import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.api.resource.json.JElement;
 import io.github.theepicblock.polymc.api.resource.json.JGuiLight;
 import io.github.theepicblock.polymc.api.resource.json.JModel;
-import io.github.theepicblock.polymc.api.resource.json.JModelOverride;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import io.github.theepicblock.polymc.impl.resource.json.JModelWrapper;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -36,7 +35,6 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.widgets.BaseWidget;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

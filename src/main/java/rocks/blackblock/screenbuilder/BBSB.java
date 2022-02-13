@@ -1,16 +1,9 @@
 package rocks.blackblock.screenbuilder;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
-import rocks.blackblock.screenbuilder.text.Font;
-import rocks.blackblock.screenbuilder.text.PixelFontCollection;
-import rocks.blackblock.screenbuilder.utils.GuiUtils;
-
-import java.util.Optional;
 
 public class BBSB implements ModInitializer {
 
