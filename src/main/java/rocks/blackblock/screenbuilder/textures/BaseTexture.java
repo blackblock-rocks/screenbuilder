@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public abstract class BaseTexture {
     public ArrayList<TexturePiece> getPieces() {
 
         if (this.pieces == null) {
-            this.pieces = this.calculate();
+            this.pieces = this.generateTexturePieces();
         }
 
         return this.pieces;
@@ -167,14 +168,7 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public int getPieceWidth(int piece_index) {
-
         return (int) Math.ceil((double) this.width / (double) this.getAmountOfPieces());
-
-        /*
-        int preferred_width = this.getPreferredPieceWidth();
-        return Math.min(preferred_width, this.width - piece_index * preferred_width);
-
-         */
     }
 
     /**
@@ -205,33 +199,50 @@ public abstract class BaseTexture {
     }
 
     /**
-     * Calculate all the pieces of this texture
+     * Make sure all the pieces are generated
      *
      * @since   0.1.1
      */
-    protected ArrayList<TexturePiece> calculate() {
+    public ArrayList<TexturePiece> calculate() {
+        return this.getPieces();
+    }
+
+    /**
+     * Get the source image
+     *
+     * @since   0.1.1
+     */
+    public BufferedImage getSourceImage() throws IOException {
+        byte[] data;
+        BufferedImage source_image = null;
+
+        data = getFileStream(this.texture_path).readAllBytes();
+        source_image = ImageIO.read(new ByteArrayInputStream(data));
+
+        return source_image;
+    }
+
+    /**
+     * Calculate all the pieces of this texture
+     * (without setting them)
+     *
+     * @since   0.1.1
+     */
+    protected ArrayList<TexturePiece> generateTexturePieces() {
 
         ArrayList<TexturePiece> texturePieces = new ArrayList<>();
-        byte[] data;
 
         // Only set the gui_nr if it hasn't been assigned one yet
         if (this.gui_nr == null) {
             this.gui_nr = BaseTexture.gui_counter++;
         }
 
-        try {
-            data = getFileStream(this.texture_path).readAllBytes();
-        } catch (Exception e) {
-            System.out.println("Failed to load texture file: " + this.texture_path);
-            return texturePieces;
-        }
-
         BufferedImage source_image = null;
 
         try {
-            source_image = ImageIO.read(new ByteArrayInputStream(data));
+            source_image = this.getSourceImage();
         } catch (Exception e) {
-            System.out.println("Failed to read texture data: " + this.texture_path);
+            System.out.println("Failed to load texture file: " + this.texture_path + "\n" + e.getMessage());
             return texturePieces;
         }
 

@@ -342,27 +342,6 @@ public class PixelFontCollection {
         pack.setAsset(BBSB.NAMESPACE, "textures/font/pxtop.png", (location, gson) -> {
             GuiUtils.writeToPath(location, this.positive_pixels);
         });
-
-
-
-        /*
-
-        Path buildLocation = pack.getBuildLocation();
-
-        for (PixelFont font : this.line_fonts.values()) {
-            String json = font.getJson().toString();
-            String path_str = "assets/bbsb/font/px" + this.width + "x" + this.height + "/l" + font.getLineIndex() + ".json";
-
-            Path path = buildLocation.resolve(path_str);
-            GuiUtils.writeToPath(path, json);
-        }
-
-        Path pixel_path = buildLocation.resolve("assets/bbsb/textures/font/pxtop.png");
-
-        GuiUtils.writeToPath(pixel_path, this.positive_pixels);
-
-         */
-
     }
 
 }

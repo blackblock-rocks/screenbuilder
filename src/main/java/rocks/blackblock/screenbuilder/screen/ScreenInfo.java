@@ -97,6 +97,21 @@ public class ScreenInfo {
     }
 
     /**
+     * Get the slot coordinates
+     *
+     * @param   slot_index   The index of the wanted slot
+     */
+    public Coordinates getSlotCoordinates(int slot_index) {
+        Coordinates coords = new Coordinates();
+
+        // @TODO: this will only work for generic container screens
+        coords.y = 18 + ((slot_index / 9) * 18);
+        coords.x = 8 + ((slot_index % 9) * 18);
+
+        return coords;
+    }
+
+    /**
      * Register info for a vanilla screen
      *
      * @param   screen       The vanilla screen type
@@ -113,6 +128,20 @@ public class ScreenInfo {
         SCREENS.put(screen, info);
 
         return info;
+    }
+
+    public static class Coordinates {
+        public int x;
+        public int y;
+
+        public Coordinates() {
+            this(0, 0);
+        }
+
+        public Coordinates(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     static {
@@ -148,6 +177,5 @@ public class ScreenInfo {
         create(ScreenHandlerType.SMITHING, 60, 18, 3);
         create(ScreenHandlerType.SMOKER, 8, 6, 3);
         create(ScreenHandlerType.STONECUTTER, 8, 5, 2);
-
     }
 }

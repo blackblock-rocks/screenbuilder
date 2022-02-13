@@ -422,7 +422,6 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    index   The index of the slot inside this GUI
      */
@@ -437,6 +436,16 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         this.setSlot(index, back_button);
 
         return back_button;
+    }
+
+    /**
+     * Get all the slots
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public List<Slot> getSlots() {
+        return this.slots;
     }
 
     /**
@@ -788,7 +797,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
         // Make sure the font texture pieces have been generated
         if (this.font_texture != null) {
-            this.font_texture.getPieces();
+            this.font_texture.calculate();
         }
 
         //this.loadTextureItem();

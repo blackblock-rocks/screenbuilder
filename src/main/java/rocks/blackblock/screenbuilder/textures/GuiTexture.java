@@ -1,10 +1,20 @@
 package rocks.blackblock.screenbuilder.textures;
 
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.screen.ScreenInfo;
+import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The Texture class used for GUIs
@@ -37,6 +47,9 @@ public class GuiTexture extends BaseTexture {
     // The screenbuilder this is used for
     private ScreenBuilder screenbuilder = null;
 
+    // The original instance
+    private GuiTexture original = null;
+
     public GuiTexture(Identifier texture_path, int original_x, int original_y) {
         super(texture_path);
         this.original_x = original_x;
@@ -53,18 +66,32 @@ public class GuiTexture extends BaseTexture {
     public GuiTexture(GuiTexture original) {
         super(original.texture_path);
 
+        this.original = original;
+
         this.original_x = original.original_x;
         this.original_y = original.original_y;
         this.gui_nr = original.gui_nr;
-
-        // The pieces aren't cloned
-        this.setPieces(original.getPieces());
 
         this.width = original.width;
         this.height = original.height;
 
         this.text_x = original.text_x;
         this.text_y = original.text_y;
+    }
+
+    /**
+     * Get the pieces from the original instance
+     *
+     * @since   0.1.1
+     */
+    @Override
+    public ArrayList<TexturePiece> getPieces() {
+
+        if (this.original != null) {
+            return this.original.getPieces();
+        }
+
+        return super.getPieces();
     }
 
     /**
@@ -101,6 +128,12 @@ public class GuiTexture extends BaseTexture {
      * @since   0.1.1
      */
     public GuiTexture setScreenBuilder(ScreenBuilder screenbuilder) {
+
+        if (this.original != null && this.original.screenbuilder == null) {
+            // Assume the first screenbuilder set is a template one
+            this.original.setScreenBuilder(screenbuilder);
+        }
+
         this.screenbuilder = screenbuilder;
         return this;
     }
@@ -297,6 +330,111 @@ public class GuiTexture extends BaseTexture {
      */
     public int getOriginalY() {
         return original_y;
+    }
+
+    /**
+     * Get the source image.
+     * We'll modify the source image first to make the used slots light up when hovering over them.
+     * (This is only needed for FontTextures, not for Guis using item textures)
+     *
+     * @since   0.1.1
+     */
+    @Override
+    public BufferedImage getSourceImage() throws IOException {
+
+        // Get the actual source image
+        BufferedImage source_image = super.getSourceImage();
+
+        // If there is a screenbuilder present, we can use it to get info on the slot coordinates
+        if (this.screenbuilder != null) {
+
+            int width = source_image.getWidth();
+            int height = source_image.getHeight();
+
+            // This is the default slot color vanilla Minecraft uses
+            int default_slot_color = 0xFF000000 + 0x8b8b8b;
+
+            // Get all the defined slots
+            List<Slot> slots = this.screenbuilder.getSlots();
+
+            // Iterate over all the slots
+            for (int i = 0; i < slots.size(); i++) {
+                Slot slot = slots.get(i);
+
+                // If there's no slot there, don't do anything
+                if (slot == null) {
+                    continue;
+                }
+
+                // If the slot is a static slot, also skip it.
+                // We'll only make slots the user can interact with highlightable
+                if (slot instanceof StaticSlot) {
+                    continue;
+                }
+
+                // Get the coordinates of this slot on the vanilla screen
+                ScreenInfo.Coordinates coords = this.screenbuilder.getScreenInfo().getSlotCoordinates(i);
+
+                // Now modify the coordinates to be relative to the texture
+                coords.x += this.getOriginalX();
+                coords.y += this.getOriginalY();
+
+                // Now iterate over each pixel in this slot
+                for (int x = 0; x < 16; x++) {
+                    for (int y = 0; y < 16; y++) {
+
+                        int pixel_x = coords.x + x;
+                        int pixel_y = coords.y + y;
+
+                        if (pixel_x > width || pixel_y > height) {
+                            continue;
+                        }
+
+                        int pixel = source_image.getRGB(pixel_x, pixel_y);
+
+                        Color color = new Color(pixel);
+                        var hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+
+                        // We have to increase the saturation & lightness of the pixel
+                        // (because it'll be overlayed on the default dark grey slot color)
+                        // When the opacity is very low, don't increase the brightness too much.
+                        if (hsb[1] < 0.05) {
+                            // Increase saturation
+                            hsb[1] *= 1.1;
+
+                            // Increase lightness
+                            hsb[2] *= 1.05;
+                        } else {
+                            // Increase saturation
+                            hsb[1] *= 1.1;
+
+                            // Increase lightness
+                            hsb[2] *= 1.15;
+                        }
+
+                        // Clip the values or it'll mess with the wrong components
+                        if (hsb[1] > 1) {
+                            hsb[1] = 1;
+                        }
+
+                        if (hsb[2] > 1) {
+                            hsb[2] = 1;
+                        }
+
+                        // Turn the HSB values back into RGB
+                        pixel = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+
+                        // Make it about 25% transparent
+                        pixel = (192 << 24) + pixel;
+
+                        // Put the modified pixel back on the image
+                        source_image.setRGB(coords.x + x, coords.y + y, pixel);
+                    }
+                }
+            }
+        }
+
+        return source_image;
     }
 
 }

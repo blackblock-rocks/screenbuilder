@@ -46,7 +46,7 @@ public class WidgetTexture extends BaseTexture {
         this.min_pieces = min_pieces;
 
         // Make sure the pieces are generated
-        this.getPieces();
+        this.calculate();
     }
 
     /**
