@@ -25,6 +25,13 @@ repositories {
 
 	maven { url 'https://jitpack.io' }
 
+	maven {
+		url "https://maven.theepicblock.nl"
+		content {
+			includeGroup("nl.theepicblock")
+		}
+	}
+
 	maven { url 'https://maven.blackblock.rocks/releases' }
 }
 

@@ -23,7 +23,7 @@ public class ScreenbuilderTest implements ModInitializer {
 
     // Cardboard Box Block
     public static final Identifier CARDBOARD_BOX_IDENTIFIER = new Identifier(MOD_ID, "cardboard_box");
-    public static final CardboardBoxBlock CARDBOARD_BOX_BLOCK = Registry.register(Registry.BLOCK, CARDBOARD_BOX_IDENTIFIER, new CardboardBoxBlock(FabricBlockSettings.copyOf(Blocks.BARREL).strength(1.0F, 1.0F).breakByHand(true)));
+    public static final CardboardBoxBlock CARDBOARD_BOX_BLOCK = Registry.register(Registry.BLOCK, CARDBOARD_BOX_IDENTIFIER, new CardboardBoxBlock(FabricBlockSettings.copyOf(Blocks.BARREL).strength(1.0F, 1.0F)));
     public static final BlockItem CARDBOARD_BOX_BLOCK_ITEM = Registry.register(Registry.ITEM, CARDBOARD_BOX_IDENTIFIER, new BlockItem(CARDBOARD_BOX_BLOCK, new Item.Settings().group(ItemGroup.INVENTORY).maxDamage(16)));
     public static final BlockEntityType<CardboardBoxBlockEntity> CARDBOARD_BOX_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, CARDBOARD_BOX_IDENTIFIER, FabricBlockEntityTypeBuilder.create(CardboardBoxBlockEntity::new, CARDBOARD_BOX_BLOCK).build(null));
 
