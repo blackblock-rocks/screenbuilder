@@ -335,5 +335,25 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
         }
     }
 
+    /**
+     * Register a player interacting with this inventory
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.2
+     */
+    default void openedByPlayer(PlayerEntity player) {
+        // NOOP
+    }
+
+    /**
+     * Unregister a player interacting with this inventory
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.2
+     */
+    default void closedByPlayer(PlayerEntity player) {
+        // NOOP
+    }
+
     void contentsChanged();
 }

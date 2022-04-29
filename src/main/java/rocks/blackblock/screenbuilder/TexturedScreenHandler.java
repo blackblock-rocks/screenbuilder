@@ -8,7 +8,10 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;
@@ -34,6 +37,7 @@ import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 import java.util.OptionalInt;
+import java.util.Random;
 
 /**
  * A base ScreenHandler class used to implement modded GUIs
@@ -91,7 +95,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    sync_id             The identifier used to communicate between client & server
      * @param    builder             The ScreenBuilder with the screen definitions
@@ -123,6 +126,8 @@ public class TexturedScreenHandler extends ScreenHandler {
                 this.listener = this::onContentChanged;
                 this.base_inventory.addListener(this.listener);
             }
+
+            base_inventory.openedByPlayer(player);
         }
 
         if (inventory instanceof NamedScreenHandlerFactory factory) {
@@ -330,7 +335,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setSlots() {
 
@@ -355,18 +359,37 @@ public class TexturedScreenHandler extends ScreenHandler {
             screen_index++;
         }
 
-        // Player inventory
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 9; ++x) {
-                Slot slot = new Slot(this.player_inventory, x + y * 9 + 9, 0, 0);
-                this.addSlot(slot);
+        if (this.builder.getShowPlayerInventory()) {
+            // Show the player's inventory
+            for (int y = 0; y < 3; ++y) {
+                for (int x = 0; x < 9; ++x) {
+                    Slot slot = new Slot(this.player_inventory, x + y * 9 + 9, 0, 0);
+                    this.addSlot(slot);
+                }
+            }
+        } else {
+            // Do not show the player's inventory
+            for (int y = 0; y < 3; ++y) {
+                for (int x = 0; x < 9; ++x) {
+                    Slot slot = new StaticSlot(new ItemStack(Items.AIR));
+                    this.addSlot(slot);
+                }
             }
         }
 
-        // Player hotbar
-        for (int hotbar = 0; hotbar < 9; ++hotbar) {
-            Slot slot = new Slot(this.player_inventory, hotbar, 0,0);
-            this.addSlot(slot);
+        if (this.builder.getShowPlayerHotbar()) {
+            // Show the player's hotbar
+            // (This is linked to the actual hotbar players see on the bottom of their screen)
+            for (int hotbar = 0; hotbar < 9; ++hotbar) {
+                Slot slot = new Slot(this.player_inventory, hotbar, 0, 0);
+                this.addSlot(slot);
+            }
+        } else {
+            // Don't show the hotbar
+            for (int hotbar = 0; hotbar < 9; ++hotbar) {
+                Slot slot = new StaticSlot(new ItemStack(Items.AIR));
+                this.addSlot(slot);
+            }
         }
     }
 
@@ -820,7 +843,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    player      The player that was using this GUI
      */
@@ -832,6 +854,10 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         super.close(player);
         this.dropInputs(player);
+
+        if (this.base_inventory != null) {
+            this.base_inventory.closedByPlayer(player);
+        }
 
         if (this.listener != null) {
             if (this.base_inventory != null && this.base_inventory.getListeners() != null) {

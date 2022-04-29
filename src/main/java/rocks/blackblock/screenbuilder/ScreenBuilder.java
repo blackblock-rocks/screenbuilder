@@ -111,6 +111,12 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     // The font texture to use
     protected GuiTexture font_texture = null;
 
+    // Should the player inventory be shown?
+    protected boolean show_player_inventory = true;
+
+    // Should the player hotbar be shown?
+    protected boolean show_player_hotbar = true;
+
     /**
      * Create a new ScreenBuilder with the 9x6 generic container
      *
@@ -133,6 +139,46 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     public ScreenBuilder(String name, ScreenHandlerType<?> screen_type) {
         this.name = name;
         this.setType(screen_type);
+    }
+
+    /**
+     * Should the player inventory be shown?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public boolean getShowPlayerInventory() {
+        return this.show_player_inventory;
+    }
+
+    /**
+     * Should the player inventory be shown?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void setShowPlayerInventory(boolean show) {
+        this.show_player_inventory = show;
+    }
+
+    /**
+     * Should the player hotbar be shown?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public boolean getShowPlayerHotbar() {
+        return this.show_player_hotbar;
+    }
+
+    /**
+     * Should the player inventory be shown?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.1
+     */
+    public void setShowPlayerHotbar(boolean show) {
+        this.show_player_hotbar = show;
     }
 
     /**
