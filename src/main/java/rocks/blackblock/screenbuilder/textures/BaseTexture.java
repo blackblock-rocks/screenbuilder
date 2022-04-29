@@ -14,7 +14,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The base Texture class
@@ -35,7 +41,10 @@ public abstract class BaseTexture {
     public static final GuiFont GUI_FONT = new GuiFont("bbsb:gui");
 
     // The identifier/path to the original texture
-    protected Identifier texture_path = null;
+    protected Identifier texture_identifier;
+
+    // Set the optional texture path
+    protected Path texture_path = null;
 
     // The height of the texture
     protected int height = 0;
@@ -47,15 +56,18 @@ public abstract class BaseTexture {
     protected Integer gui_nr = null;
 
     // The pieces of this texture
-    private ArrayList<TexturePiece> pieces = null;
+    private List<TexturePiece> pieces = null;
+
+    // The image pieces
+    private List<BufferedImage> image_pieces = null;
 
     /**
      * Set the texture
      *
      * @since   0.1.1
      */
-    public BaseTexture(Identifier texture_path) {
-        this.texture_path = texture_path;
+    public BaseTexture(Identifier texture_identifier) {
+        this.texture_identifier = texture_identifier;
     }
 
     /**
@@ -64,7 +76,7 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public ArrayList<TexturePiece> getPieces() {
+    public List<TexturePiece> getPieces() {
 
         if (this.pieces == null) {
             this.pieces = this.generateTexturePieces();
@@ -78,8 +90,32 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public void setPieces(ArrayList<TexturePiece> pieces) {
+    public void setPieces(List<TexturePiece> pieces) {
         this.pieces = pieces;
+    }
+
+    /**
+     * Get the path to the texture file
+     *
+     * @since   0.1.2
+     */
+    public Path getTexturePath() {
+
+        if (this.texture_path != null) {
+            return this.texture_path;
+        }
+
+        return null;
+    }
+
+    /**
+     * Set the path to the texture file
+     *
+     * @since   0.1.2
+     */
+    public void setTexturePath(Path texture_path) {
+        this.texture_path = texture_path;
+        this.recalculate();
     }
 
     /**
@@ -88,7 +124,7 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public Identifier getTextureIdentifier() {
-        return this.texture_path;
+        return this.texture_identifier;
     }
 
     /**
@@ -203,7 +239,17 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public ArrayList<TexturePiece> calculate() {
+    public List<TexturePiece> calculate() {
+        return this.getPieces();
+    }
+
+    /**
+     * Make sure all the pieces are re-generated
+     *
+     * @since   0.1.1
+     */
+    public List<TexturePiece> recalculate() {
+        this.pieces = null;
         return this.getPieces();
     }
 
@@ -216,7 +262,12 @@ public abstract class BaseTexture {
         byte[] data;
         BufferedImage source_image = null;
 
-        data = getFileStream(this.texture_path).readAllBytes();
+        if (this.texture_path != null) {
+            data = getFileStream(this.texture_path).readAllBytes();
+        } else {
+            data = getFileStream(this.texture_identifier).readAllBytes();
+        }
+
         source_image = ImageIO.read(new ByteArrayInputStream(data));
 
         return source_image;
@@ -228,9 +279,9 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    protected ArrayList<TexturePiece> generateTexturePieces() {
+    protected List<TexturePiece> generateTexturePieces() {
 
-        ArrayList<TexturePiece> texturePieces = new ArrayList<>();
+        List<TexturePiece> texturePieces = new ArrayList<>();
 
         // Only set the gui_nr if it hasn't been assigned one yet
         if (this.gui_nr == null) {
@@ -242,7 +293,7 @@ public abstract class BaseTexture {
         try {
             source_image = this.getSourceImage();
         } catch (Exception e) {
-            System.out.println("Failed to load texture file: " + this.texture_path + "\n" + e.getMessage());
+            System.out.println("Failed to load texture file: " + this.texture_identifier + "\n" + e.getMessage());
             return texturePieces;
         }
 
@@ -299,6 +350,8 @@ public abstract class BaseTexture {
             if (has_transparent_last_column) {
                 target_image.setRGB(x_end - 1, 0, 0x01000001);
             }
+
+            this.image_pieces.add(target_image);
 
             TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
             piece.setUsesSharedImage(true);
@@ -442,6 +495,15 @@ public abstract class BaseTexture {
         String path = "assets/" + namespace + "/textures/" + texture_path.getPath() + ".png";
 
         return GuiUtils.findModResource(namespace, path);
+    }
+
+    public static InputStream getFileStream(Path actual_path) {
+        try {
+            return Files.newInputStream(actual_path, StandardOpenOption.READ);
+        } catch (IOException e) {
+            System.out.printf("Failed to get resource '%s'%n", actual_path);
+        }
+        return null;
     }
 
 }

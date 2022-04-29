@@ -1,16 +1,10 @@
 package rocks.blackblock.screenbuilder.server;
 
 import com.mojang.brigadier.Command;
-import io.github.theepicblock.polymc.impl.misc.logging.CommandSourceLogger;
-import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
-import java.util.Collection;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 
 import static net.minecraft.server.command.CommandManager.literal;
@@ -28,7 +22,6 @@ public class ScreenbuilderCommands {
                                 .then(CommandManager.argument("title", TextArgumentType.text())
                                         .executes((context -> {
                                             var source = context.getSource();
-                                            SimpleLogger commandSource = new CommandSourceLogger(source, true);
 
                                             var target = EntityArgumentType.getPlayers(context, "targets");
 
@@ -36,7 +29,11 @@ public class ScreenbuilderCommands {
 
                                             for (var entity : target) {
                                                 ScreenBuilder builder = new ScreenBuilder("test");
+
                                                 builder.setDisplayName(text);
+                                                builder.setShowPlayerInventory(false);
+                                                builder.setShowPlayerHotbar(false);
+
                                                 entity.openHandledScreen(builder);
                                             }
 

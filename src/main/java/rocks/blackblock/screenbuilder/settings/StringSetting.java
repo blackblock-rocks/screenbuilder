@@ -1,7 +1,9 @@
 package rocks.blackblock.screenbuilder.settings;
 
 import rocks.blackblock.screenbuilder.BBSB;
+import rocks.blackblock.screenbuilder.values.NumberValue;
 import rocks.blackblock.screenbuilder.values.SettingValue;
+import rocks.blackblock.screenbuilder.values.StringValue;
 
 public class StringSetting extends Setting {
 
@@ -12,6 +14,6 @@ public class StringSetting extends Setting {
 
     @Override
     public SettingValue createValue() {
-        return null;
+        return new SettingValue(this, new StringValue());
     }
 }

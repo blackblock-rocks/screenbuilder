@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Texture class used for GUIs
@@ -24,7 +25,7 @@ import java.util.List;
 public class GuiTexture extends BaseTexture {
 
     // Some calculations can be stored here, in case there needs to be some sharing
-    private static HashMap<Identifier, GuiTexture> textures = new HashMap<>();
+    private static Map<Identifier, GuiTexture> textures = new HashMap<>();
 
     /**
      * The X coordinate of the original texture inside the replacement
@@ -62,7 +63,7 @@ public class GuiTexture extends BaseTexture {
      * @since   0.1.1
      */
     public GuiTexture(GuiTexture original) {
-        super(original.texture_path);
+        super(original.texture_identifier);
 
         this.original = original;
 
@@ -83,7 +84,7 @@ public class GuiTexture extends BaseTexture {
      * @since   0.1.1
      */
     @Override
-    public ArrayList<TexturePiece> getPieces() {
+    public List<TexturePiece> getPieces() {
 
         if (this.original != null) {
             return this.original.getPieces();
