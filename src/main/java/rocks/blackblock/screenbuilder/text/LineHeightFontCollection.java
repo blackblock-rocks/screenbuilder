@@ -26,6 +26,7 @@ public class LineHeightFontCollection {
     private final int height_adjustment;
     private final Font parent_font;
     private final HashMap<Integer, LineHeightFont> line_height_fonts = new HashMap<>();
+    private LineHeightFont first_font = null;
 
     /**
      * Create the collection
@@ -91,13 +92,13 @@ public class LineHeightFontCollection {
 
         for (int i = -20; i < 20; i++) {
 
-            if (i == 0) {
-                continue;
-            }
-
             font = new LineHeightFont(this, i);
             line_height_fonts.put(i, font);
             Font.register(font);
+
+            if (this.first_font == null) {
+                this.first_font = font;
+            }
         }
     }
 
@@ -177,6 +178,29 @@ public class LineHeightFontCollection {
      */
     public int getOriginalHeight() {
         return this.original_height;
+    }
+
+    /**
+     * Calculate the width of the given string for this font
+     *
+     * @param   text    The String to calculate the width for
+     * @param   scale   Scale the width according to the font's height
+     *
+     * @since   0.1.2
+     */
+    public int getWidth(String text, boolean scale) {
+        return this.first_font.getWidth(text, scale);
+    }
+
+    /**
+     * Calculate the width of the given string for this font
+     *
+     * @param   text    The String to calculate the width for
+     *
+     * @since   0.1.2
+     */
+    public int getWidth(String text) {
+        return this.getWidth(text, false);
     }
 
     /**

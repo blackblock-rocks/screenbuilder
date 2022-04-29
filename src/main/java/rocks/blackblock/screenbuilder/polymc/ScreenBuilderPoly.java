@@ -7,10 +7,13 @@ import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.text.LineHeightFont;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.PixelFontCollection;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
+import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
+import javax.imageio.ImageIO;
 import java.nio.file.Files;
 
 /**
@@ -46,7 +49,10 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "font/space.json");
 
         // There is a new font texture which is used for printing lines of text above the start position
-        copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/asciix10.png");
+        pack.setAsset(BBSB.NAMESPACE, "textures/font/asciix10.png", (location, gson) -> {
+            GuiUtils.writeToPath(location, LineHeightFont.getFontImage());
+        });
+
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/pixel.png");
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/space_nosplit.png");
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/space_split.png");
