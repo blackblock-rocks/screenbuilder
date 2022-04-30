@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
+import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
 public class BBSB implements ModInitializer {
 
@@ -31,6 +33,7 @@ public class BBSB implements ModInitializer {
     public static final GuiItem GUI_GTE = GuiItem.create("gte");
     public static final GuiItem GUI_ARROW_LEFT = GuiItem.create("arrow_left");
     public static final GuiItem GUI_TRANSPARENT = GuiItem.create("transparent");
+    public static final WidgetTexture BUTTON_LARGE = new WidgetTexture(new Identifier("bbsb", "gui/button_l"));
 
     /**
      * Create an identifier
