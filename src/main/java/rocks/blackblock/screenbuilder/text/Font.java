@@ -325,6 +325,8 @@ public class Font {
         } else if (current_char == 56) {
             // Skip 8 & 9
             current_char = 58;
+        } else if (current_char == 1539) {
+            current_char = 1786;
         } else {
 
             String test;
@@ -334,6 +336,14 @@ public class Font {
                 // Do a directionality test first
                 // (Right-to-left characters break stuff)
                 if (Font.isRightToLeft(current_char)) {
+                    current_char++;
+                    continue;
+                }
+
+                int type = Character.getType(current_char);
+
+                // Unassigned characters can behave weirdly
+                if (type == Character.UNASSIGNED) {
                     current_char++;
                     continue;
                 }

@@ -583,24 +583,27 @@ public class TextBuilder {
 
             Font font = this.getCurrentFont();
             MutableText title_with_font = this.title.shallowCopy();
-            title_with_font.setStyle(font.font_style);
+            //title_with_font.setStyle(font.font_style);
 
             //System.out.println("Title with font: " + Text.Serializer.toJson(title_with_font));
 
             text.append(title_with_font);
         }
 
-        //System.out.println("Built text: " + Text.Serializer.toJson(text));
+        boolean debug = false;
 
-        String json_string = Text.Serializer.toJson(text);
+        if (debug) {
+            System.out.println("Dumping GUI text to /tmp/mc_textbuilder.json");
+            String json_string = Text.Serializer.toJson(text);
 
-        Path path = Paths.get("/tmp/mc_textbuilder.json");
-        byte[] strToBytes = json_string.getBytes();
+            Path path = Paths.get("/tmp/mc_textbuilder.json");
+            byte[] strToBytes = json_string.getBytes();
 
-        try {
-            Files.write(path, strToBytes);
-        } catch (Exception e) {
+            try {
+                Files.write(path, strToBytes);
+            } catch (Exception e) {
 
+            }
         }
 
         return text;

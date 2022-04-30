@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
+import rocks.blackblock.screenbuilder.text.PixelFontCollection;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
@@ -50,6 +51,9 @@ public class BBSB implements ModInitializer {
         ScreenbuilderCommands.registerCommands();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            // Make sure PX01 is loaded
+            PixelFontCollection.PX01.getHeight();
+
             BaseTexture.calculateAll();
         });
     }
