@@ -15,7 +15,7 @@ public class DummyWidget extends BaseWidget {
      * @since 0.1.1
      */
     public DummyWidget() {
-        super(null);
+        super((Identifier) null);
     }
 
     @Override

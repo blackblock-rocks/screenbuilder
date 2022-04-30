@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import rocks.blackblock.chunker.chunk.Lump;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -49,7 +50,7 @@ public class MapWidget extends BaseWidget {
      * @since 0.1.1
      */
     public MapWidget() {
-        super(null);
+        super((Identifier) null);
     }
 
     /**

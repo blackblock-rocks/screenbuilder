@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
 /**
  * Show some kind of progress bar
@@ -16,8 +17,12 @@ public class ProgressWidget extends BaseWidget {
     // The max amount to use
     protected int max_amount = 100;
 
-    public ProgressWidget(Identifier texture_path) {
-        super(texture_path);
+    public ProgressWidget(WidgetTexture widget_texture) {
+        super(widget_texture);
+    }
+
+    public ProgressWidget(Identifier texture_identifier) {
+        super(texture_identifier);
     }
 
     /**
@@ -44,9 +49,11 @@ public class ProgressWidget extends BaseWidget {
             float percentage = this.calculatePercentageValue(int_value);
             int total_piece_count = this.widget_texture.getAmountOfPieces();
             int wanted_piece_count = Math.round(((percentage / 100) * total_piece_count));
-            this.widget_texture.addToBuilder(builder, this.x, wanted_piece_count);
+
+            this.widget_texture.addToBuilder(builder, this.x, this.y, wanted_piece_count);
+
         } else {
-            this.widget_texture.addToBuilder(builder, this.x);
+            this.widget_texture.addToBuilder(builder, this.x, this.y);
         }
     }
 

@@ -4,6 +4,7 @@ import io.github.theepicblock.polymc.api.resource.ModdedResources;
 import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.GuiFont;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
@@ -17,10 +18,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The base Texture class
@@ -30,6 +29,9 @@ import java.util.Map;
  * @version  0.1.1
  */
 public abstract class BaseTexture {
+
+    // All textures
+    public static final Set<BaseTexture> TEXTURES = new HashSet<>();
 
     // The max allowed width of an image
     private static final int MAX_WIDTH = 128;
@@ -61,6 +63,9 @@ public abstract class BaseTexture {
     // The image pieces
     private List<BufferedImage> image_pieces = null;
 
+    // The Y offsets
+    private Map<Integer, List<TexturePiece>> y_pieces = new HashMap<>();
+
     /**
      * Set the texture
      *
@@ -68,6 +73,68 @@ public abstract class BaseTexture {
      */
     public BaseTexture(Identifier texture_identifier) {
         this.texture_identifier = texture_identifier;
+        TEXTURES.add(this);
+    }
+
+    /**
+     * Calculate all textures
+     *
+     * @since   0.1.3
+     */
+    public static void calculateAll() {
+        for (BaseTexture texture : TEXTURES) {
+            texture.calculate();
+        }
+    }
+
+    /**
+     * Get the texture pieces of a specific Y offset
+     * (Will also call the `calculate` method the first time)
+     *
+     * @since   0.1.1
+     */
+    public List<TexturePiece> getPieces() {
+        return this.getPieces(0);
+    }
+
+    /**
+     * Get the texture pieces of a specific Y offset
+     * (Will also call the `calculate` method the first time)
+     *
+     * @since   0.1.1
+     */
+    public List<TexturePiece> getPieces(int y) {
+
+        if (!this.y_pieces.containsKey(y)) {
+            this.y_pieces.put(y, this.generateTexturePieces(y));
+        }
+
+        return this.y_pieces.get(y);
+    }
+
+    /**
+     * Register an absolute Y offset
+     *
+     * @since   0.1.3
+     */
+    public void registerYOffset(int y) {
+        if (!this.y_pieces.containsKey(y)) {
+            this.y_pieces.put(y, this.generateTexturePieces(y));
+        }
+    }
+
+    /**
+     * Register a relative Y offset
+     *
+     * @since   0.1.3
+     */
+    public void registerYOffset(ScreenBuilder gui, int y) {
+
+        GuiTexture gui_texture = gui.getFontTexture();
+
+        int container_y = gui_texture.getContainerY(y);
+
+        this.registerYOffset(container_y);
     }
 
     /**
@@ -76,13 +143,13 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public List<TexturePiece> getPieces() {
+    public List<BufferedImage> getImagePieces() {
 
-        if (this.pieces == null) {
-            this.pieces = this.generateTexturePieces();
+        if (this.image_pieces == null) {
+            this.image_pieces = this.generateImagePieces();
         }
 
-        return this.pieces;
+        return this.image_pieces;
     }
 
     /**
@@ -141,7 +208,7 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public abstract int getAscent();
+    public abstract int getAscent(int y_offset);
 
     /**
      * Get the maximum width a piece can be
@@ -239,8 +306,10 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public List<TexturePiece> calculate() {
-        return this.getPieces();
+    public void calculate() {
+        for (Integer y : this.y_pieces.keySet()) {
+            this.getPieces(y);
+        }
     }
 
     /**
@@ -279,9 +348,9 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    protected List<TexturePiece> generateTexturePieces() {
+    protected List<BufferedImage> generateImagePieces() {
 
-        List<TexturePiece> texturePieces = new ArrayList<>();
+        List<BufferedImage> image_pieces = new ArrayList<>();
 
         // Only set the gui_nr if it hasn't been assigned one yet
         if (this.gui_nr == null) {
@@ -294,7 +363,7 @@ public abstract class BaseTexture {
             source_image = this.getSourceImage();
         } catch (Exception e) {
             System.out.println("Failed to load texture file: " + this.texture_identifier + "\n" + e.getMessage());
-            return texturePieces;
+            return image_pieces;
         }
 
         this.height = source_image.getHeight();
@@ -351,16 +420,34 @@ public abstract class BaseTexture {
                 target_image.setRGB(x_end - 1, 0, 0x01000001);
             }
 
-            this.image_pieces.add(target_image);
-
-            TexturePiece piece = new TexturePiece(this, i, GUI_FONT.getNextChar());
-            piece.setUsesSharedImage(true);
-            texturePieces.add(piece);
-            GUI_FONT.registerTexturePiece(piece);
-            piece.setImage(target_image);
+            image_pieces.add(target_image);
         }
 
-        return texturePieces;
+        return image_pieces;
+    }
+
+    /**
+     * Calculate all the pieces of this texture for the given Y position
+     * (without setting them)
+     *
+     * @since   0.1.1
+     */
+    protected List<TexturePiece> generateTexturePieces(int y) {
+
+        List<BufferedImage> image_pieces = this.getImagePieces();
+        List<TexturePiece> pieces = new ArrayList<>();
+
+        for (int i = 0; i < image_pieces.size(); i++) {
+            BufferedImage image = image_pieces.get(i);
+
+            TexturePiece piece = new TexturePiece(this, i, y, GUI_FONT.getNextChar());
+            piece.setUsesSharedImage(true);
+            pieces.add(piece);
+            GUI_FONT.registerTexturePiece(piece);
+            piece.setImage(image);
+        }
+
+        return pieces;
     }
 
     /**
@@ -383,7 +470,40 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public void addToBuilder(TextBuilder builder, int x, int amount_of_pieces_to_add) {
+    public void addToBuilder(TextBuilder builder, int x, int y) {
+        this.addToBuilder(builder, x, y, this.getAmountOfPieces());
+    }
+
+    /**
+     * Add this texture to the given TextBuilder
+     * This will also move the cursor position to the left
+     *
+     * @param   builder
+     *
+     * @since   0.1.1
+     */
+    public void addAmountToBuilder(TextBuilder builder, int x, int amount_of_pieces_to_add) {
+        this.addToBuilder(builder, x, 0, amount_of_pieces_to_add);
+    }
+
+    /**
+     * Get the amount of pieces this texture has
+     *
+     * @since   0.1.3
+     */
+    public int getPieceCount() {
+        return this.getImagePieces().size();
+    }
+
+    /**
+     * Add this texture to the given TextBuilder
+     * This will also move the cursor position to the left
+     *
+     * @param   builder
+     *
+     * @since   0.1.1
+     */
+    public void addToBuilder(TextBuilder builder, int x, int y, int amount_of_pieces_to_add) {
 
         String str = "";
         int count = -1;
@@ -391,11 +511,17 @@ public abstract class BaseTexture {
         // Get the current cursor position
         int start_cursor = builder.getRawCursorPosition();
 
+        // Get the coordinate to use in the container
+        int container_y = builder.getScreenBuilder().getFontTexture().getContainerY(y);
+
+        // Register the container y
+        this.registerYOffset(container_y);
+
         // Make sure the cursor is at the wanted position
         builder.setCursor(x);
 
         // Get the amount of pieces
-        int total_piece_count = this.getPieces().size();
+        int total_piece_count = this.getPieceCount();
 
         int piece_count = amount_of_pieces_to_add;
 
@@ -404,15 +530,16 @@ public abstract class BaseTexture {
         }
 
         // Should we mix texture pieces & negative spaces?
-        boolean print_mixed = true;
+        boolean print_single_pass = true;
         if (this.getPieceWidth() == 1 && piece_count > 6) {
-            print_mixed = false;
+            print_single_pass = false;
         }
 
-        if (print_mixed) {
+        if (print_single_pass) {
             int width = 0;
+            int placed = 0;
 
-            for (TexturePiece piece : this.getPieces()) {
+            for (TexturePiece piece : this.getPieces(container_y)) {
                 count++;
 
                 if (count > 0) {
@@ -426,10 +553,11 @@ public abstract class BaseTexture {
                 }
 
                 builder.insertUnsafe("" + piece.getCharacter(), GUI_FONT);
+                placed++;
                 width += piece.getWidth();
             }
 
-            if (count > 0) {
+            if (placed > 0) {
                 // Move the cursor back to where the builder thinks it is
                 builder.moveCursorUnsafe(-width - 1);
             }
@@ -452,7 +580,7 @@ public abstract class BaseTexture {
                         continue;
                     }
 
-                    piece = this.getPieces().get(px);
+                    piece = this.getPieces(container_y).get(px);
                     pixel_char = piece.getCharacter();
                     pass_line.append(pixel_char);
                     placed++;

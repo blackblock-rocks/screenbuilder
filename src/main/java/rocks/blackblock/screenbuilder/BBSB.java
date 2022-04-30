@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
@@ -44,5 +45,9 @@ public class BBSB implements ModInitializer {
     @Override
     public void onInitialize() {
         ScreenbuilderCommands.registerCommands();
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            BaseTexture.calculateAll();
+        });
     }
 }

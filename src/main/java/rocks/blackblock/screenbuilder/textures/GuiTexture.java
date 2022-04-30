@@ -94,6 +94,17 @@ public class GuiTexture extends BaseTexture {
     }
 
     /**
+     * Calculate all the pieces
+     *
+     * @since   0.1.3
+     */
+    @Override
+    public void calculate() {
+        this.getPieces();
+    }
+
+
+    /**
      * Get and/or create & register a texture
      *
      * @param   texture_path   The path to the texture image
@@ -249,7 +260,7 @@ public class GuiTexture extends BaseTexture {
      * Calculate the font's ascent
      */
     @Override
-    public int getAscent() {
+    public int getAscent(int y_offset) {
 
         int result = 0;
         int original_y = this.getOriginalY();
@@ -329,6 +340,46 @@ public class GuiTexture extends BaseTexture {
      */
     public int getOriginalY() {
         return original_y;
+    }
+
+    /**
+     * Recalculate the given X coordinate to the coordinate in the overriden container
+     *
+     * @param   x   The X coordinate inside the custom gui
+     */
+    public int getContainerX(int x) {
+
+        int result = x;
+
+        int original_x = this.getOriginalX();
+
+        if (original_x != 0) {
+            result += original_x;
+        }
+
+        result -= this.getOriginalScreenTitleX();
+
+        return result;
+    }
+
+    /**
+     * Recalculate the given Y coordinate to the coordinate in the overriden container
+     *
+     * @param   y   The Y coordinate inside the custom gui
+     */
+    public int getContainerY(int y) {
+
+        int result = y;
+
+        int original_y = this.getOriginalY();
+
+        if (original_y != 0) {
+            result += original_y;
+        }
+
+        result -= this.getOriginalScreenTitleY();
+
+        return result;
     }
 
     /**

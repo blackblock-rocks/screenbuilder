@@ -7,6 +7,7 @@ import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.WidgetAddedListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
@@ -44,6 +45,18 @@ public abstract class BaseWidget {
 
     // The optional path to the texture
     protected Path texture_path = null;
+
+    /**
+     * Create the widget
+     *
+     * @param   widget_texture
+     *
+     * @since   0.1.3
+     */
+    public BaseWidget(WidgetTexture widget_texture) {
+        this.widget_texture = widget_texture;
+        this.texture_identifier = widget_texture.getTextureIdentifier();
+    }
 
     /**
      * Create the widget
@@ -98,7 +111,7 @@ public abstract class BaseWidget {
             return this.widget_texture;
         }
 
-        this.widget_texture = new WidgetTexture(this.texture_identifier);
+        this.widget_texture = WidgetTexture.getWidgetTexture(this.texture_identifier, this.getWantedAmountOfTexturePieces());
 
         if (this.parent_gui != null) {
             this.widget_texture.setParentGuiTexture(this.parent_gui);
@@ -184,7 +197,7 @@ public abstract class BaseWidget {
         }
 
         if (this.widget_texture != null) {
-            this.widget_texture.addToBuilder(builder, this.x);
+            this.widget_texture.addToBuilder(builder, this.x, this.y);
         }
 
         if (this.added_listener != null) {

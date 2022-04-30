@@ -67,7 +67,9 @@ public class GuiFont extends Font {
 
         for (TexturePiece piece : this.texture_pieces) {
             String path = piece.getPath();
-            JsonArray chars = provider_chars.get(path);
+            String ascent_id = path + "_" + piece.getAscent();
+
+            JsonArray chars = provider_chars.get(ascent_id);
 
             if (chars == null) {
 
@@ -82,7 +84,7 @@ public class GuiFont extends Font {
                 provider.add("chars", chars);
                 providers.add(provider);
 
-                provider_chars.put(path, chars);
+                provider_chars.put(ascent_id, chars);
                 chars.add("");
             }
 

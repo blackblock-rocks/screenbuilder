@@ -12,10 +12,12 @@ public class TexturePiece {
     private BufferedImage image = null;
     private boolean uses_shared_image = false;
     private int width = 0;
+    private int y_offset = 0;
 
-    public TexturePiece(BaseTexture parent, int index, char character) {
+    public TexturePiece(BaseTexture parent, int index, int y_offset, char character) {
         this.parent = parent;
         this.index = index;
+        this.y_offset = y_offset;
         this.character = character;
     }
 
@@ -53,6 +55,15 @@ public class TexturePiece {
      */
     public char getCharacter() {
         return character;
+    }
+
+    /**
+     * Get the Y offset of this piece
+     *
+     * @since   0.1.3
+     */
+    public int getYOffset() {
+        return this.y_offset;
     }
 
     /**
@@ -107,7 +118,7 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public int getAscent() {
-        return this.parent.getAscent();
+        return this.parent.getAscent(this.y_offset);
     }
 
     /**

@@ -3,6 +3,10 @@ package rocks.blackblock.screenbuilder.textures;
 import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The Texture class used for GUI widgets
@@ -12,6 +16,9 @@ import java.nio.file.Path;
  * @version  0.1.1
  */
 public class WidgetTexture extends BaseTexture {
+
+    // All the registered textures
+    public static Map<Identifier, Map<Integer, WidgetTexture>> widget_textures = new HashMap<>();
 
     // The y-coordinate of where the texture should go in its respective container
     protected Integer target_y;
@@ -24,6 +31,37 @@ public class WidgetTexture extends BaseTexture {
 
     // The minimum amount of pieces this widget should be split into
     protected Integer min_pieces = null;
+
+    /**
+     * Get a WidgetTexture
+     *
+     * @param   texture_identifier   The path to the texture
+     * @param   min_pieces           The minimum amount of pieces this widget should be split into
+     */
+    public static WidgetTexture getWidgetTexture(Identifier texture_identifier, Integer min_pieces) {
+
+        if (!widget_textures.containsKey(texture_identifier)) {
+            widget_textures.put(texture_identifier, new HashMap<>());
+        }
+
+        if (!widget_textures.get(texture_identifier).containsKey(min_pieces)) {
+            widget_textures.get(texture_identifier).put(min_pieces, new WidgetTexture(texture_identifier, min_pieces));
+        }
+
+        return widget_textures.get(texture_identifier).get(min_pieces);
+    }
+
+    /**
+     * Create an uninitialized texture
+     *
+     * @param   texture_identifier   The path to the texture
+     *
+     * @since   0.1.2
+     */
+    public WidgetTexture(Identifier texture_identifier, Integer min_pieces) {
+        super(texture_identifier);
+        this.setMinPieces(min_pieces);
+    }
 
     /**
      * Create a new WidgetTexture
@@ -131,8 +169,8 @@ public class WidgetTexture extends BaseTexture {
      * @since   0.1.1
      */
     @Override
-    public int getAscent() {
-        int result = -this.target_y;
+    public int getAscent(int y_offset) {
+        int result = -y_offset;
 
         return result;
     }
