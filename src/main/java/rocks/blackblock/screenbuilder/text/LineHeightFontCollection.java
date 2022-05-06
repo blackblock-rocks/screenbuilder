@@ -12,11 +12,13 @@ import rocks.blackblock.screenbuilder.utils.GuiUtils;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class LineHeightFontCollection {
 
-    public static final HashMap<Integer, LineHeightFontCollection> collection = new HashMap<>();
+    private static final HashMap<String, LineHeightFontCollection> collection = new HashMap<>();
     public static JsonObject BASE_NEGATIVE = null;
     public static JsonObject BASE_POSITIVE = null;
 
@@ -24,7 +26,9 @@ public class LineHeightFontCollection {
     private final int line_gap;
     private final int ascent_adjustment;
     private final int height_adjustment;
+    private final int top_margin;
     private final Font parent_font;
+    private final String name_suffix;
     private final HashMap<Integer, LineHeightFont> line_height_fonts = new HashMap<>();
     private LineHeightFont first_font = null;
 
@@ -39,19 +43,32 @@ public class LineHeightFontCollection {
      *
      * @since   0.1.1
      */
-    public LineHeightFontCollection(int original_height, int line_gap, int ascent_adjustment, int height_adjustment, Font parent) {
+    public LineHeightFontCollection(int original_height, int line_gap, int ascent_adjustment, int height_adjustment, int top_margin, String name_suffix, Font parent) {
 
         // The gap between lines in pixels
         this.line_gap = line_gap;
         this.ascent_adjustment = ascent_adjustment;
         this.height_adjustment = height_adjustment;
         this.original_height = original_height;
+        this.top_margin = top_margin;
         this.parent_font = parent;
+        this.name_suffix = name_suffix;
 
-        collection.put(line_gap, this);
+        String id = line_gap + "-" + ascent_adjustment + "-" + height_adjustment + "-" + top_margin + "-" + name_suffix;
+
+        collection.put(id, this);
 
         this.loadBaseFiles();
         this.generateFonts();
+    }
+
+    /**
+     * Get all the font collections
+     *
+     * @since   0.1.3
+     */
+    public static Collection<LineHeightFontCollection> getAllFontCollections() {
+        return collection.values();
     }
 
     /**
@@ -115,7 +132,20 @@ public class LineHeightFontCollection {
      * @since   0.1.1
      */
     public int getAscentAdjustment() {
-        return ascent_adjustment;
+        return this.ascent_adjustment;
+    }
+
+    /**
+     * Get the ascent for the given line
+     * @since   0.1.3
+     */
+    public int getAscentForLine(int base_ascent, int line_index) {
+
+        int ascent_adjustment = line_index * this.getAscentAdjustment() * -1;
+
+        ascent_adjustment -= this.top_margin;
+
+        return base_ascent + ascent_adjustment;
     }
 
     /**
@@ -126,6 +156,7 @@ public class LineHeightFontCollection {
      * @since   0.1.1
      */
     public int convertYToLine(int y) {
+        y -= this.top_margin;
         int total_height = this.original_height + this.line_gap;
         int result = y / total_height;
 
@@ -204,12 +235,27 @@ public class LineHeightFontCollection {
     }
 
     /**
+     * Get the font folder id
+     *
+     * @since   0.1.3
+     */
+    public String getFontFolderId() {
+        String result = "lh" + this.getLineHeightString();
+
+        if (this.name_suffix != null) {
+            result += "_" + this.name_suffix;
+        }
+
+        return result;
+    }
+
+    /**
      * Get the font-id for the given line index
      *
      * @since   0.1.1
      */
     public String getFontIdForLine(int line_index) {
-        return "bbsb:lh" + this.getLineHeightString() + "/l"+line_index;
+        return "bbsb:" + this.getFontFolderId() + "/l"+line_index;
     }
 
     /**
@@ -223,7 +269,7 @@ public class LineHeightFontCollection {
 
         for (LineHeightFont font : this.line_height_fonts.values()) {
             String json = font.getJson();
-            String path_str = "font/lh" + this.getLineHeightString() + "/l" + font.getLineIndex() + ".json";
+            String path_str = "font/" + this.getFontFolderId() + "/l" + font.getLineIndex() + ".json";
 
             pack.setAsset(BBSB.NAMESPACE, path_str, (location, gson) -> {
                 GuiUtils.writeToPath(location, json);

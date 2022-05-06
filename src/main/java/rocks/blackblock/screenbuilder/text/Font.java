@@ -36,8 +36,22 @@ public class Font {
             4,
             9,
             0,
+            0,
+            null,
             DEFAULT
     );
+
+    public static final LineHeightFontCollection LH18 = new LineHeightFontCollection(
+            8,
+            18,
+            18,
+            0,
+            17,
+            "slot",
+            DEFAULT
+    );
+
+    public static final LineHeightFontCollection LH_INVENTORY_SLOT = LH18;
 
     // The LH22 font collection (each line is separated by 22 pixels)
     public static final LineHeightFontCollection LH22 = new LineHeightFontCollection(
@@ -45,6 +59,8 @@ public class Font {
             22,
             18,
             0,
+            0,
+            null,
             DEFAULT
     );
 

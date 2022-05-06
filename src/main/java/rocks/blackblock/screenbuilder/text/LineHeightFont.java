@@ -9,12 +9,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LineHeightFont extends Font {
 
     private final LineHeightFontCollection collection;
     private final int line_index;
-    private static BufferedImage image = null;
+    private static final Map<Integer, BufferedImage> images = new HashMap();
 
     /**
      * Creates a font that inherits its character widths from a parent font
@@ -77,23 +81,28 @@ public class LineHeightFont extends Font {
                 provider.addProperty("height", height);
             }
 
-            if (ascent_adjustment != 0) {
+            /*if (ascent_adjustment != 0) {
                 ascent += ascent_adjustment;
                 provider.addProperty("ascent", ascent);
-            }
+            }*/
+            provider.addProperty("ascent", this.collection.getAscentForLine(ascent, this.line_index));
         }
 
         return json.toString();
     }
 
     /**
-     * Generate the font
+     * Generate the font with the adjusted heights
+     *
+     * @param   piece   Because each font image can only be 4000 pixels high,
+     *                  we need to split it up into two pieces
+     *
      * @return
      */
-    public static BufferedImage getFontImage() {
+    public static BufferedImage getFontImage(int piece) {
 
-        if (image != null) {
-            return image;
+        if (images.containsKey(piece)) {
+            return images.get(piece);
         }
 
         // Get the original ascii font image
@@ -114,11 +123,24 @@ public class LineHeightFont extends Font {
         // Get the height of the font
         int original_image_height = source_image.getHeight();
 
-        // Get the amount of rows in the font
+        // Get the amount of rows in the original font
         int rows = original_image_height / 8;
 
-        // Get the new height of the font
-        int target_height = 400 * rows;
+        // The first two rows are empty, and can be skipped
+        int skip = 2;
+
+        // The target amount of rows
+        int target_rows = 7;
+
+        // The new height of a single line
+        // (256 is the max height a character can be! Otherwise the font won't load)
+        int new_height = 256;
+
+        // Get the new height of the font image
+        int target_height = new_height * target_rows;
+
+        // The starting row
+        int start_row = skip + (piece * target_rows);
 
         // Create the target image
         BufferedImage target_image = new BufferedImage(source_image.getWidth(), target_height, BufferedImage.TYPE_INT_ARGB);
@@ -128,12 +150,16 @@ public class LineHeightFont extends Font {
 
         int sx = 0;
         int dx = target_image.getWidth();
+        int target_row = -1;
 
         // Copy over each row
-        for (int row = 0; row < rows; row++) {
+        for (int row = start_row; row < rows; row++) {
+            target_row++;
+
             int source_sy = row * 8;
             int source_dy = source_sy + 8;
-            int target_sy = (400-8) + row * 400;
+
+            int target_sy = target_row * new_height;
             int target_dy = target_sy + 8;
 
             target.drawImage(
@@ -145,7 +171,7 @@ public class LineHeightFont extends Font {
 
         }
 
-        image = target_image;
+        images.put(piece, target_image);
 
         return target_image;
     }
