@@ -1,7 +1,10 @@
 package rocks.blackblock.screenbuilder.slots;
 
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 public class ListenerWidgetSlot extends WidgetSlot {
 
@@ -13,11 +16,10 @@ public class ListenerWidgetSlot extends WidgetSlot {
      * ListenerWidgetSlot constructor
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public ListenerWidgetSlot() {
-        super();
+        super(new ItemStack(BBSB.GUI_TRANSPARENT));
     }
 
     /**

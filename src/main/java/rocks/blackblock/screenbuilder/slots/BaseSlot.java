@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 public abstract class BaseSlot extends Slot {
 
@@ -266,4 +267,54 @@ public abstract class BaseSlot extends Slot {
 
         return result;
     }
+
+    /**
+     * Get the X number coordinate of the slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public int getSlotX() {
+        return this.screen_index % 9;
+    }
+
+    /**
+     * Get the Y number coordinate of the slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public int getSlotY() {
+        return this.screen_index / 9;
+    }
+
+    /**
+     * Get the absolute Y coordinate of this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public int getSlotYInPixels() {
+        return 17 + (this.getSlotY() * 18);
+    }
+
+    /**
+     * Get the absolute X coordinate of this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public int getSlotXInPixels() {
+        return 7 + (this.getSlotX() * 18);
+    }
+
+    /**
+     * This slot was used in the given TextBuilder
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     *
+     * @param    builder   The text builder
+     */
+    public void addToTextBuilder(TextBuilder builder) {}
 }

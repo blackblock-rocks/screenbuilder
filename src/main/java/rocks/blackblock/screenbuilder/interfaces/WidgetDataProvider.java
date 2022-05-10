@@ -9,4 +9,7 @@ public interface WidgetDataProvider {
 
     Object getWidgetValue(String widget_id);
 
+    default void setWidgetValue(String widget_id, Object value) {
+        // Ignore by default
+    }
 }

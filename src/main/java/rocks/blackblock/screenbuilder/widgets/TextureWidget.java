@@ -20,7 +20,7 @@ import java.nio.file.Path;
  * @since    0.1.1
  * @version  0.1.1
  */
-public abstract class BaseWidget {
+public abstract class TextureWidget extends Widget {
 
     // The parent gui it will be used in
     protected GuiTexture parent_gui = null;
@@ -37,12 +37,6 @@ public abstract class BaseWidget {
     // The wanted Y position
     protected int y = 0;
 
-    // The name of this widget
-    protected String id = null;
-
-    // The added listener
-    protected WidgetAddedListener added_listener = null;
-
     // The optional path to the texture
     protected Path texture_path = null;
 
@@ -53,7 +47,7 @@ public abstract class BaseWidget {
      *
      * @since   0.1.3
      */
-    public BaseWidget(WidgetTexture widget_texture) {
+    public TextureWidget(WidgetTexture widget_texture) {
         this.widget_texture = widget_texture;
         this.texture_identifier = widget_texture.getTextureIdentifier();
     }
@@ -65,7 +59,7 @@ public abstract class BaseWidget {
      *
      * @since   0.1.1
      */
-    public BaseWidget(Identifier texture_identifier) {
+    public TextureWidget(Identifier texture_identifier) {
         this.texture_identifier = texture_identifier;
     }
 
@@ -77,7 +71,7 @@ public abstract class BaseWidget {
      *
      * @since   0.1.2
      */
-    public BaseWidget(Identifier texture_identifier, Path texture_path) {
+    public TextureWidget(Identifier texture_identifier, Path texture_path) {
         this.texture_identifier = texture_identifier;
         this.setTexturePath(texture_path);
     }
@@ -166,35 +160,16 @@ public abstract class BaseWidget {
     }
 
     /**
-     * Listen for value updates
-     *
-     * @since   0.1.1
-     */
-    public abstract void addWithValue(TextBuilder builder, Object value);
-
-    /**
      * Add the widget to the text builder
      *
      * @since   0.1.1
      */
     public void addToTextBuilder(TextBuilder builder) {
 
+        super.addToTextBuilder(builder);
+
         ScreenBuilder screenbuilder = builder.getScreenBuilder();
         TexturedScreenHandler handler = builder.getScreenHandler();
-
-        if (handler != null) {
-            NamedScreenHandlerFactory factory = handler.getOriginFactory();
-
-            if (factory instanceof WidgetDataProvider provider) {
-                this.addWithValue(builder, provider.getWidgetValue(this.id));
-
-                if (this.added_listener != null) {
-                    this.added_listener.onAdded(builder, null);
-                }
-
-                return;
-            }
-        }
 
         if (this.widget_texture != null) {
             this.widget_texture.addToBuilder(builder, this.x, this.y);
@@ -205,12 +180,5 @@ public abstract class BaseWidget {
         }
     }
 
-    /**
-     * Set the added listener
-     *
-     * @since   0.1.1
-     */
-    public void setAddedListener(WidgetAddedListener listener) {
-        this.added_listener = listener;
-    }
+
 }

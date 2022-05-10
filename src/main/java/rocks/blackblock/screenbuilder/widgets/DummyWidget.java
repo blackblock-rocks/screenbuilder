@@ -6,7 +6,7 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 /**
  * A widget that doesn't really add anything
  */
-public class DummyWidget extends BaseWidget {
+public class DummyWidget extends TextureWidget {
 
 
     /**

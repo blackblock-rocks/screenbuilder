@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.screen;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -78,8 +79,17 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
      */
     @Nullable
     @Override
-    public TexturedScreenHandler createMenu(int sync_id, PlayerInventory inv, PlayerEntity player) {
-        TexturedScreenHandler handler = this.getScreenBuilder().createScreenHandler(sync_id, inv);
+    public TexturedScreenHandler createMenu(int sync_id, PlayerInventory player_inventory, PlayerEntity player) {
+
+        TexturedScreenHandler handler;
+        ScreenBuilder sb = this.getScreenBuilder();
+
+        if (this instanceof Inventory inventory) {
+            handler = sb.createScreenHandler(sync_id, player_inventory, inventory);
+        } else {
+            handler = sb.createScreenHandler(sync_id, player_inventory);
+        }
+
         handler.setOriginFactory(this);
         return handler;
     }

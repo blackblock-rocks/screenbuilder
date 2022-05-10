@@ -8,8 +8,8 @@ import java.util.List;
 
 public class TextGroup {
 
-    private final TextBuilder builder;
-    private final TextGroup parent;
+    private TextBuilder builder = null;
+    private TextGroup parent = null;
 
     private TextColor color = null;
     private Identifier font = null;
@@ -19,6 +19,10 @@ public class TextGroup {
     private String main_text = null;
 
     private List<TextGroup> children = new ArrayList<>();
+
+    public TextGroup(String text) {
+        this.append(text);
+    }
 
     public TextGroup(TextBuilder builder) {
         this(builder, null);
@@ -62,7 +66,11 @@ public class TextGroup {
             return this.parent.getColor();
         }
 
-        return this.builder.getDefaultColor();
+        if (this.builder != null) {
+            return this.builder.getDefaultColor();
+        }
+
+        return null;
     }
 
     /**
@@ -98,7 +106,11 @@ public class TextGroup {
             return this.parent.getFont();
         }
 
-        return this.builder.getDefaultFont();
+        if (this.builder != null) {
+            return this.builder.getDefaultFont();
+        }
+
+        return null;
     }
 
     /**

@@ -1,5 +1,6 @@
 package rocks.blackblock.screenbuilder.inputs;
 
+import net.minecraft.text.TextColor;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -7,6 +8,12 @@ import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
+import rocks.blackblock.screenbuilder.text.Font;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.widgets.StringWidget;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseInput extends BasescreenFactory {
 
@@ -24,6 +31,12 @@ public abstract class BaseInput extends BasescreenFactory {
 
     // The back listener
     protected BaseInputChangeEventListener on_back_click = null;
+
+    // The line where error messages should be shown
+    protected Integer show_error_line = -2;
+
+    // Error messages
+    protected List<String> error_messages = null;
 
     /**
      * Set what should happen when the user changes the value
@@ -134,6 +147,8 @@ public abstract class BaseInput extends BasescreenFactory {
             sb.setSlot(this.show_back_button, back_button);
         }
 
+        this.printErrors(sb);
+
         return sb;
     }
 
@@ -159,6 +174,38 @@ public abstract class BaseInput extends BasescreenFactory {
             screen.close();
             return;
         }
+    }
+
+    /**
+     * Print the error messages
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    protected void printErrors(ScreenBuilder builder) {
+
+        if (this.error_messages == null) {
+            return;
+        }
+
+        for (String message : this.error_messages) {
+            builder.addError(message);
+        }
+    }
+
+    /**
+     * Add an error message
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public void addError(String message) {
+
+        if (this.error_messages == null) {
+            this.error_messages = new ArrayList<>();
+        }
+
+        this.error_messages.add(message);
     }
 
     public enum ChangeBehaviour {

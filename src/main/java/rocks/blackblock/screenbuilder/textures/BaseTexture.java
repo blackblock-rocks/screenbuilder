@@ -131,8 +131,13 @@ public abstract class BaseTexture {
     public void registerYOffset(ScreenBuilder gui, int y) {
 
         GuiTexture gui_texture = gui.getFontTexture();
+        int container_y;
 
-        int container_y = gui_texture.getContainerY(y);
+        if (gui_texture == null) {
+            container_y = y - (gui.getScreenInfo().getTitleY() + 7);
+        } else {
+            container_y = gui_texture.getContainerY(y);
+        }
 
         this.registerYOffset(container_y);
     }
@@ -511,8 +516,14 @@ public abstract class BaseTexture {
         // Get the current cursor position
         int start_cursor = builder.getRawCursorPosition();
 
+        // Get the screenbuilder
+        ScreenBuilder screenBuilder = builder.getScreenBuilder();
+
+        // Get the gui texture (if any)
+        GuiTexture gui_texture = screenBuilder.getFontTexture();
+
         // Get the coordinate to use in the container
-        int container_y = builder.getScreenBuilder().getFontTexture().getContainerY(y);
+        int container_y = screenBuilder.calculateTitleOffsetY(y);
 
         // Register the container y
         this.registerYOffset(container_y);

@@ -27,7 +27,7 @@ import rocks.blackblock.screenbuilder.utils.NbtUtils;
  *
  * @since   0.1.1
  */
-public class MapWidget extends BaseWidget {
+public class MapWidget extends TextureWidget {
 
     /**
      * The optional slot index this might use to add a click listener to

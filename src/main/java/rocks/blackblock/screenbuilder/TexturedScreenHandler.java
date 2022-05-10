@@ -24,6 +24,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.inventories.BaseInventory;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.mixin.ScreenHandlerAccessor;
@@ -174,29 +175,6 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
-     * Refresh the screen by re-opening it
-     * (This is an example implementation, this can actually be used to update the screen)
-     *
-     * @since   0.1.1
-     */
-    public void refresh() {
-
-        PlayerEntity player = this.getPlayer();
-
-        if (player instanceof ServerPlayerEntity sp) {
-
-            TextBuilder builder = this.getTextBuilder();
-            Text title = builder.build();
-
-            // Send the "OpenSCreen" packet to the client, with the existing sync id.
-            sp.networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, this.getType(), title));
-
-            // Always sync the state afterwards, that's needed to keep the contents of the cursor
-            this.syncState();
-        }
-    }
-
-    /**
      * Set the current title of the screen
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -340,7 +318,7 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         int screen_index = 0;
 
-        for (Slot slot : this.builder.slots) {
+        for (Slot slot : this.builder.getSlots()) {
 
             if (slot instanceof SlotBuilder build_slot) {
                 SlotBuilder generated_slot = build_slot.createSlot(this);
@@ -1073,11 +1051,9 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         PlayerEntity player = this.getPlayer();
 
-        if (!(player instanceof ServerPlayerEntity)) {
+        if (!(player instanceof ServerPlayerEntity server_player)) {
             return null;
         }
-
-        ServerPlayerEntity server_player = (ServerPlayerEntity) player;
 
         OptionalInt result = server_player.openHandledScreen(factory);
 
@@ -1119,6 +1095,48 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Replace this screen with another screen, keeping the history
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public void replaceScreen(NamedScreenHandlerFactory factory) {
+
+        TexturedScreenHandler handler = this.showScreen(factory);
+
+        if (handler == null) {
+            return;
+        }
+
+        if (this.previous_factory != null) {
+            handler.setPreviousFactory(this.previous_factory);
+        }
+    }
+
+    /**
+     * Refresh the screen by re-opening it
+     * (This is an example implementation, this can actually be used to update the screen)
+     *
+     * @since   0.1.1
+     */
+    public void refresh() {
+
+        PlayerEntity player = this.getPlayer();
+
+        if (player instanceof ServerPlayerEntity sp) {
+
+            TextBuilder builder = this.getTextBuilder();
+            Text title = builder.build();
+
+            // Send the "OpenSCreen" packet to the client, with the existing sync id.
+            sp.networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, this.getType(), title));
+
+            // Always sync the state afterwards, that's needed to keep the contents of the cursor
+            this.syncState();
+        }
+    }
+
+    /**
      * Get the factory that created this screen
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -1127,6 +1145,23 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public NamedScreenHandlerFactory getOriginFactory() {
         return this.origin_factory;
+    }
+
+    /**
+     * Get the WidgetDataProvider
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public WidgetDataProvider getWidgetDataProvider() {
+
+        if (this.origin_factory != null) {
+            if (this.origin_factory instanceof WidgetDataProvider provider) {
+                return provider;
+            }
+        }
+
+        return null;
     }
 
     /**

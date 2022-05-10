@@ -9,7 +9,7 @@ import rocks.blackblock.screenbuilder.textures.WidgetTexture;
  *
  * @since   0.1.1
  */
-public class ProgressWidget extends BaseWidget {
+public class ProgressWidget extends TextureWidget {
 
     // The max value
     public final static int MAX_VALUE = 100;

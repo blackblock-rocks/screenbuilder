@@ -1,7 +1,5 @@
 package rocks.blackblock.screenbuilder.server;
 
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonObject;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,10 +10,18 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
+import rocks.blackblock.screenbuilder.text.Font;
+import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
+import rocks.blackblock.screenbuilder.text.MiniText;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -77,20 +83,132 @@ public class ScreenbuilderCommands {
                                             var text = TextArgumentType.getTextArgument(context, "title");
 
                                             for (var entity : target) {
-                                                ScreenBuilder builder = new ScreenBuilder("test");
+                                                try {
 
-                                                builder.setDisplayName(text);
-                                                builder.setShowPlayerInventory(false);
-                                                builder.setShowPlayerHotbar(false);
+                                                    TestBuilder builder = new TestBuilder("test");
 
-                                                entity.openHandledScreen(builder);
+                                                    builder.setDisplayName(text);
+                                                    builder.setShowPlayerInventory(false);
+                                                    builder.setShowPlayerHotbar(false);
+
+                                                    NumberPicker numberPicker = new NumberPicker();
+                                                    numberPicker.setId("picker");
+                                                    builder.addWidget(numberPicker);
+
+                                                    NumberPicker numberPicker_two = new NumberPicker();
+                                                    numberPicker_two.setId("picker_two");
+                                                    numberPicker_two.setSlotIndex(30);
+                                                    builder.addWidget(numberPicker_two);
+
+                                                    entity.openHandledScreen(builder);
+                                                } catch (Exception e) {
+                                                    System.out.println("ERROR: " + e.getMessage());
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             return Command.SINGLE_SUCCESS;
                                         })))
                             )
 
-                    ));
+                    )
+                    .then(literal("font")
+                            .then(CommandManager.argument("targets", EntityArgumentType.players())
+
+                                    .then(CommandManager.argument("name", StringArgumentType.greedyString())
+                                            .executes((context -> {
+                                                var source = context.getSource();
+
+                                                var target = EntityArgumentType.getPlayers(context, "targets");
+
+                                                String name = StringArgumentType.getString(context, "name");
+
+                                                for (var entity : target) {
+                                                    try {
+
+                                                        TestBuilder builder = new TestBuilder("test");
+
+                                                        builder.setDisplayName(new MiniText(name));
+                                                        builder.setShowPlayerInventory(false);
+                                                        builder.setShowPlayerHotbar(false);
+
+                                                        LineHeightFontCollection font;
+
+                                                        if (name.equalsIgnoreCase("lh18")) {
+                                                            font = Font.LH18;
+                                                        } else if (name.equalsIgnoreCase("lh04")) {
+                                                            font = Font.LH04;
+                                                        } else if (name.equalsIgnoreCase("lh22")) {
+                                                            font = Font.LH22;
+                                                        } else {
+                                                            font = Font.LH04;
+                                                        }
+
+                                                        for (int i = 0; i < 20; i++) {
+                                                            builder.addFontString(i, "Line " + i, font.getFontForLine(i));
+                                                        }
+
+                                                        builder.addError("Error line 1");
+                                                        builder.addError("Error line 2");
+
+                                                        entity.openHandledScreen(builder);
+                                                    } catch (Exception e) {
+                                                        System.out.println("ERROR: " + e.getMessage());
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+
+                                                return Command.SINGLE_SUCCESS;
+                                            }))
+                                    )
+                            )
+                    )
+            );
         });
+    }
+
+    private static class TestBuilder extends ScreenBuilder implements WidgetDataProvider {
+
+        private Map<String, Object> values = new HashMap<>();
+        private Map<Integer, FontString> font_strings = new HashMap<>();
+
+        public TestBuilder(String name) {
+            super(name);
+        }
+
+        @Override
+        public Object getWidgetValue(String widget_id) {
+            return values.get(widget_id);
+        }
+
+        @Override
+        public void setWidgetValue(String widget_id, Object value) {
+            values.put(widget_id, value);
+        }
+
+        public void addFontString(int id, String string, Font font) {
+            FontString entry = new FontString(string, font);
+            this.addFontString(id, entry);
+        }
+
+        public void addFontString(int id, FontString font_string) {
+            font_strings.put(id, font_string);
+        }
+
+        @Override
+        public void addToTextBuilder(TextBuilder builder) {
+            super.addToTextBuilder(builder);
+
+            for (Integer index : font_strings.keySet()) {
+                FontString entry = font_strings.get(index);
+
+                builder.setCursor(6);
+                builder.print(entry.text(), entry.font());
+            }
+        }
+    }
+
+    private static record FontString(String text, Font font) {
+
     }
 }

@@ -5,6 +5,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 
 import javax.imageio.ImageIO;
@@ -177,6 +178,17 @@ public class TextBuilder {
      */
     public TextBuilder setDefaultColor(TextColor color) {
         this.default_color = color;
+        return this;
+    }
+
+    /**
+     * Set the current color
+     *
+     * @since   0.1.3
+     */
+    public TextBuilder setColor(TextColor color) {
+        Style style = Style.EMPTY.withColor(color);
+        TextGroup group = this.ensureGroup(style);
         return this;
     }
 
@@ -745,6 +757,22 @@ public class TextBuilder {
                 }
             }
         }
+    }
 
+    public void setOffsetsFrom(ScreenInfo info) {
+
+        // Calculate the initial adjustment (to get back to the start of the container)
+        int initial_cursor_adjustment_x = 0 - info.getTitleX();
+
+        // Get the current cursor position
+        int start_cursor = this.getRawCursorPosition();
+
+        // Make sure the cursor is at the wanted position
+        this.setCursor(initial_cursor_adjustment_x);
+
+        this.makeCurrentPositionOrigin();
+
+        this.setCursor(info.getTitleX());
+        this.setTextStartX(info.getTitleX());
     }
 }

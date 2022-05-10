@@ -23,6 +23,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
@@ -31,9 +32,14 @@ import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.slots.*;
+import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
-import rocks.blackblock.screenbuilder.widgets.BaseWidget;
+import rocks.blackblock.screenbuilder.unit.Unit;
+import rocks.blackblock.screenbuilder.widgets.StringWidget;
+import rocks.blackblock.screenbuilder.widgets.TextureWidget;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,7 +103,10 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     private Consumer<TexturedScreenHandler> call_on_change = null;
 
     // All non-slot widgets (font-based widgets)
-    protected HashMap<String, BaseWidget> font_widgets = new HashMap<>();
+    protected HashMap<String, Widget> widgets = new HashMap<>();
+
+    // All units (composed widgets/slots)
+    protected List<Unit> units = new ArrayList<>();
 
     // Should the slots be cloned?
     protected boolean clone_slots = true;
@@ -116,6 +125,12 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
     // Should the player hotbar be shown?
     protected boolean show_player_hotbar = true;
+
+    // The line where error messages should be shown
+    protected Integer show_error_line = -2;
+
+    // Error messages
+    protected List<String> error_messages = null;
 
     /**
      * Create a new ScreenBuilder with the 9x6 generic container
@@ -234,6 +249,19 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Set the font texture directly
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     *
+     * @param    gui_texture   The texture to use
+     */
+    public GuiTexture setFontTexture(GuiTexture gui_texture) {
+        this.font_texture = gui_texture;
+        return this.font_texture;
+    }
+
+    /**
      * Get the GuiTexture
      *
      * @since   0.1.1
@@ -339,8 +367,18 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
      */
-    public void addWidget(String id, BaseWidget widget) {
-        this.font_widgets.put(id, widget);
+    public void addWidget(String id, Widget widget) {
+        this.widgets.put(id, widget);
+    }
+
+    /**
+     * Add a widget to this screen
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public void addWidget(Widget widget) {
+        this.widgets.put(widget.getId(), widget);
     }
 
     /**
@@ -489,7 +527,16 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @since    0.1.1
      */
     public List<Slot> getSlots() {
-        return this.slots;
+        List<Slot> slots = new ArrayList<>();
+
+        // Iterate over all the widgets
+        for (Widget widget : this.widgets.values()) {
+            widget.prepareSlots(this);
+        }
+
+        slots.addAll(this.slots);
+
+        return slots;
     }
 
     /**
@@ -957,15 +1004,26 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         // If this screenbuilder has a font texture, use it now
         if (this.font_texture != null) {
             this.font_texture.addToTextBuilder(text_builder);
+        } else {
+            text_builder.setOffsetsFrom(this.getScreenInfo());
+        }
+
+        // Iterate over all the WidgetSlots
+        for (Slot slot : this.getSlots()) {
+
+            if (slot instanceof BaseSlot baseSlot) {
+                baseSlot.addToTextBuilder(text_builder);
+            }
         }
 
         // Iterate over all the key-value font_widgets
-        for (Map.Entry<String, BaseWidget> entry : this.font_widgets.entrySet()) {
+        for (Map.Entry<String, Widget> entry : this.widgets.entrySet()) {
             String id = entry.getKey();
-            BaseWidget widget = entry.getValue();
+            Widget widget = entry.getValue();
             widget.addToTextBuilder(text_builder);
         }
 
+        this.printErrors(text_builder);
     }
 
     /**
@@ -985,5 +1043,88 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         handler.setOriginFactory(this);
 
         return handler;
+    }
+
+    /**
+     * Add a unit to the screenbuilder
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    public void addUnit(Unit unit) {
+        this.units.add(unit);
+    }
+
+    /**
+     * Turn the Y coordinate in the current screen's GUI texture
+     * into a Y coordinate relative to the original title placement.
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    public int calculateTitleOffsetY(int y) {
+
+        // Prepare the result value
+        int result = y;
+
+        // See if there's a GuiTexture in use
+        GuiTexture gui_texture = this.getFontTexture();
+
+        if (gui_texture != null) {
+            result = gui_texture.getContainerY(y);
+        } else {
+            result -= (this.getScreenInfo().getTitleY() + 7);
+        }
+
+        return result;
+    }
+
+    /**
+     * Add an error message
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public void addError(String message) {
+
+        if (this.error_messages == null) {
+            this.error_messages = new ArrayList<>();
+        }
+
+        this.error_messages.add(message);
+    }
+
+    /**
+     * Print the error messages
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    protected void printErrors(TextBuilder builder) {
+
+        if (this.error_messages == null) {
+            return;
+        }
+
+        int line = this.show_error_line;
+
+        // Will break for inputs that are taller than normal, oh well
+        if (line < 0) {
+            line -= this.error_messages.size() - 1;
+        }
+
+        TextGroup error_group = builder.createNewGroup();
+        error_group.setColor(TextColor.fromRgb(0xFF0000));
+
+        for (String message : this.error_messages) {
+            Font font = Font.LH04.getFontForLine(line);
+            int message_width = font.getWidth(message);
+
+            int start_x = (176 - message_width) / 2;
+            builder.setCursor(start_x);
+            builder.print(message, font);
+            line++;
+        }
+
     }
 }

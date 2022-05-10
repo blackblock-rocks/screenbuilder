@@ -11,6 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.screenbuilder.interfaces.SlotStackChecker;
 import rocks.blackblock.screenbuilder.inventories.EmptyInventory;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.GuiListener;
@@ -77,6 +78,9 @@ public class SlotBuilder extends Slot implements Cloneable {
 
     // Listener that will check for take-access
     private SlotAccessListener take_access_listener = null;
+
+    // Listener that will check for input-access
+    private SlotStackChecker input_access_listener = null;
 
     /**
      * Create an empty SlotBuilder instance,
@@ -349,6 +353,17 @@ public class SlotBuilder extends Slot implements Cloneable {
     }
 
     /**
+     * A method that will check if the player can put something in this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public SlotBuilder checkInputAccess(SlotStackChecker checker) {
+        this.input_access_listener = checker;
+        return this;
+    }
+
+    /**
      * Does taking an item from this decrement another slot?
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -452,6 +467,7 @@ public class SlotBuilder extends Slot implements Cloneable {
         slot.unwrap_stack = this.unwrap_stack;
         slot.take_access_listener = this.take_access_listener;
         slot.drop_on_close = this.drop_on_close;
+        slot.input_access_listener = this.input_access_listener;
 
         return slot;
     }
@@ -461,10 +477,10 @@ public class SlotBuilder extends Slot implements Cloneable {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    stack   The stack to insert
      */
+    @Override
     public boolean canInsert(ItemStack stack) {
 
         // You can not put any items in an output slot
@@ -477,6 +493,10 @@ public class SlotBuilder extends Slot implements Cloneable {
         // Allow empty slots by default
         if (item == Items.AIR) {
             return true;
+        }
+
+        if (!this.checkStackInputAccess(stack)) {
+            return false;
         }
 
         // Check the blacklists first, they get precedence
@@ -711,12 +731,15 @@ public class SlotBuilder extends Slot implements Cloneable {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    stack   The original stack
      * @param    count   How many items to insert
      */
     public ItemStack insertStack(ItemStack stack, int count) {
+
+        if (!this.checkStackInputAccess(stack)) {
+            return stack;
+        }
 
         boolean is_exchanging = this.isExchangingStacks();
 
@@ -741,6 +764,30 @@ public class SlotBuilder extends Slot implements Cloneable {
         // Return the remaining stack, but make sure it's unwrapped
         // (This stack will go into the cursor)
         return this.unwrapStack(stack);
+    }
+
+    /**
+     * Is this stack allowed (according to the input access listener?)
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.0
+     *
+     * @param    stack   The stack
+     *
+     * @return   True if the stack is allowed (or no listener was set)
+     */
+    public boolean checkStackInputAccess(ItemStack stack) {
+
+        // If we have an input access listener, use that
+        if (this.input_access_listener != null) {
+            Boolean result = this.input_access_listener.checkAccess(this.active_handler, this, stack);
+
+            if (result != null && !result) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -907,13 +954,14 @@ public class SlotBuilder extends Slot implements Cloneable {
 
     /**
      * Set the stack
+     * (Canceling this will delete the stack)
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    stack   The original stack
      */
+    @Override
     public void setStack(ItemStack stack) {
 
         if (this.isQuickCrafting() || this.isSwapping() || this.isExchangingStacks()) {
@@ -979,6 +1027,7 @@ public class SlotBuilder extends Slot implements Cloneable {
         clone.wrap_stack = this.wrap_stack;
         clone.unwrap_stack = this.unwrap_stack;
         clone.take_access_listener = this.take_access_listener;
+        clone.input_access_listener = this.input_access_listener;
 
         if (this.decrements_slots != null) {
             clone.decrements_slots = (ArrayList<SlotBuilder>) this.decrements_slots.clone();

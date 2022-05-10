@@ -48,9 +48,13 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
         // The `bbsb:space` font is always required, it allows us to horizontally move text
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "font/space.json");
 
-        // There is a new font texture which is used for printing lines of text above the start position
-        pack.setAsset(BBSB.NAMESPACE, "textures/font/asciix10.png", (location, gson) -> {
-            GuiUtils.writeToPath(location, LineHeightFont.getFontImage());
+        // There are new font textures which is used for printing lines of text above the start position
+        pack.setAsset(BBSB.NAMESPACE, "textures/font/asciix10_0.png", (location, gson) -> {
+            GuiUtils.writeToPath(location, LineHeightFont.getFontImage(0));
+        });
+
+        pack.setAsset(BBSB.NAMESPACE, "textures/font/asciix10_1.png", (location, gson) -> {
+            GuiUtils.writeToPath(location, LineHeightFont.getFontImage(1));
         });
 
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/pixel.png");
@@ -58,7 +62,7 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/space_split.png");
 
         // Make all the LineHeight fonts add themselves to the resource pack
-        for (LineHeightFontCollection fc : LineHeightFontCollection.collection.values()) {
+        for (LineHeightFontCollection fc : LineHeightFontCollection.getAllFontCollections()) {
             fc.addToResourcePack(moddedResources, pack, logger);
         }
 
