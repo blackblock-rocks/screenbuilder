@@ -37,8 +37,6 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.unit.Unit;
-import rocks.blackblock.screenbuilder.widgets.StringWidget;
-import rocks.blackblock.screenbuilder.widgets.TextureWidget;
 import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
@@ -379,6 +377,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     public void addWidget(Widget widget) {
         this.widgets.put(widget.getId(), widget);
+        widget.setScreenBuilder(this);
     }
 
     /**
@@ -544,7 +543,6 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    index   The index of the slot inside this GUI
      * @param    slot    The slot to set
@@ -560,6 +558,9 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
             // BaseSlots can sometimes be kept as-is
             base_slot.setCloneBeforeScreen(this.clone_slots);
+
+            // Give it a reference to this screenbuilder
+            base_slot.setScreenBuilder(this);
         }
 
         return slot;
@@ -1020,6 +1021,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         for (Map.Entry<String, Widget> entry : this.widgets.entrySet()) {
             String id = entry.getKey();
             Widget widget = entry.getValue();
+
             widget.addToTextBuilder(text_builder);
         }
 
@@ -1056,24 +1058,124 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
-     * Turn the Y coordinate in the current screen's GUI texture
-     * into a Y coordinate relative to the original title placement.
+     * Convert the Y coordinate in the current GUI to the Y coordinate
+     * relative to the underlying screen's title baseline Y
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.3
+     *
+     * @param   gui_y   The Y coordinate inside the current GUI
      */
-    public int calculateTitleOffsetY(int y) {
+    public int convertToUnderlyingTitleY(int gui_y) {
 
         // Prepare the result value
-        int result = y;
+        int result = gui_y;
 
         // See if there's a GuiTexture in use
         GuiTexture gui_texture = this.getFontTexture();
 
         if (gui_texture != null) {
-            result = gui_texture.getContainerY(y);
-        } else {
-            result -= (this.getScreenInfo().getTitleY() + 7);
+            result = gui_texture.getContainerY(gui_y);
+        }
+
+        ScreenInfo underlying_screen_info = this.getScreenInfo();
+
+        if (underlying_screen_info != null) {
+            result -= underlying_screen_info.getTitleBaselineY();
+        }
+
+        return result;
+    }
+
+    /**
+     * Turn the Y coordinate in the (possible) GUI texture
+     * into the underlying screen's Y coordinate.
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     *
+     * @param   gui_y   The Y coordinate in the GUI texture
+     */
+    public int getContainerY(int gui_y) {
+
+        // See if there's a GuiTexture in use
+        GuiTexture gui_texture = this.getFontTexture();
+
+        if (gui_texture != null) {
+            return gui_texture.getContainerY(gui_y);
+        }
+
+        return gui_y;
+    }
+
+    /**
+     * Turn the X coordinate in the (possible) GUI texture
+     * into the underlying screen's X coordinate.
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     *
+     * @param   gui_x   The X coordinate in the GUI texture
+     */
+    public int getContainerX(int gui_x) {
+
+        // See if there's a GuiTexture in use
+        GuiTexture gui_texture = this.getFontTexture();
+
+        if (gui_texture != null) {
+            return gui_texture.getContainerX(gui_x);
+        }
+
+        return gui_x;
+    }
+
+    /**
+     * Turn the Y coordinate in the underlying screen into a Y coordinate
+     * in the current screen's GUI texture
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     *
+     * @param   container_y   The Y coordinate in the underlying screen
+     *                        (NOT relative to the original title, just starting at the top left)
+     */
+    public int getGuiY(int container_y) {
+
+        // Prepare the result value
+        int result = container_y;
+
+        // See if there's a GuiTexture in use
+        GuiTexture gui_texture = this.getFontTexture();
+
+        if (gui_texture != null) {
+            int original_y = gui_texture.getOriginalY();
+            result += original_y;
+        }
+
+        return result;
+    }
+
+    /**
+     * Turn the X coordinate in the underlying screen into a X coordinate
+     * in the current screen's GUI texture
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     *
+     * @param   container_x   The X coordinate in the underlying screen
+     *                        (NOT relative to the original title, just starting at the top left)
+     */
+    public int getGuiX(int container_x) {
+
+        // Prepare the result value
+        int result = container_x;
+
+        // See if there's a GuiTexture in use
+        GuiTexture gui_texture = this.getFontTexture();
+
+        if (gui_texture != null) {
+            int original_x = gui_texture.getOriginalX();
+            result += original_x;
         }
 
         return result;
@@ -1117,7 +1219,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         error_group.setColor(TextColor.fromRgb(0xFF0000));
 
         for (String message : this.error_messages) {
-            Font font = Font.LH04.getFontForLine(line);
+            Font font = Font.DEFAULT_LH.getFontForLine(line);
             int message_width = font.getWidth(message);
 
             int start_x = (176 - message_width) / 2;

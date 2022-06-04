@@ -66,6 +66,8 @@ dependencies {
 
 	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
 
+	modImplementation include('com.diogonunes:JColor:5.5.1')
+
 	testmodImplementation sourceSets.main.output
 }
 

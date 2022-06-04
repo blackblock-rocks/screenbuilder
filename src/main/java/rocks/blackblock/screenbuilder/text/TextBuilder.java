@@ -341,7 +341,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public int convertYToLine(int y) {
-        return Font.LH04.convertYToLine(y);
+        return Font.DEFAULT_LH.convertYToLine(y);
     }
 
     /**
@@ -622,24 +622,6 @@ public class TextBuilder {
     }
 
     /**
-     * Return a debug string representation of the text builder
-     *
-     * @since   0.1.1
-     */
-    public String toString() {
-
-        String result = "TextBuilder {";
-
-        for (Text t : this.text_list) {
-            result += t.asString();
-        }
-
-        result += "}";
-
-        return result;
-    }
-
-    /**
      * Return the JSON representation
      *
      * @since   0.1.1
@@ -774,5 +756,27 @@ public class TextBuilder {
 
         this.setCursor(info.getTitleX());
         this.setTextStartX(info.getTitleX());
+    }
+
+    /**
+     * Return a debug string representation of the text builder
+     *
+     * @since   0.1.1
+     */
+    public String toString() {
+
+        String result = "TextBuilder{";
+
+        if (this.title != null) {
+            result += "title=" + this.title.asString() + ", ";
+        }
+
+        for (Text t : this.text_list) {
+            result += t.asString();
+        }
+
+        result += "}";
+
+        return result;
     }
 }

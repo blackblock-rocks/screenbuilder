@@ -1,8 +1,13 @@
 package rocks.blackblock.screenbuilder;
 
+import com.diogonunes.jcolor.AnsiFormat;
+import com.diogonunes.jcolor.Attribute;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
 import rocks.blackblock.screenbuilder.text.PixelFontCollection;
@@ -10,9 +15,22 @@ import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
+import static com.diogonunes.jcolor.Attribute.*;
+
 public class BBSB implements ModInitializer {
 
     public static final String NAMESPACE = "bbsb";
+    public static final Logger LOGGER = LogManager.getLogger(NAMESPACE);
+
+    // Log colours & formats
+    private static Attribute BLACK_BACK = BACK_COLOR(0, 0, 0);
+    private static AnsiFormat BoldYellowOnRed = new AnsiFormat(YELLOW_TEXT(), RED_BACK(), BOLD());
+    private static AnsiFormat BoldGrayOnBlack = new AnsiFormat(TEXT_COLOR(120, 120, 120), BLACK_BACK, BOLD());
+    private static AnsiFormat CyanOnBlack = new AnsiFormat(CYAN_TEXT(), BLACK_BACK);
+    private static AnsiFormat YellowText = new AnsiFormat(BRIGHT_YELLOW_TEXT());
+    private static AnsiFormat RedText = new AnsiFormat(BRIGHT_RED_TEXT());
+    private static AnsiFormat GreenText = new AnsiFormat(BRIGHT_GREEN_TEXT());
+    private static AnsiFormat BlueText = new AnsiFormat(BRIGHT_BLUE_TEXT());
 
     // GUI items
     public static final GuiItem GUI_TRUE = GuiItem.create("true");
@@ -51,6 +69,8 @@ public class BBSB implements ModInitializer {
     public static final WidgetTexture ARROW_RIGHT = new WidgetTexture(id("gui/arrow_right"));
     public static final WidgetTexture PAGER = new WidgetTexture(id("gui/pager"));
     public static final GuiTexture EMPTY_54 = new GuiTexture(id("gui/generic_54_empty"), 0, 0);
+    public static final GuiTexture BOOK_V2 = new GuiTexture(id("gui/book_big_v02"), 17, 106);
+    public static final GuiTexture BOOK_V3 = new GuiTexture(id("gui/book_big_v03"), 40, 106);
 
     /**
      * Create an identifier
@@ -60,6 +80,98 @@ public class BBSB implements ModInitializer {
      */
     public static Identifier id(String name) {
         return new Identifier(NAMESPACE, name);
+    }
+
+    /**
+     * Get the BBSB prefix
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    1.1.2
+     */
+    private static String getPrefix() {
+        return BoldGrayOnBlack.format("[") + CyanOnBlack.format("BBSB") + BoldGrayOnBlack.format("]") + " ";
+    }
+
+    /**
+     * Output to the Blackblock logger
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    1.1.2
+     *
+     * @param    level    The log level
+     * @param    message  The actual message
+     */
+    public static void log(Level level, Object message) {
+        LOGGER.log(level, getPrefix() + message);
+    }
+
+    /**
+     * Output to the Blackblock logger using the info level
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    1.1.2
+     *
+     * @param    message  The actual message
+     */
+    public static void log(Object message) {
+        LOGGER.log(Level.INFO, getPrefix() + message);
+    }
+
+    /**
+     * Output to the Blackblock logger using the info level
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    1.1.2
+     *
+     * @param    args  Multiple arguments
+     */
+    public static void log(Object... args) {
+
+        StringBuilder builder = new StringBuilder();
+        int i = 0;
+
+        for (Object arg : args) {
+
+            if (i > 0) {
+                builder.append(" ");
+            }
+
+            String entry = arg.toString();
+
+            if (arg instanceof Number) {
+                entry = BlueText.format(entry);
+            } else if (arg instanceof Boolean bool) {
+                if (bool) {
+                    entry = GreenText.format(entry);
+                } else {
+                    entry = RedText.format(entry);
+                }
+            } else if (arg instanceof String) {
+                entry = YellowText.format(entry);
+            }
+
+            builder.append(entry);
+            i++;
+        }
+
+        log(builder.toString());
+    }
+
+    /**
+     * Output to the Blackblock logger by grabbing some attention
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    1.1.2
+     *
+     * @param    message  The actual message
+     */
+    public static void attention(Object message) {
+
+        log("");
+        log(BoldYellowOnRed.format("»»»»»»»»»» Attention ««««««««««"));
+        log(Level.WARN, message);
+        log(BoldYellowOnRed.format("==============================="));
+        log("");
     }
 
     @Override
@@ -98,6 +210,8 @@ public class BBSB implements ModInitializer {
         }
 
         EMPTY_54.registerYOffset(0);
+        BOOK_V2.registerYOffset(0);
+        BOOK_V3.registerYOffset(0);
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             // Make sure PX01 is loaded

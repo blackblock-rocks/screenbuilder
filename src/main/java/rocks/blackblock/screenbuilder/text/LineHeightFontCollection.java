@@ -11,10 +11,8 @@ import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class LineHeightFontCollection {
 
@@ -149,15 +147,20 @@ public class LineHeightFontCollection {
     }
 
     /**
-     * Convert the given pixels into a line index
+     * Convert the given Y pixel coordinate into a line index.
+     * Warning: This Y pixel has to be relative to the top of the
+     * screen title, not the top of the screen.
      *
-     * @param   y   The y position
+     * @param   y   The y position relative to the title
      *
      * @since   0.1.1
      */
     public int convertYToLine(int y) {
+
         y -= this.top_margin;
+
         int total_height = this.original_height + this.line_gap;
+
         int result = y / total_height;
 
         return result;
@@ -287,6 +290,22 @@ public class LineHeightFontCollection {
             Path path = buildLocation.resolve(path_str);
             GuiUtils.writeToPath(path, json);
         }*/
+    }
+
+    /**
+     * Get the string representation of this collection
+     *
+     * @since   0.1.3
+     */
+    public String toString() {
+        return this.getClass().getSimpleName()
+                + "{font=\"" + this.parent_font.id
+                + "\", line_gap=" + this.line_gap
+                + ", original_height=" + this.parent_font.height
+                + ", height_adjustment=" + this.height_adjustment
+                + ", ascent_adjustment=" + this.ascent_adjustment
+                + ", name_suffix=\"" + this.name_suffix + "\""
+                + "}";
     }
 
 }

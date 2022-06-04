@@ -5,13 +5,19 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
+import rocks.blackblock.screenbuilder.BBSB;
+import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 public abstract class BaseSlot extends Slot {
 
     // For generated slots: the current ScreenHandler
     protected TexturedScreenHandler active_handler = null;
+
+    // Store a reference to the current ScreenBuilder
+    protected ScreenBuilder active_builder = null;
 
     // The index in the screen this slot takes up
     protected Integer screen_index = null;
@@ -61,7 +67,6 @@ public abstract class BaseSlot extends Slot {
      * Is this using the inventory?
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public boolean getUseRealInventory() {
@@ -82,6 +87,26 @@ public abstract class BaseSlot extends Slot {
         }
 
         return this.use_real_inventory;
+    }
+
+    /**
+     * Set the current ScreenBuilder
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public void setScreenBuilder(ScreenBuilder builder) {
+        this.active_builder = builder;
+    }
+
+    /**
+     * Get the current ScreenBuilder
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.3
+     */
+    public ScreenBuilder getScreenBuilder() {
+        return this.active_builder;
     }
 
     /**
@@ -290,22 +315,42 @@ public abstract class BaseSlot extends Slot {
 
     /**
      * Get the absolute Y coordinate of this slot
+     * in the current applied GUI
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3
      */
     public int getSlotYInPixels() {
-        return 17 + (this.getSlotY() * 18);
+
+        int result;
+
+        if (this.active_builder != null) {
+            ScreenInfo.Coordinates slot_coordinates = this.active_builder.getScreenInfo().getSlotCoordinates(this.screen_index);
+            result = this.active_builder.getGuiY(slot_coordinates.y);
+        } else {
+            // Fallback to the 9x5 screen info
+            result = 17 + this.getSlotY() * 18;
+        }
+
+        return result;
     }
 
     /**
      * Get the absolute X coordinate of this slot
+     * in the current applied GUI
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3
      */
     public int getSlotXInPixels() {
-        return 7 + (this.getSlotX() * 18);
+
+        if (this.active_builder != null) {
+            ScreenInfo.Coordinates slot_coordinates = this.active_builder.getScreenInfo().getSlotCoordinates(this.screen_index);
+            return this.active_builder.getGuiX(slot_coordinates.x);
+        } else {
+            // Fallback to the 9x5 screen info
+            return 7 + this.getSlotX() * 18;
+        }
     }
 
     /**

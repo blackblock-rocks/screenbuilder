@@ -4,9 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The Texture class used for GUI widgets
@@ -135,7 +133,7 @@ public class WidgetTexture extends BaseTexture {
 
         if (this.parent_gui != null) {
             target_y -= this.parent_gui.getOriginalY();
-            target_y -= this.parent_gui.getOriginalScreenTitleY();
+            target_y -= this.parent_gui.getOriginalScreenTitleBaselineY();
         }
 
         this.target_y = target_y;

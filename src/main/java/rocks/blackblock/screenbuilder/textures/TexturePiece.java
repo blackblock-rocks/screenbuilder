@@ -114,6 +114,7 @@ public class TexturePiece {
 
     /**
      * Calculate the font's ascent
+     * (Ascent is how much higher the font is drawn relative to the Y coordinate)
      *
      * @since   0.1.1
      */
@@ -142,6 +143,18 @@ public class TexturePiece {
         }
 
         return image.getWidth();
+    }
+
+    /**
+     * Return the string representation of this instance
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    @Override
+    public String toString() {
+        String result = this.getClass().getSimpleName() + "{" + this.getPath() + ", piece=" + this.getIndex() + ", width=" + this.getWidth() + ", height=" + this.getHeight() + ", ascent=" + this.getAscent() + ", y_offset=" + this.getYOffset() + "}";
+        return result;
     }
 
 }

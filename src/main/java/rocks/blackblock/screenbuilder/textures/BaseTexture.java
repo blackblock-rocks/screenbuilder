@@ -4,6 +4,7 @@ import io.github.theepicblock.polymc.api.resource.ModdedResources;
 import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.GuiFont;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
@@ -101,25 +102,31 @@ public abstract class BaseTexture {
      * Get the texture pieces of a specific Y offset
      * (Will also call the `calculate` method the first time)
      *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.1
+     *
+     * @param   title_y   The Y coordinate relative to the title
      */
-    public List<TexturePiece> getPieces(int y) {
+    public List<TexturePiece> getPieces(int title_y) {
 
-        if (!this.y_pieces.containsKey(y)) {
-            this.y_pieces.put(y, this.generateTexturePieces(y));
+        if (!this.y_pieces.containsKey(title_y)) {
+            this.y_pieces.put(title_y, this.generateTexturePieces(title_y));
         }
 
-        return this.y_pieces.get(y);
+        return this.y_pieces.get(title_y);
     }
 
     /**
      * Register an absolute Y offset
      *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.3
+     *
+     * @param   title_y   The Y coordinate relative to the title
      */
-    public void registerYOffset(int y) {
-        if (!this.y_pieces.containsKey(y)) {
-            this.y_pieces.put(y, this.generateTexturePieces(y));
+    public void registerYOffset(int title_y) {
+        if (!this.y_pieces.containsKey(title_y)) {
+            this.y_pieces.put(title_y, this.generateTexturePieces(title_y));
         }
     }
 
@@ -134,7 +141,7 @@ public abstract class BaseTexture {
         int container_y;
 
         if (gui_texture == null) {
-            container_y = y - (gui.getScreenInfo().getTitleY() + 7);
+            container_y = y - (gui.getScreenInfo().getTitleBaselineY());
         } else {
             container_y = gui_texture.getContainerY(y);
         }
@@ -444,8 +451,9 @@ public abstract class BaseTexture {
 
         for (int i = 0; i < image_pieces.size(); i++) {
             BufferedImage image = image_pieces.get(i);
+            char piece_char = GUI_FONT.getNextChar();
 
-            TexturePiece piece = new TexturePiece(this, i, y, GUI_FONT.getNextChar());
+            TexturePiece piece = new TexturePiece(this, i, y, piece_char);
             piece.setUsesSharedImage(true);
             pieces.add(piece);
             GUI_FONT.registerTexturePiece(piece);
@@ -508,7 +516,7 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public void addToBuilder(TextBuilder builder, int x, int y, int amount_of_pieces_to_add) {
+    public void addToBuilder(TextBuilder builder, int gui_x, int gui_y, int amount_of_pieces_to_add) {
 
         String str = "";
         int count = -1;
@@ -523,13 +531,17 @@ public abstract class BaseTexture {
         GuiTexture gui_texture = screenBuilder.getFontTexture();
 
         // Get the coordinate to use in the container
-        int container_y = screenBuilder.calculateTitleOffsetY(y);
+        int container_y = screenBuilder.getContainerY(gui_y);
+        //int container_y = screenBuilder.calculateTitleOffsetY(gui_y);
+        //int container_y = gui_y;
 
-        // Register the container y
+        int title_y = screenBuilder.convertToUnderlyingTitleY(gui_y);
+
+        // Register the container gui_y
         this.registerYOffset(container_y);
 
         // Make sure the cursor is at the wanted position
-        builder.setCursor(x);
+        builder.setCursor(gui_x);
 
         // Get the amount of pieces
         int total_piece_count = this.getPieceCount();
@@ -550,7 +562,7 @@ public abstract class BaseTexture {
             int width = 0;
             int placed = 0;
 
-            for (TexturePiece piece : this.getPieces(container_y)) {
+            for (TexturePiece piece : this.getPieces(title_y)) {
                 count++;
 
                 if (count > 0) {
@@ -591,7 +603,7 @@ public abstract class BaseTexture {
                         continue;
                     }
 
-                    piece = this.getPieces(container_y).get(px);
+                    piece = this.getPieces(title_y).get(px);
                     pixel_char = piece.getCharacter();
                     pass_line.append(pixel_char);
                     placed++;
@@ -643,6 +655,18 @@ public abstract class BaseTexture {
             System.out.printf("Failed to get resource '%s'%n", actual_path);
         }
         return null;
+    }
+
+    /**
+     * Return the string representation of this instance
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    @Override
+    public String toString() {
+        String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\", pieces=" + this.getPieceCount() + ", piecewidth=" + this.getPieceWidth() + "}";
+        return result;
     }
 
 }

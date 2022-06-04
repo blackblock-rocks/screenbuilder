@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.inputs;
 
-import net.minecraft.text.TextColor;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -8,9 +7,6 @@ import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
-import rocks.blackblock.screenbuilder.text.Font;
-import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.widgets.StringWidget;
 
 import java.util.ArrayList;
 import java.util.List;

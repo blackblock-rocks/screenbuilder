@@ -10,7 +10,6 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,7 +205,7 @@ public class GuiTexture extends BaseTexture {
         if (result == null) {
 
             if (this.screenbuilder != null) {
-                result = this.screenbuilder.getScreenInfo().getTitleY();
+                result = this.screenbuilder.getScreenInfo().getTitleTopY();
             }
 
             if (result == null) {
@@ -234,19 +233,16 @@ public class GuiTexture extends BaseTexture {
     /**
      * Return the Y-coordinate where the title starts in the original, unmodded container
      * (Probably a generic inventory container screen)
-     * @return
      */
-    public int getOriginalScreenTitleY() {
+    public int getOriginalScreenTitleBaselineY() {
 
         int result = 0;
 
         if (this.screenbuilder != null) {
-            result = this.screenbuilder.getScreenInfo().getTitleY();
+            result = this.screenbuilder.getScreenInfo().getTitleBaselineY();
         } else {
-            result = 6;
+            result = 13;
         }
-
-        result += 7;
 
         return result;
     }
@@ -269,7 +265,7 @@ public class GuiTexture extends BaseTexture {
             result += original_y;
         }
 
-        result += this.getOriginalScreenTitleY();
+        result += this.getOriginalScreenTitleBaselineY();
 
         return result;
     }
@@ -314,7 +310,7 @@ public class GuiTexture extends BaseTexture {
 
         // The cursor is now back at the start position,
         // so make that the new origin
-        builder.setCurrentOriginPosition(builder.getRawCursorPosition(), -this.getOriginalY() + this.getOriginalScreenTitleY());
+        builder.setCurrentOriginPosition(builder.getRawCursorPosition(), -this.getOriginalY() + this.getOriginalScreenTitleBaselineY());
 
         // Move the X-coordinate cursor to where the text should start
         builder.setCursor(this.getTextX());
@@ -329,27 +325,28 @@ public class GuiTexture extends BaseTexture {
     }
 
     /**
-     * Get the original texture's X-coordinate
+     * The X coordinate of the original texture inside the underlying container
      */
     public int getOriginalX() {
         return original_x;
     }
 
     /**
-     * Get the original texture's Y-coordinate
+     * The Y coordinate of the original texture inside the underlying container
      */
     public int getOriginalY() {
         return original_y;
     }
 
     /**
-     * Recalculate the given X coordinate to the coordinate in the overriden container
+     * Turn the X coordinate in this GUI texture
+     * into the underlying screen's X coordinate.
      *
-     * @param   x   The X coordinate inside the custom gui
+     * @param   gui_x   The X coordinate inside the custom gui
      */
-    public int getContainerX(int x) {
+    public int getContainerX(int gui_x) {
 
-        int result = x;
+        int result = gui_x;
 
         int original_x = this.getOriginalX();
 
@@ -357,27 +354,28 @@ public class GuiTexture extends BaseTexture {
             result += original_x;
         }
 
-        result -= this.getOriginalScreenTitleX();
+        //result -= this.getOriginalScreenTitleX();
 
         return result;
     }
 
     /**
-     * Recalculate the given Y coordinate to the coordinate in the overriden container
+     * Turn the Y coordinate in this GUI texture
+     * into the underlying screen's Y coordinate.
      *
-     * @param   y   The Y coordinate inside the custom gui
+     * @param   gui_y   The Y coordinate inside the custom gui
      */
-    public int getContainerY(int y) {
+    public int getContainerY(int gui_y) {
 
-        int result = y;
+        int result = gui_y;
 
         int original_y = this.getOriginalY();
 
         if (original_y != 0) {
-            result += original_y;
+            result -= original_y;
         }
 
-        result -= this.getOriginalScreenTitleY();
+        //result -= this.getOriginalScreenTitleY();
 
         return result;
     }
@@ -485,6 +483,23 @@ public class GuiTexture extends BaseTexture {
         }
 
         return source_image;
+    }
+
+    /**
+     * Return the string representation of this instance
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    @Override
+    public String toString() {
+        String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\""
+                + ", pieces=" + this.getPieceCount()
+                + ", piecewidth=" + this.getPieceWidth()
+                + ", original_x=" + this.original_x
+                + ", original_y=" + this.original_y
+                + "}";
+        return result;
     }
 
 }

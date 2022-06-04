@@ -1,23 +1,20 @@
 package rocks.blackblock.screenbuilder.widgets;
 
-import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
+import rocks.blackblock.screenbuilder.BBSB;
+import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class StringWidget extends Widget {
 
-    private int x = 0;
-    private int y = 0;
-    private String text = null;
-    private boolean centered = false;
-    private int width = 0;
-    private LineHeightFontCollection font_collection = Font.LH04;
-    private TextColor color = TextColor.fromRgb(0x3f3f3f);
-    private Integer y_line = null;
+    protected int x = 0;
+    protected int y = 0;
+    protected String text = null;
+    protected boolean centered = false;
+    protected int width = 0;
+    protected LineHeightFontCollection font_collection = Font.LH01;
+    protected TextColor color = TextColor.fromRgb(0x3f3f3f);
+    protected Integer y_line = null;
 
     public void setX(int x) {
         this.x = x;
@@ -57,6 +54,28 @@ public class StringWidget extends Widget {
     }
 
     /**
+     * Convert the Y coordinate inside this GUI into a line index
+     *
+     * @since   0.1.3
+     */
+    public int getLineIndex(int gui_y) {
+
+        ScreenBuilder screen_builder = this.getScreenBuilder();
+
+        int y;
+
+        if (screen_builder == null) {
+            y = gui_y;
+        } else {
+            y = screen_builder.convertToUnderlyingTitleY(gui_y);
+        }
+
+        int line_index = this.font_collection.convertYToLine(y);
+
+        return line_index;
+    }
+
+    /**
      * Add the widget to the text builder
      *
      * @since   0.1.1
@@ -70,7 +89,7 @@ public class StringWidget extends Widget {
         int line_index;
 
         if (this.y_line == null) {
-            line_index = this.font_collection.convertYToLine(this.y);
+            line_index = this.getLineIndex(this.y);
         } else {
             line_index = this.y_line;
         }

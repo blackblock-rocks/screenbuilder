@@ -25,6 +25,9 @@ public abstract class Widget<T> {
     // Generic change listener
     protected BaseWidgetChangeEventListener on_change = null;
 
+    // The ScreenBuilder this was added to
+    protected ScreenBuilder screen_builder = null;
+
     /**
      * Set the widget's ID
      *
@@ -58,8 +61,31 @@ public abstract class Widget<T> {
     }
 
     /**
+     * Get the ScreenBuilder instance this widget was added to
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     */
+    public ScreenBuilder getScreenBuilder() {
+        return this.screen_builder;
+    }
+
+    /**
+     * Set the ScreenBuilder instance this widget was added to
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.1.3
+     *
+     * @param   screen_builder   The ScreenBuilder instance
+     */
+    public void setScreenBuilder(ScreenBuilder screen_builder) {
+        this.screen_builder = screen_builder;
+    }
+
+    /**
      * Set the on-change listener
      *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.3
      */
     public void setOnChangeListener(BaseWidgetChangeEventListener on_change) {

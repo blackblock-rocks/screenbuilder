@@ -181,15 +181,17 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             return;
         }
 
-        WidgetTexture bg;
+        WidgetTexture button_image;
 
-        bg = switch (this.background_type) {
+        button_image = switch (this.background_type) {
             case LARGE -> BBSB.BUTTON_LARGE;
             case MEDIUM -> BBSB.BUTTON_MEDIUM;
             case SMALL, LOWER_SMALL -> BBSB.BUTTON_SMALL;
             case EXTRA_SMALL -> BBSB.BUTTON_EXTRA_SMALL;
         };
 
+        // The different type of button images have different sizes,
+        // so they don't all start at the top left corner of the slot.
         int offset = switch (this.background_type) {
             case LARGE -> -1;
             case MEDIUM, SMALL -> 0;
@@ -197,19 +199,16 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             case EXTRA_SMALL -> 1;
         };
 
-        int x = this.getSlotX() * 18;
-        int y = this.getSlotY() * 18;
+        int x = this.getSlotXInPixels() + offset;
+        int y = this.getSlotYInPixels() + offset;
 
-        x += 7 + offset;
-        y += 17 + offset;
-
-        bg.addToBuilder(builder, x, y);
+        button_image.addToBuilder(builder, x, y);
 
         if (this.button_text != null) {
             int slot_y = this.getSlotY();
             Font font = Font.LH_INVENTORY_SLOT.getFontForLine(slot_y);
 
-            int text_x = this.getSlotXInPixels();
+            int text_x = x;
 
             text_x += (font.getWidth(this.button_text) + 9) / 2;
 

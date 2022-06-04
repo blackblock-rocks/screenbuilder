@@ -10,6 +10,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.inputs.BookletInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
@@ -112,6 +113,32 @@ public class ScreenbuilderCommands {
                             )
 
                     )
+                    .then(literal("booklet")
+                            .then(CommandManager.argument("targets", EntityArgumentType.players())
+                                    .then(CommandManager.argument("content", StringArgumentType.greedyString())
+                                            .executes((context -> {
+                                                var source = context.getSource();
+                                                var target = EntityArgumentType.getPlayers(context, "targets");
+
+                                                for (var entity : target) {
+                                                    try {
+                                                        BookletInput input = new BookletInput();
+                                                        input.printLine(StringArgumentType.getString(context, "content"));
+                                                        input.printLine("Extra 1");
+                                                        input.printLine("Extra 2");
+                                                        input.printLine("Extra 3");
+                                                        entity.openHandledScreen(input);
+                                                    } catch (Exception e) {
+                                                        System.out.println("ERROR: " + e.getMessage());
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+
+                                                return 1;
+                                            }))
+                                    )
+                            )
+                    )
                     .then(literal("font")
                             .then(CommandManager.argument("targets", EntityArgumentType.players())
 
@@ -134,22 +161,22 @@ public class ScreenbuilderCommands {
 
                                                         LineHeightFontCollection font;
 
-                                                        if (name.equalsIgnoreCase("lh18")) {
-                                                            font = Font.LH18;
-                                                        } else if (name.equalsIgnoreCase("lh04")) {
-                                                            font = Font.LH04;
-                                                        } else if (name.equalsIgnoreCase("lh22")) {
-                                                            font = Font.LH22;
+                                                        if (name.equalsIgnoreCase("lh09")) {
+                                                            font = Font.LH09;
+                                                        } else if (name.equalsIgnoreCase("lh04") || name.equalsIgnoreCase("lh01")) {
+                                                            font = Font.LH01;
+                                                        } else if (name.equalsIgnoreCase("lh11")) {
+                                                            font = Font.LH11;
                                                         } else {
-                                                            font = Font.LH04;
+                                                            font = Font.DEFAULT_LH;
                                                         }
 
-                                                        for (int i = 0; i < 20; i++) {
-                                                            builder.addFontString(i, "Line " + i, font.getFontForLine(i));
+                                                        for (int i = -10; i < 20; i++) {
+                                                            builder.addFontString(i, "|^_^| Line " + i, font.getFontForLine(i));
                                                         }
 
-                                                        builder.addError("Error line 1");
-                                                        builder.addError("Error line 2");
+                                                        builder.addError("              Error line 1");
+                                                        builder.addError("              Error line 2");
 
                                                         entity.openHandledScreen(builder);
                                                     } catch (Exception e) {
@@ -202,7 +229,7 @@ public class ScreenbuilderCommands {
             for (Integer index : font_strings.keySet()) {
                 FontString entry = font_strings.get(index);
 
-                builder.setCursor(6);
+                builder.setCursor(-65);
                 builder.print(entry.text(), entry.font());
             }
         }

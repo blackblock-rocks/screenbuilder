@@ -30,10 +30,10 @@ public class Font {
     // Register the spacer font
     public static final SpacerFont SPACE = new SpacerFont("bbsb:space", 8);
 
-    // The LH04 font collection (each line is separated by 4 pixels)
-    public static final LineHeightFontCollection LH04 = new LineHeightFontCollection(
+    // The LH01 font collection (each line is separated by 1 pixel)
+    public static final LineHeightFontCollection LH01 = new LineHeightFontCollection(
             8,
-            4,
+            1,
             9,
             0,
             0,
@@ -41,9 +41,12 @@ public class Font {
             DEFAULT
     );
 
-    public static final LineHeightFontCollection LH18 = new LineHeightFontCollection(
+    // Use the LH01 font collection as the default one
+    public static final LineHeightFontCollection DEFAULT_LH = LH01;
+
+    public static final LineHeightFontCollection LH09 = new LineHeightFontCollection(
             8,
-            18,
+            9,
             18,
             0,
             17,
@@ -51,12 +54,12 @@ public class Font {
             DEFAULT
     );
 
-    public static final LineHeightFontCollection LH_INVENTORY_SLOT = LH18;
+    public static final LineHeightFontCollection LH_INVENTORY_SLOT = LH09;
 
     // The LH22 font collection (each line is separated by 22 pixels)
-    public static final LineHeightFontCollection LH22 = new LineHeightFontCollection(
+    public static final LineHeightFontCollection LH11 = new LineHeightFontCollection(
             8,
-            22,
+            11,
             18,
             0,
             0,
@@ -102,16 +105,16 @@ public class Font {
     /**
      * Create a line-height font
      *
-     * @param   line_height   The line-height of the font
+     * @param   line_gap      The line-gap of the font
      * @param   line_index    Which line this font is for
      *
      * @since   0.1.1
      */
-    public static Font createLhFont(int line_height, int line_index) {
+    public static Font createLhFont(int line_gap, int line_index) {
 
-        String lh = "" + line_height;
+        String lh = "" + line_gap;
 
-        if (line_height < 10) {
+        if (line_gap < 10) {
             lh = "0" + lh;
         }
 
@@ -130,29 +133,33 @@ public class Font {
      * @since   0.1.1
      */
     public static Font getLhFont(int line_index) {
-        return getLhFont(line_index, 4);
+        return getLhFont(line_index, 1);
     }
 
     /**
      * Get the correct font for the given line_index
      *
      * @param   line_index    Which line to get the font for
-     * @param   line_height   The line-height of the font
+     * @param   line_gap      The line-gap of the font
      *
      * @since   0.1.1
      */
-    public static Font getLhFont(int line_index, int line_height) {
+    public static Font getLhFont(int line_index, int line_gap) {
 
         if (line_index == 0) {
             return DEFAULT;
         }
 
-        if (line_height == 4) {
-            return LH04.getFontForLine(line_index);
+        if (line_gap == 1) {
+            return LH01.getFontForLine(line_index);
         }
 
-        if (line_height == 22) {
-            return LH22.getFontForLine(line_index);
+        if (line_gap == 9) {
+            return LH09.getFontForLine(line_index);
+        }
+
+        if (line_gap == 11) {
+            return LH11.getFontForLine(line_index);
         }
 
         // @TODO: lookup others?
@@ -285,7 +292,7 @@ public class Font {
      * @since   0.1.1
      */
     public String toString() {
-        return this.getClass().getName() + "{ " + this.getId() + " }";
+        return this.getClass().getSimpleName() + "{id=\"" + this.getId() + "\", height=" + this.height + "}";
     }
 
     /**
@@ -336,7 +343,7 @@ public class Font {
         } else if (current_char >= 155 && current_char <= 160) {
             current_char = 160;
             return getNextChar(current_char);
-        } else if (current_char == '\\' || current_char == '§' || current_char == '&') {
+        } else if (current_char == '\\' || current_char == '§' || current_char == '&' || current_char == 173) {
             return getNextChar(current_char);
         } else if (current_char == 56) {
             // Skip 8 & 9
