@@ -41,6 +41,9 @@ public class BBSB implements ModInitializer {
     public static final GuiItem GUI_NUMBER = GuiItem.create("number");
     public static final GuiItem GUI_TEXT = GuiItem.create("text");
     public static final GuiItem GUI_BOOLEAN = GuiItem.create("boolean");
+    public static final GuiItem GUI_OBJECT_TYPE = GuiItem.create("object_type");
+    public static final GuiItem GUI_UNKOWN_TYPE = GuiItem.create("unknown_type");
+    public static final GuiItem GUI_ENTITY_TYPE = GuiItem.create("entity_type");
     public static final GuiItem GUI_CHECKBOX_UNCHECKED = GuiItem.create("checkbox_unchecked");
     public static final GuiItem GUI_CHECKBOX_CHECKED = GuiItem.create("checkbox_checked");
     public static final GuiItem GUI_IF = GuiItem.create("if");

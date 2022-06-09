@@ -806,12 +806,20 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void close() {
 
         if (this.server_player != null) {
-            this.server_player.closeHandledScreen();
+            BBSB.log("Should close this screen", this);
+
+            // Make sure there is a screen handler open first
+            if (this.server_player.currentScreenHandler != null) {
+
+                // Now see if it's the same screen handler
+                if (this.server_player.currentScreenHandler.syncId == this.syncId) {
+                    this.server_player.closeHandledScreen();
+                }
+            }
         }
 
     }

@@ -71,6 +71,10 @@ public class TextWidget extends StringWidget {
         for (MiniText line : this.text) {
             String raw_string = line.getRawString();
 
+            if (raw_string == null) {
+                raw_string = "";
+            }
+
             // Split on forced newlines
             String[] lines = raw_string.split("\r?\n|\r");
 

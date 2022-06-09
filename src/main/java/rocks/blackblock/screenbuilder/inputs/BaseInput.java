@@ -11,6 +11,13 @@ import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The base input class
+ *
+ * @author  Jelle De Loecker   <jelle@elevenways.be>
+ * @since   0.1.0
+ * @version 0.1.3
+ */
 public abstract class BaseInput extends BasescreenFactory {
 
     // What should happen on a change?

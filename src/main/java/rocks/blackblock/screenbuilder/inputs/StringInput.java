@@ -63,11 +63,14 @@ public class StringInput extends BaseInput {
 
             if (factory instanceof StringInput input) {
 
+                // Handle screen behaviour first (might close this screen)
+                input.handleScreenBehaviour(screen);
+
+                // Call rename listener afterwards
                 if (input.on_rename_listener != null) {
                     input.on_rename_listener.onRenamed(screen, screen.getRenamedValue());
                 }
 
-                input.handleScreenBehaviour(screen);
             } else {
                 screen.showPreviousScreen();
             }
