@@ -80,7 +80,7 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
      */
     public static void copyFile(ModdedResources moddedResources, PolyMcResourcePack pack, String namespace, String path) {
         pack.setAsset(namespace, path, (location, gson) -> {
-            Files.write(location, moddedResources.getInputStream(namespace, path).readAllBytes());
+            GuiUtils.writeToPath(location, moddedResources.getInputStream(namespace, path).readAllBytes());
         });
     }
 }

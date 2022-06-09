@@ -7,7 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -114,7 +113,7 @@ public class SettingValue extends Value {
      */
     @Override
     public Text getDisplayName() {
-        return new LiteralText(this.setting.getTitle());
+        return Text.literal(this.setting.getTitle());
     }
 
     /**
@@ -179,7 +178,7 @@ public class SettingValue extends Value {
         NbtCompound nbt;
 
         ItemStack number = new ItemStack(BBSB.GUI_NUMBER);
-        number.setCustomName(new LiteralText("Number").setStyle(Style.EMPTY.withItalic(false)));
+        number.setCustomName(Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
         nbt = number.getOrCreateNbt();
         nbt.putString("type", "number");
         number.setNbt(nbt);

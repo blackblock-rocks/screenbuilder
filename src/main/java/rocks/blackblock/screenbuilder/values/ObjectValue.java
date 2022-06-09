@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +29,7 @@ public class ObjectValue extends Value {
 
     @Override
     public Text getDisplayName() {
-        return new LiteralText("Object");
+        return Text.literal("Object");
     }
 
     @Override

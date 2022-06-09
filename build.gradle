@@ -1,12 +1,10 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -35,24 +33,6 @@ repositories {
 	maven { url 'https://maven.blackblock.rocks/releases' }
 }
 
-sourceSets {
-	testmod {
-		runtimeClasspath += main.runtimeClasspath
-		compileClasspath += main.compileClasspath
-	}
-}
-
-loom {
-	runs {
-		testmodServer {
-			server()
-			ideConfigGenerated project.rootProject == project
-			name = "Test Mod Server"
-			source sourceSets.testmod
-		}
-	}
-}
-
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -62,13 +42,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+	modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+
 	modImplementation "com.github.TheEpicBlock:polymc:${project.polymc_version}"
 
 	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
 
 	modImplementation include('com.diogonunes:JColor:5.5.1')
-
-	testmodImplementation sourceSets.main.output
 }
 
 processResources {
@@ -79,29 +59,13 @@ processResources {
 	}
 }
 
-task testmodJar(type: Jar, dependsOn: testmodClasses) {
-	archiveBaseName = 'screenbuildertest'
-	archiveClassifier = 'dev'
-	from(sourceSets.testmod.output) {
-		include 'fabric.mod.json'
-		expand 'version': project.version
-	}
-	from(sourceSets.testmod.output) {
-		exclude 'fabric.mod.json'
-	}
+loom {
+	accessWidenerPath = file("src/main/resources/bbsb.accesswidener")
 }
-
-task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
-	archiveBaseName = 'screenbuildertest'
-	input = testmodJar.archiveFile
-	addNestedDependencies = false
-}
-
-build.dependsOn(remapTestmodJar)
 
 tasks.withType(JavaCompile).configureEach {
 	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 16
+	it.options.release = 17
 }
 
 java {

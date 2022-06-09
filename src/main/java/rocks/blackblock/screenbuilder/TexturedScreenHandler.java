@@ -9,9 +9,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;
@@ -19,8 +17,6 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +29,10 @@ import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.slots.WidgetSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 import java.util.OptionalInt;
-import java.util.Random;
 
 /**
  * A base ScreenHandler class used to implement modded GUIs
@@ -935,14 +929,14 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         this.renamed_value = new_name;
 
-        this.getSlot(0).getStack().setCustomName(new LiteralText(""));
+        this.getSlot(0).getStack().setCustomName(Text.of(""));
 
         Slot output = this.getSlot(2);
         ItemStack output_stack = new ItemStack(GuiItem.get("true"));
-        output_stack.setCustomName(new LiteralText("Accept").setStyle(Style.EMPTY.withItalic(false)));
+        output_stack.setCustomName(Text.of("Accept").copy().setStyle(Style.EMPTY.withItalic(false)));
         output.setStack(output_stack);
 
-        NbtUtils.appendLore(output_stack, new LiteralText("\"").append(new_name).append("\""));
+        NbtUtils.appendLore(output_stack, Text.of("\"").copy().append(new_name).append("\""));
 
         this.sendContentUpdates();
     }

@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.text;
 
-import net.minecraft.text.BaseText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

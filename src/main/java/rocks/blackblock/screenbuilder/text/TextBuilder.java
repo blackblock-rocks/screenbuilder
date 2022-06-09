@@ -3,6 +3,7 @@ package rocks.blackblock.screenbuilder.text;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
@@ -577,7 +578,7 @@ public class TextBuilder {
             return this.groups.get(0).build();
         }
 
-        LiteralText text = new LiteralText("");
+        MutableText text = Text.literal("");
 
         // If there is a title, move the cursor to the right start
         if (this.title != null) {
@@ -589,14 +590,11 @@ public class TextBuilder {
             group.buildInto(text);
         }
 
-        //System.out.println("Built text: " + Text.Serializer.toJson(text));
-
         if (this.title != null) {
 
             Font font = this.getCurrentFont();
-            MutableText title_with_font = this.title.shallowCopy();
+            MutableText title_with_font = MiniText.shallowClone(this.title);
             //title_with_font.setStyle(font.font_style);
-
             //System.out.println("Title with font: " + Text.Serializer.toJson(title_with_font));
 
             text.append(title_with_font);
@@ -768,11 +766,11 @@ public class TextBuilder {
         String result = "TextBuilder{";
 
         if (this.title != null) {
-            result += "title=" + this.title.asString() + ", ";
+            result += "title=" + this.title.getString() + ", ";
         }
 
         for (Text t : this.text_list) {
-            result += t.asString();
+            result += t.getString();
         }
 
         result += "}";

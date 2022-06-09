@@ -4,7 +4,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +29,7 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
      * @version 0.1.0
      */
     public void setDisplayName(String name) {
-        this.setDisplayName(new LiteralText(name).setStyle(Style.EMPTY.withItalic(false)));
+        this.setDisplayName(Text.literal(name).setStyle(Style.EMPTY.withItalic(false)));
     }
 
     /**
@@ -58,7 +57,7 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
             return this.display_name_text;
         }
 
-        return new LiteralText(this.default_name);
+        return Text.literal(this.default_name);
     }
 
     /**

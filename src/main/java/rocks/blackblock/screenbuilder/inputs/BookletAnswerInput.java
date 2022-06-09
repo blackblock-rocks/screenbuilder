@@ -3,7 +3,6 @@ package rocks.blackblock.screenbuilder.inputs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
-import net.minecraft.text.TranslatableText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -11,7 +10,6 @@ import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.widgets.TextWidget;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -329,7 +327,7 @@ public class BookletAnswerInput extends BookletInput {
                 if (this.text == null) {
 
                     if (this.item_stack != null) {
-                        String item_name = this.item_stack.getName().asString();
+                        String item_name = this.item_stack.getName().getString();
 
                         if (item_name == null || item_name.isEmpty()) {
                             item_name = this.item_stack.getItem().getTranslationKey();

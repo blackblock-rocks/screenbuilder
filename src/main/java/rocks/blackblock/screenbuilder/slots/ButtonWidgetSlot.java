@@ -2,9 +2,9 @@ package rocks.blackblock.screenbuilder.slots;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -63,7 +63,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @version  0.1.0
      */
     public ButtonWidgetSlot setTitle(String title) {
-        return this.setTitle(new LiteralText(title).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+        return this.setTitle(Text.literal(title).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
     }
 
     /**
@@ -74,7 +74,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @version  0.1.0
      */
     public ButtonWidgetSlot setLore(String lore) {
-        return this.setLore(new LiteralText(lore).setStyle(Style.EMPTY.withItalic(false)));
+        return this.setLore(Text.literal(lore).setStyle(Style.EMPTY.withItalic(false)));
     }
 
     /**

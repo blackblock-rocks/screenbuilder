@@ -8,7 +8,7 @@ import io.github.theepicblock.polymc.api.resource.json.JElement;
 import io.github.theepicblock.polymc.api.resource.json.JGuiLight;
 import io.github.theepicblock.polymc.api.resource.json.JModel;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
-import io.github.theepicblock.polymc.impl.resource.json.JModelWrapper;
+import io.github.theepicblock.polymc.impl.resource.json.JModelImpl;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,7 +20,6 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -865,7 +864,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                 title = this.title;
             }
 
-            gui_stack.setCustomName(new LiteralText(title).setStyle(Style.EMPTY.withItalic(false)));
+            gui_stack.setCustomName(Text.literal(title).setStyle(Style.EMPTY.withItalic(false)));
 
             this.setSlot(this.texture_slot_x, this.texture_slot_y, gui_stack);
         }
@@ -910,7 +909,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             return;
         }
 
-        JModel item_model = new JModelWrapper();
+        JModel item_model = new JModelImpl();
         JsonParser parser = new JsonParser();
 
         item_model.setGuiLight(JGuiLight.FRONT);
@@ -988,7 +987,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             title = this.name;
         }
 
-        return new LiteralText(title);
+        return Text.literal(title);
     }
 
     /**

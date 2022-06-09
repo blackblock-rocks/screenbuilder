@@ -28,6 +28,7 @@
   "mixins": [
     "screenbuilder.mixins.json"
   ],
+  "accessWidener": "bbsb.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.11.3",

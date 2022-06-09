@@ -274,14 +274,14 @@ public class TextGroup {
      *
      * @since   0.1.1
      */
-    public void buildInto(LiteralText parent_text) {
+    public void buildInto(MutableText parent_text) {
 
         if ((this.main_text == null || this.main_text.isEmpty()) && this.children.isEmpty()) {
             return;
         }
 
         Style style = this.buildStyle();
-        LiteralText text = parent_text;
+        MutableText text = parent_text;
 
         if (style == null) {
             if (this.main_text != null && !this.main_text.isEmpty()) {
@@ -296,7 +296,7 @@ public class TextGroup {
                 main_text = "";
             }
 
-            text = new LiteralText(main_text);
+            text = Text.literal(main_text);
             text.setStyle(style);
             parent_text.append(text);
         }
@@ -321,7 +321,7 @@ public class TextGroup {
             main_text = "";
         }
 
-        LiteralText text = new LiteralText(main_text);
+        MutableText text = Text.literal(main_text);
 
         if (this.hasChildren()) {
             for (TextGroup child : this.children) {

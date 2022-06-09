@@ -1,7 +1,9 @@
 package rocks.blackblock.screenbuilder.text;
 
-import net.minecraft.text.LiteralText;
+import com.google.common.collect.Lists;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 /**
@@ -10,12 +12,12 @@ import net.minecraft.text.Text;
  *
  * @since   0.1.1
  */
-public class MiniText extends LiteralText {
+public class MiniText extends MutableText {
 
     protected boolean can_be_primitive = false;
 
     public MiniText(String string) {
-        super(string);
+        super(new LiteralTextContent(string), Lists.newArrayList(), Style.EMPTY);
     }
 
     /**
@@ -46,7 +48,7 @@ public class MiniText extends LiteralText {
      * @since   0.1.1
      */
     public MutableText append(Text text) {
-        MutableText mutable_text = text.shallowCopy();
+        MutableText mutable_text = shallowClone(text);
         super.append(mutable_text);
 
         this.can_be_primitive = false;
@@ -71,5 +73,31 @@ public class MiniText extends LiteralText {
         return text;
     }
 
+    /**
+     * Get the raw string
+     *
+     * @since   0.2.0
+     */
+    public String getRawString() {
+        return this.getString();
+    }
+
+    /**
+     * Create a shallow clone
+     *
+     * @since   0.2.0
+     */
+    public static MutableText shallowClone(Text text) {
+
+        MutableText result = MutableText.of(text.getContent());
+
+        for (var sibling : text.getSiblings()) {
+            result.append(sibling);
+        }
+
+        result.setStyle(text.getStyle());
+
+        return result;
+    }
 
 }

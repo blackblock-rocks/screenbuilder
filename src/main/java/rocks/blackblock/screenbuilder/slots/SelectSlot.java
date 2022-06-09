@@ -6,7 +6,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -147,7 +146,7 @@ public class SelectSlot extends ListenerWidgetSlot implements NamedScreenHandler
 
     @Override
     public Text getDisplayName() {
-        return new LiteralText("Select an option ...");
+        return Text.literal("Select an option ...");
     }
 
     /**

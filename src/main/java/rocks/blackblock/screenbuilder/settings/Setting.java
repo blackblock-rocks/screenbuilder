@@ -3,8 +3,8 @@ package rocks.blackblock.screenbuilder.settings;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.values.SettingValue;
 
 public abstract class Setting {
@@ -124,7 +124,7 @@ public abstract class Setting {
             title = this.name;
         }
 
-        result.setCustomName((new LiteralText(title)).setStyle(Style.EMPTY.withItalic(false)));
+        result.setCustomName((Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
 
         NbtCompound nbt = result.getOrCreateNbt();
         nbt.putString("setting_name", this.name);

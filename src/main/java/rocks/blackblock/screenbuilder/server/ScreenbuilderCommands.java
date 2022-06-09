@@ -7,8 +7,11 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BookletInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -18,9 +21,11 @@ import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 
+import javax.swing.plaf.basic.BasicButtonListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +66,9 @@ public class ScreenbuilderCommands {
                                             // Read in the json file in a string reader
                                             StringReader reader = new StringReader(json_string);
                                             MutableText text = Text.Serializer.fromJson(reader);
+
+                                            BBSB.log("Using text: " + text);
+                                            BBSB.log(" -- json:", Text.Serializer.toJson(text));
 
                                             builder.setDisplayName(text);
                                             builder.setShowPlayerInventory(false);

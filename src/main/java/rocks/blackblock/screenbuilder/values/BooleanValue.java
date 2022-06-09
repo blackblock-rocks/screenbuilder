@@ -7,7 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -47,13 +46,13 @@ public class BooleanValue extends Value {
     @Override
     public ItemStack getStack(ItemStack result) {
 
-        MutableText lore = (new LiteralText("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
+        MutableText lore = (Text.literal("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
         MutableText value;
 
         if (this.getValue()) {
-            value = new LiteralText("True").setStyle(Style.EMPTY.withColor(Formatting.GREEN));
+            value = Text.literal("True").setStyle(Style.EMPTY.withColor(Formatting.GREEN));
         } else {
-            value = new LiteralText("False").setStyle(Style.EMPTY.withColor(Formatting.RED));
+            value = Text.literal("False").setStyle(Style.EMPTY.withColor(Formatting.RED));
         }
 
         NbtUtils.appendLore(result, lore.append(value));
@@ -80,7 +79,7 @@ public class BooleanValue extends Value {
 
     @Override
     public Text getDisplayName() {
-        return new LiteralText("Boolean");
+        return Text.literal("Boolean");
     }
 
     /**

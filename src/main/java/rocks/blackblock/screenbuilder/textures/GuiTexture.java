@@ -6,7 +6,6 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,6 +94,51 @@ public class GuiUtils {
 
     public static void setGuiItem(String name, Item item) {
         items.put(name, item);
+    }
+
+    /**
+     * Write some text to a file, which is actually a stream
+     *
+     * @param   output   The output stream
+     * @param   data     The data to write
+     *
+     * @since   0.2.0
+     */
+    public static boolean writeToPath(OutputStream output, String data) {
+        return writeToPath(output, data.getBytes());
+    }
+
+    /**
+     * Write some text to a file, which is actually a stream
+     *
+     * @param   output   The output stream
+     * @param   data     The data to write
+     *
+     * @since   0.2.0
+     */
+    public static boolean writeToPath(OutputStream output, byte[] data) {
+        try {
+            output.write(data);
+            return true;
+        } catch (IOException e) {
+            System.out.println(String.format("Failed to write to '%s'", output.toString()));
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Write some text to a file, which is actually a stream
+     *
+     * @param   output   The output stream
+     * @param   image    The image to write
+     *
+     * @since   0.2.0
+     */
+    public static boolean writeToPath(OutputStream output, BufferedImage image) {
+        return writeToPath(output, toByteArray(image, "png"));
     }
 
     /**

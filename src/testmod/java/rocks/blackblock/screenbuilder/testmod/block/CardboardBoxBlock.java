@@ -68,12 +68,6 @@ public class CardboardBoxBlock extends BlockWithEntity {
         return super.getTicker(world, state, type);
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> GameEventListener getGameEventListener(World world, T blockEntity) {
-        return super.getGameEventListener(world, blockEntity);
-    }
-
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 

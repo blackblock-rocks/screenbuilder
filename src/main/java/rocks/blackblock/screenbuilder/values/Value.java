@@ -4,7 +4,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -62,7 +61,7 @@ public abstract class Value implements NamedScreenHandlerFactory {
         NbtCompound nbt = stack.getOrCreateNbt();
 
         // Set the (default) title
-        stack.setCustomName(new LiteralText(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
+        stack.setCustomName(Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
 
         // Put the class type
         nbt.putString("bclass", "value");

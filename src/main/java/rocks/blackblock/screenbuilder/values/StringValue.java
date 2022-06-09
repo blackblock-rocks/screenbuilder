@@ -7,7 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -35,17 +34,17 @@ public class StringValue extends Value {
     @Override
     public ItemStack getStack(ItemStack result) {
 
-        MutableText lore = (new LiteralText("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
+        MutableText lore = (Text.literal("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
         MutableText value;
 
         String str = this.getValue();
 
         if (str == null) {
-            value = new LiteralText("undefined").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
+            value = Text.literal("undefined").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
         } else if (str.length() == 0) {
-            value = new LiteralText("empty").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
+            value = Text.literal("empty").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
         } else {
-            value = new LiteralText(str).setStyle(Style.EMPTY.withColor(Formatting.GREEN));
+            value = Text.literal(str).setStyle(Style.EMPTY.withColor(Formatting.GREEN));
         }
 
         NbtUtils.appendLore(result, lore.append(value));
@@ -66,7 +65,7 @@ public class StringValue extends Value {
 
     @Override
     public Text getDisplayName() {
-        return new LiteralText("String");
+        return Text.literal("String");
     }
 
     @Override

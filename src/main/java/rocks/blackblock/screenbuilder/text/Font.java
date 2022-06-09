@@ -1,8 +1,8 @@
 package rocks.blackblock.screenbuilder.text;
 
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -257,9 +257,9 @@ public class Font {
      *
      * @param text  The String to turn into Text
      */
-    public BaseText getText(String text) {
+    public MutableText getText(String text) {
 
-        LiteralText result = new LiteralText(text);
+        MutableText result = Text.literal(text);
 
         result.setStyle(this.font_style);
 

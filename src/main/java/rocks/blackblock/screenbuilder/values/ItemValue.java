@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -79,8 +78,8 @@ public class ItemValue extends Value {
         }
 
         if (this.check_name == Boolean.TRUE || other_value.check_name == Boolean.TRUE) {
-            String this_name = this_stack.getName().asString();
-            String other_name = other_stack.getName().asString();
+            String this_name = this_stack.getName().getString();
+            String other_name = other_stack.getName().getString();
 
             if (!this_name.equals(other_name)) {
                 return false;
@@ -131,15 +130,15 @@ public class ItemValue extends Value {
     @Override
     public ItemStack getStack(ItemStack result) {
 
-        MutableText lore = (new LiteralText("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
+        MutableText lore = (Text.literal("Value: ")).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY));
         MutableText value;
 
         ItemStack stack = this.getValue();
 
         if (stack == null || stack.isEmpty()) {
-            value = new LiteralText("empty").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
+            value = Text.literal("empty").setStyle(Style.EMPTY.withColor(Formatting.RED).withItalic(true));
         } else {
-            value = new LiteralText("").append(stack.getName()).setStyle(Style.EMPTY.withColor(Formatting.RED));
+            value = Text.literal("").append(stack.getName()).setStyle(Style.EMPTY.withColor(Formatting.RED));
         }
 
         NbtUtils.appendLore(result, lore.append(value));
@@ -149,7 +148,7 @@ public class ItemValue extends Value {
 
     @Override
     public Text getDisplayName() {
-        return new LiteralText("Item");
+        return Text.literal("Item");
     }
 
     @Override
