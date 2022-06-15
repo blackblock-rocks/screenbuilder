@@ -630,6 +630,9 @@ public abstract class BaseTexture {
 
         // And now move it back to where it was at the beginning
         builder.setRawCursor(start_cursor);
+
+        // Add the splitting '$' (1px back) and the '9' (1px forward)
+        builder.insertUnsafe("9$", Font.SPACE);
     }
 
     /**

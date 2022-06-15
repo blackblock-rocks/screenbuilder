@@ -32,6 +32,15 @@
                 "2": 987,
                 "1": 2584
             }
+        },
+        {
+            "type": "bitmap",
+            "file": "bbsb:font/space_split.png",
+            "ascent": -32768,
+            "height": -3,
+            "chars": [
+                "$"
+            ]
         }
     ]
 }
