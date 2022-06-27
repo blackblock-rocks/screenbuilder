@@ -876,7 +876,6 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void register() {
 
@@ -889,6 +888,11 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         // Make sure the font texture pieces have been generated
         if (this.font_texture != null) {
             this.font_texture.calculate();
+        }
+
+        // Iterate over all the widgets
+        for (Widget widget : this.widgets.values()) {
+            widget.register();
         }
 
         //this.loadTextureItem();

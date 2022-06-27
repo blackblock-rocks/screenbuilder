@@ -3,7 +3,6 @@ package rocks.blackblock.screenbuilder.widgets;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
-import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
 import rocks.blackblock.screenbuilder.interfaces.BaseWidgetChangeEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetAddedListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -157,5 +156,14 @@ public abstract class Widget<T> {
      */
     public void addWithDefaultValue(TextBuilder builder) {
         this.addWithValue(builder, this.default_value);
+    }
+
+    /**
+     * Register this widget
+     *
+     * @since   0.2.1
+     */
+    public void register() {
+
     }
 }
