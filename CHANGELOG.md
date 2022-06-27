@@ -6,3 +6,4 @@
 * Fix `TexturedScreenHandler#transferSlot()` causing infinite loop
 * Fix `Widget`s not always getting the parent `ScreenBuilder` instance set
 * Allow `Widget`s to register themselves
+* Fix `TextureWidget`s adding themselves to a `TextBuilder` multiple times

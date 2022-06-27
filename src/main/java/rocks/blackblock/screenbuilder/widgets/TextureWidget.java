@@ -1,13 +1,8 @@
 package rocks.blackblock.screenbuilder.widgets;
 
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
-import rocks.blackblock.screenbuilder.TexturedScreenHandler;
-import rocks.blackblock.screenbuilder.interfaces.WidgetAddedListener;
-import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
@@ -165,19 +160,7 @@ public abstract class TextureWidget extends Widget {
      * @since   0.1.1
      */
     public void addToTextBuilder(TextBuilder builder) {
-
         super.addToTextBuilder(builder);
-
-        ScreenBuilder screenbuilder = builder.getScreenBuilder();
-        TexturedScreenHandler handler = builder.getScreenHandler();
-
-        if (this.widget_texture != null) {
-            this.widget_texture.addToBuilder(builder, this.x, this.y);
-        }
-
-        if (this.added_listener != null) {
-            this.added_listener.onAdded(builder, null);
-        }
     }
 
 
