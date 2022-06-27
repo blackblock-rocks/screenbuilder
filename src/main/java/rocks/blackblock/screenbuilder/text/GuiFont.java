@@ -65,6 +65,14 @@ public class GuiFont extends Font {
 
         HashMap<String, JsonArray> provider_chars = new HashMap<>();
 
+        // Always add the space provider
+        JsonObject space_provider = new JsonObject();
+        space_provider.addProperty("type", "space");
+        JsonObject advances_obj = new JsonObject();
+        advances_obj.addProperty(" ", 4);
+        space_provider.add("advances", advances_obj);
+        providers.add(space_provider);
+
         for (TexturePiece piece : this.texture_pieces) {
             String path = piece.getPath();
             String ascent_id = path + "_" + piece.getAscent();

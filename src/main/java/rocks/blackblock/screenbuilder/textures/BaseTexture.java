@@ -638,13 +638,14 @@ public abstract class BaseTexture {
             // Because each pixel prints an invisible pixel on the right,
             // we need to print the line in 2 passes
             for (int pass = 0; pass < 2; pass++) {
+
                 StringBuilder pass_line = new StringBuilder();
                 int placed = 0;
 
                 for (int px = -pass; px < piece_count; px += 2) {
 
                     if (px < 0) {
-                        // Spaces are hardcoded, so we can use that to move forward 4 pixels
+                        // Spaces are always added to GUI fonts as 4px wide
                         pass_line.append(' ');
                         continue;
                     }

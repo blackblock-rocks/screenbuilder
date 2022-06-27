@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.text;
 
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.ArrayList;
 import java.util.List;
