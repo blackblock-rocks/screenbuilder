@@ -3,8 +3,12 @@ package rocks.blackblock.screenbuilder.textures;
 import io.github.theepicblock.polymc.api.resource.ModdedResources;
 import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
+import net.minecraft.text.Style;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.GuiFont;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
@@ -66,14 +70,29 @@ public abstract class BaseTexture {
     // The Y offsets
     private Map<Integer, List<TexturePiece>> y_pieces = new HashMap<>();
 
+    // The colour to apply to the texture
+    protected TextColor texture_colour = null;
+
     /**
-     * Set the texture
+     * Create the instance without registering
+     *
+     * @since   0.2.1
+     */
+    protected BaseTexture(Identifier texture_identifier, boolean register) {
+        this.texture_identifier = texture_identifier;
+
+        if (register) {
+            TEXTURES.add(this);
+        }
+    }
+
+    /**
+     * Create the instance
      *
      * @since   0.1.1
      */
     public BaseTexture(Identifier texture_identifier) {
-        this.texture_identifier = texture_identifier;
-        TEXTURES.add(this);
+        this(texture_identifier, true);
     }
 
     /**
@@ -85,6 +104,31 @@ public abstract class BaseTexture {
         for (BaseTexture texture : TEXTURES) {
             texture.calculate();
         }
+    }
+
+    /**
+     * Get a coloured version of this texture
+     *
+     * @since   0.2.1
+     */
+    public BaseTexture getColoured(TextColor colour) {
+
+        if (colour == null) {
+            return this;
+        }
+
+        ColouredTexture coloured = new ColouredTexture(this);
+        coloured.texture_colour = colour;
+        return coloured;
+    }
+
+    /**
+     * Get the root, uncouloured texture
+     *
+     * @since   0.2.1
+     */
+    public BaseTexture getOriginalTexture() {
+        return this;
     }
 
     /**
