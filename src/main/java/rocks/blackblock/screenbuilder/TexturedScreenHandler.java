@@ -1249,6 +1249,43 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Show an error message
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since     0.2.1
+     */
+    public void showError(String message) {
+        if (this.builder != null) {
+            this.builder.setError(message);
+            this.refresh();
+        } else {
+            BBSB.log("Unable to show error to user: '" + message + "'");
+        }
+    }
+
+    /**
+     * Show an error message
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since     0.2.1
+     */
+    public void showError(String ...message) {
+
+        if (this.builder != null) {
+            this.builder.clearErrors();
+            for (String msg : message) {
+                this.builder.addError(msg);
+            }
+            this.refresh();
+        } else {
+            BBSB.log("Unable to show errors to user...");
+            for (String msg : message) {
+                BBSB.log("  - " + msg);
+            }
+        }
+    }
+
+    /**
      * Get a TextBuilder instance for this screen.
      * It can then be used to supply the DisplayName.
      *

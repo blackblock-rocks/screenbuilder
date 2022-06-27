@@ -1185,6 +1185,29 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Remove the current errors, if any
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    public void clearErrors() {
+        if (this.error_messages != null) {
+            this.error_messages.clear();
+        }
+    }
+
+    /**
+     * Set a new error message
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    public void setError(String message) {
+        this.clearErrors();
+        this.addError(message);
+    }
+
+    /**
      * Add an error message
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>

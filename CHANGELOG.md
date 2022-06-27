@@ -12,3 +12,4 @@
 * Improve getting a slot's coordinates
 * Make ProgressWidget register itself correctly
 * Allow adding "overlays" to `BaseSlot` instances
+* Improve the showing of error messages
