@@ -54,6 +54,12 @@ public abstract class CombinedWidget<T> extends Widget<T> {
      */
     public int getY() {
 
+        ScreenBuilder sb = this.getScreenBuilder();
+
+        if (sb != null) {
+            return sb.getSlotCoordinates(this.slot_index).y;
+        }
+
         if (!this.slots.containsKey(0)) {
             return 0;
         }
@@ -68,6 +74,12 @@ public abstract class CombinedWidget<T> extends Widget<T> {
      * @since   0.1.3
      */
     public int getX() {
+
+        ScreenBuilder sb = this.getScreenBuilder();
+
+        if (sb != null) {
+            return sb.getSlotCoordinates(this.slot_index).x;
+        }
 
         if (!this.slots.containsKey(0)) {
             return 0;

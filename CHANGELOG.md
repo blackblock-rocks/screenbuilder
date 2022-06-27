@@ -9,3 +9,4 @@
 * Fix `TextureWidget`s adding themselves to a `TextBuilder` multiple times
 * Fix render issues by using at least 1 splitting character
 * Add the `space` as a hardcoded 4px-wide whitespace character
+* Improve getting a slot's coordinates

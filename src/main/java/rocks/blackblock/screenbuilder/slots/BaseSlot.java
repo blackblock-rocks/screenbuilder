@@ -300,6 +300,11 @@ public abstract class BaseSlot extends Slot {
      * @since    0.1.3
      */
     public int getSlotX() {
+
+        if (this.screen_index == null) {
+            return 0;
+        }
+
         return this.screen_index % 9;
     }
 
@@ -310,6 +315,11 @@ public abstract class BaseSlot extends Slot {
      * @since    0.1.3
      */
     public int getSlotY() {
+
+        if (this.screen_index == null) {
+            return 0;
+        }
+
         return this.screen_index / 9;
     }
 
@@ -325,8 +335,7 @@ public abstract class BaseSlot extends Slot {
         int result;
 
         if (this.active_builder != null) {
-            ScreenInfo.Coordinates slot_coordinates = this.active_builder.getScreenInfo().getSlotCoordinates(this.screen_index);
-            result = this.active_builder.getGuiY(slot_coordinates.y);
+            return this.active_builder.getSlotCoordinates(this.screen_index).y;
         } else {
             // Fallback to the 9x5 screen info
             result = 17 + this.getSlotY() * 18;
@@ -345,8 +354,7 @@ public abstract class BaseSlot extends Slot {
     public int getSlotXInPixels() {
 
         if (this.active_builder != null) {
-            ScreenInfo.Coordinates slot_coordinates = this.active_builder.getScreenInfo().getSlotCoordinates(this.screen_index);
-            return this.active_builder.getGuiX(slot_coordinates.x);
+            return this.active_builder.getSlotCoordinates(this.screen_index).x;
         } else {
             // Fallback to the 9x5 screen info
             return 7 + this.getSlotX() * 18;

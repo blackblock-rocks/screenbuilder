@@ -1230,6 +1230,22 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             builder.print(message, font);
             line++;
         }
+    }
 
+    /**
+     * Get the coordinates of a slot in the current applied GUI
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.2
+     *
+     * @param    slot_index   The index of the slot
+     */
+    public ScreenInfo.Coordinates getSlotCoordinates(int slot_index) {
+        ScreenInfo.Coordinates original_slot_coordinates = this.getScreenInfo().getSlotCoordinates(slot_index);
+
+        int new_y = this.getGuiY(original_slot_coordinates.y);
+        int new_x = this.getGuiX(original_slot_coordinates.x);
+
+        return new ScreenInfo.Coordinates(new_x, new_y);
     }
 }
