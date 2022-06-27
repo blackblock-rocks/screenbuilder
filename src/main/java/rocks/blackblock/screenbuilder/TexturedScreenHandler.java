@@ -415,7 +415,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    player          The player that is doing the clicking
      * @param    screen_index    The index of the slot that was clicked on the screen
@@ -462,6 +461,8 @@ public class TexturedScreenHandler extends ScreenHandler {
                         return ItemStack.EMPTY;
                     }
                 }
+
+                return ItemStack.EMPTY;
 
             } else {
 
