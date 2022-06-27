@@ -601,6 +601,9 @@ public abstract class BaseTexture {
             print_single_pass = false;
         }
 
+        // Add the splitting '$' (1px back) and the '9' (1px forward)
+        builder.insertUnsafe("9$", Font.SPACE);
+
         if (print_single_pass) {
             int width = 0;
             int placed = 0;

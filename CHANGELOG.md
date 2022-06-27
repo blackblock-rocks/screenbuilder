@@ -7,3 +7,4 @@
 * Fix `Widget`s not always getting the parent `ScreenBuilder` instance set
 * Allow `Widget`s to register themselves
 * Fix `TextureWidget`s adding themselves to a `TextBuilder` multiple times
+* Fix render issues by using at least 1 splitting character

@@ -4,6 +4,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -273,7 +274,18 @@ public class Font {
      * @param   text     The String to turn into Text
      */
     public void addTo(TextBuilder builder, String text) {
-        this.addTo(builder.getCurrentGroup(), text);
+        this.addTo(builder, text, null);
+    }
+
+    /**
+     * Add the given text to the text builder
+     *
+     * @param   builder      The builder to add to
+     * @param   text         The String to turn into Text
+     * @param   extra_style  Extra stylings
+     */
+    public void addTo(TextBuilder builder, String text, Style extra_style) {
+        this.addTo(builder.getCurrentGroup(), text, extra_style);
     }
 
     /**
@@ -283,7 +295,25 @@ public class Font {
      * @param   text     The String to turn into Text
      */
     public void addTo(TextGroup group, String text) {
-        group.ensureGroup(this.font_style).append(text);
+        this.addTo(group, text, null);
+    }
+
+    /**
+     * Add the given text to the text group, or a parent
+     *
+     * @param   group        The group to add to
+     * @param   text         The String to turn into Text
+     * @param   extra_style  Extra stylings
+     */
+    public void addTo(TextGroup group, String text, Style extra_style) {
+
+        Style style = this.font_style;
+
+        if (extra_style != null) {
+            style = extra_style.withParent(style);
+        }
+
+        group.ensureGroup(style).append(text);
     }
 
     /**
@@ -421,6 +451,10 @@ public class Font {
         DEFAULT.registerWidth('~', 7);
 
         SPACE.registerWidth('-', -6765);
+
+        // This is currently the only splitting character
+        // It is required to fix rendering the layers
+        SPACE.registerWidth('$', -1);
 
         // Small negative movements
         SPACE.registerWidth('①', -1);
