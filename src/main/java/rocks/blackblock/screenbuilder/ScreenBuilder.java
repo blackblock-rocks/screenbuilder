@@ -366,6 +366,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     public void addWidget(String id, Widget widget) {
         this.widgets.put(id, widget);
+        widget.setScreenBuilder(this);
     }
 
     /**
@@ -375,8 +376,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @since    0.1.3
      */
     public void addWidget(Widget widget) {
-        this.widgets.put(widget.getId(), widget);
-        widget.setScreenBuilder(this);
+        this.addWidget(widget.getId(), widget);
     }
 
     /**
