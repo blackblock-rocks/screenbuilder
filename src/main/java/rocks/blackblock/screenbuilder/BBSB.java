@@ -13,6 +13,7 @@ import rocks.blackblock.screenbuilder.server.ScreenbuilderCommands;
 import rocks.blackblock.screenbuilder.text.PixelFontCollection;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
+import rocks.blackblock.screenbuilder.textures.IconTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 
 import static com.diogonunes.jcolor.Attribute.*;
@@ -56,6 +57,8 @@ public class BBSB implements ModInitializer {
     public static final GuiItem GUI_GTE = GuiItem.create("gte");
     public static final GuiItem GUI_ARROW_LEFT = GuiItem.create("arrow_left");
     public static final GuiItem GUI_TRANSPARENT = GuiItem.create("transparent");
+    // Semi transparency doesn't work: it blocks out underlying backgrounds
+    //public static final GuiItem GUI_SEMI_TRANSPARENT = GuiItem.create("transparency_15");
     public static final WidgetTexture BUTTON_LARGE = new WidgetTexture(id("gui/button_l"));
     public static final WidgetTexture BUTTON_MEDIUM = new WidgetTexture(id("gui/button_m"));
     public static final WidgetTexture BUTTON_SMALL = new WidgetTexture(id("gui/button_s"));
@@ -74,6 +77,14 @@ public class BBSB implements ModInitializer {
     public static final GuiTexture EMPTY_54 = new GuiTexture(id("gui/generic_54_empty"), 0, 0);
     public static final GuiTexture BOOK_V2 = new GuiTexture(id("gui/book_big_v02"), 17, 106);
     public static final GuiTexture BOOK_V3 = new GuiTexture(id("gui/book_big_v03"), 40, 106);
+    public static final IconTexture ARROW_DOWN_ICON = new IconTexture(id("gui/icons/arrow_down"));
+    public static final IconTexture COG_ICON = new IconTexture(id("gui/icons/cog"));
+    public static final IconTexture PLUS_ICON = new IconTexture(id("gui/icons/plus"));
+    public static final IconTexture DOWNLOAD_ICON = new IconTexture(id("gui/icons/download"));
+    public static final IconTexture DIAMOND_ICON = new IconTexture(id("gui/icons/diamond"));
+    public static final IconTexture WAREHOUSE_ICON = new IconTexture(id("gui/icons/warehouse"));
+    public static final IconTexture TRASH_ICON = new IconTexture(id("gui/icons/trash"));
+    public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
     /**
      * Create an identifier
@@ -139,7 +150,7 @@ public class BBSB implements ModInitializer {
                 builder.append(" ");
             }
 
-            String entry = arg.toString();
+            String entry = String.valueOf(arg);
 
             if (arg instanceof Number) {
                 entry = BlueText.format(entry);
@@ -210,6 +221,18 @@ public class BBSB implements ModInitializer {
             ARROW_LEFT.registerYOffset(dummy, 17 + 5 + offset);
             ARROW_RIGHT.registerYOffset(dummy, 17 + 5 + offset);
             PAGER.registerYOffset(dummy, 17 + 1 + offset);
+
+            SLOT_FRAME.registerYOffset(dummy, 17 + offset);
+
+            for (int i = 0; i < 4; i++) {
+                ARROW_DOWN_ICON.registerYOffset(dummy, 17 + offset + i);
+                COG_ICON.registerYOffset(dummy, 17 + offset + i);
+                PLUS_ICON.registerYOffset(dummy, 17 + offset + i);
+                DOWNLOAD_ICON.registerYOffset(dummy, 17 + offset + i);
+                DIAMOND_ICON.registerYOffset(dummy, 17 + offset + i);
+                WAREHOUSE_ICON.registerYOffset(dummy, 17 + offset + i);
+                TRASH_ICON.registerYOffset(dummy, 17 + offset + i);
+            }
         }
 
         EMPTY_54.registerYOffset(0);
