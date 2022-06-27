@@ -417,7 +417,7 @@ public abstract class BaseTexture {
         try {
             source_image = this.getSourceImage();
         } catch (Exception e) {
-            System.out.println("Failed to load texture file: " + this.texture_identifier + "\n" + e.getMessage());
+            BBSB.log("Failed to load texture file:", this.texture_identifier, "\n" + e.getMessage());
             return image_pieces;
         }
 
@@ -621,7 +621,13 @@ public abstract class BaseTexture {
                     break;
                 }
 
-                builder.insertUnsafe("" + piece.getCharacter(), GUI_FONT);
+                // This also adds unsafe, without moving the cursor back
+                if (this.texture_colour != null) {
+                    GUI_FONT.addTo(builder, ""+piece.getCharacter(), Style.EMPTY.withColor(this.texture_colour));
+                } else {
+                    GUI_FONT.addTo(builder, "" + piece.getCharacter());
+                }
+
                 placed++;
                 width += piece.getWidth();
             }
@@ -658,7 +664,12 @@ public abstract class BaseTexture {
 
                 if (placed > 0) {
 
-                    builder.insertUnsafe(pass_line.toString(), GUI_FONT);
+                    // This also adds unsafe, without moving the cursor back
+                    if (this.texture_colour != null) {
+                        GUI_FONT.addTo(builder, pass_line.toString(), Style.EMPTY.withColor(this.texture_colour));
+                    } else {
+                        GUI_FONT.addTo(builder, pass_line.toString());
+                    }
 
                     int move_back = -(placed * 2) - pass;
 
