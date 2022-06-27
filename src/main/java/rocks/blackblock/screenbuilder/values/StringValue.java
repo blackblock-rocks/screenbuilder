@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.values;
 
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -106,6 +107,15 @@ public class StringValue extends Value {
 
         input.setRenamedListener((screen, new_value) -> {
             that.setValue(new_value);
+
+            if (screen != null) {
+
+                var factory = screen.getOriginFactory();
+
+                if (factory instanceof BlockEntity be) {
+                    be.markDirty();
+                }
+            }
         });
 
         input.setChangeBehaviour(BaseInput.ChangeBehaviour.SHOW_PREVIOUS_SCREEN);
