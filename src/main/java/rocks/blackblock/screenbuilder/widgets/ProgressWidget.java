@@ -1,8 +1,11 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
+
+import javax.swing.plaf.basic.BasicButtonListener;
 
 /**
  * Show some kind of progress bar
@@ -51,7 +54,6 @@ public class ProgressWidget extends TextureWidget {
             int wanted_piece_count = Math.round(((percentage / 100) * total_piece_count));
 
             this.widget_texture.addToBuilder(builder, this.x, this.y, wanted_piece_count);
-
         } else {
             this.widget_texture.addToBuilder(builder, this.x, this.y);
         }
@@ -73,6 +75,27 @@ public class ProgressWidget extends TextureWidget {
      */
     public void setMaxAmount(int max_amount) {
         this.max_amount = max_amount;
+    }
+
+    /**
+     * Register this widget
+     *
+     * @since   0.2.1
+     */
+    public void register() {
+
+        if (this.screen_builder == null) {
+            return;
+        }
+
+        int container_y = this.screen_builder.getContainerY(this.y);
+        int title_y = this.screen_builder.convertToUnderlyingTitleY(this.y);
+
+        // This is the correct registration
+        this.widget_texture.registerYOffset(title_y);
+
+        // This one isn't, but for some reason it always does it
+        this.widget_texture.registerYOffset(this.y);
     }
 
 }

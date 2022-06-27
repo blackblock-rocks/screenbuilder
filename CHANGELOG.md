@@ -10,3 +10,4 @@
 * Fix render issues by using at least 1 splitting character
 * Add the `space` as a hardcoded 4px-wide whitespace character
 * Improve getting a slot's coordinates
+* Make ProgressWidget register itself correctly
