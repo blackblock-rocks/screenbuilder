@@ -12,7 +12,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      * ListenerWidgetSlot constructor
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public MirrorWidgetSlot() {
@@ -23,7 +22,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      * WidgetSlot constructor
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public MirrorWidgetSlot(Inventory inventory, Integer index) {
@@ -34,7 +32,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      * Set a change listener
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public void setChangeListener(SelectEventListener on_change_item) {
@@ -45,15 +42,16 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      * Called when the user left-clicks the slot
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public void onLeftClick() {
 
-        ItemStack stack = this.active_handler.getCursorStack();
+        ItemStack cursor_stack = this.active_handler.getCursorStack();
 
-        if (stack != null && !stack.isEmpty()) {
-            this.setStack(stack.copy());
+        if (cursor_stack != null && !cursor_stack.isEmpty()) {
+            ItemStack new_stack = cursor_stack.copy();
+
+            this.setStack(new_stack);
             this.fireChangeEvent();
             return;
         }
@@ -65,18 +63,18 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      * Called when the user right-clicks the slot
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @version 0.1.0
      * @since   0.1.0
      */
     public void onRightClick() {
 
-        ItemStack stack = this.active_handler.getCursorStack();
+        ItemStack cursor_stack = this.active_handler.getCursorStack();
         ItemStack current_stack = this.getStack();
 
-        if (stack != null && !stack.isEmpty()) {
+        if (cursor_stack != null && !cursor_stack.isEmpty()) {
+            ItemStack new_stack = cursor_stack.copy();
 
-            if (current_stack == null || current_stack.isEmpty() || !current_stack.isStackable() || !ItemStack.areItemsEqualIgnoreDamage(current_stack, stack)) {
-                this.setStack(stack.copy());
+            if (current_stack == null || current_stack.isEmpty() || !current_stack.isStackable() || !ItemStack.areItemsEqualIgnoreDamage(current_stack, new_stack)) {
+                this.setStack(new_stack);
                 this.fireChangeEvent();
                 return;
             }
@@ -102,7 +100,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void fireChangeEvent() {
 
@@ -118,7 +115,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    slot   The target slot
      */
@@ -132,7 +128,6 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public MirrorWidgetSlot clone(Inventory inventory, Integer index) {
 
