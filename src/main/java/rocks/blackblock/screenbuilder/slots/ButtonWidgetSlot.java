@@ -11,6 +11,7 @@ import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
+import rocks.blackblock.screenbuilder.textures.IconTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
@@ -198,6 +199,20 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             case LOWER_SMALL -> 1;
             case EXTRA_SMALL -> 1;
         };
+
+        if (this.overlays != null) {
+            for (Overlay overlay : this.overlays) {
+
+                if (overlay.original_x != null) {
+                    continue;
+                }
+
+                if (overlay.texture.getOriginalTexture() instanceof IconTexture) {
+                    overlay.external_x = offset + 2;
+                    overlay.external_y = offset + 2;
+                }
+            }
+        }
 
         int x = this.getSlotXInPixels() + offset;
         int y = this.getSlotYInPixels() + offset;

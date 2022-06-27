@@ -185,5 +185,7 @@ public abstract class WidgetSlot extends StaticSlot {
                 placement.texture.addToBuilder(builder, placement.x + slot_x, placement.y + slot_y);
             }
         }
+
+        super.addToTextBuilder(builder);
     }
 }

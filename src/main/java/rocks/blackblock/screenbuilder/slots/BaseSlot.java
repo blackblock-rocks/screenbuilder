@@ -1,5 +1,6 @@
 package rocks.blackblock.screenbuilder.slots;
 
+import net.minecraft.client.gui.screen.Overlay;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
@@ -10,6 +11,11 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
+
+import javax.swing.plaf.basic.BasicButtonListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseSlot extends Slot {
 
@@ -30,6 +36,9 @@ public abstract class BaseSlot extends Slot {
 
     // Should this slot use the real inventory?
     protected Boolean use_real_inventory = null;
+
+    // Other widgets to overlay on this
+    protected List<Overlay> overlays = null;
 
     /**
      * BaseSlot constructor
@@ -369,5 +378,79 @@ public abstract class BaseSlot extends Slot {
      *
      * @param    builder   The text builder
      */
-    public void addToTextBuilder(TextBuilder builder) {}
+    public void addToTextBuilder(TextBuilder builder) {
+
+        // Add the overlays if there are any
+        if (this.overlays != null && !this.overlays.isEmpty()) {
+            for (Overlay overlay : this.overlays) {
+                overlay.addToBuilder(builder);
+            }
+        }
+
+    }
+
+    /**
+     * Add an overlay to this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     *
+     * @param    texture   The texture to overlay
+     */
+    public Overlay addOverlay(BaseTexture texture) {
+
+        if (this.overlays == null) {
+            this.overlays = new ArrayList<>();
+        }
+
+        Overlay new_overlay = new Overlay(this, texture, null, null);
+
+        this.overlays.add(new_overlay);
+
+        return new_overlay;
+    }
+
+    /**
+     * More textures to overlay on this slow
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    protected static class Overlay {
+
+        public final BaseSlot slot;
+        public BaseTexture texture;
+        public Integer original_x = null;
+        public Integer original_y = null;
+
+        // Let certain classes recalculate things
+        public Integer external_x = null;
+        public Integer external_y = null;
+
+        public Overlay(BaseSlot slot, BaseTexture texture, Integer x, Integer y) {
+            this.slot = slot;
+            this.texture = texture;
+            this.original_x = x;
+            this.original_y = y;
+        }
+
+        public void addToBuilder(TextBuilder builder) {
+            int x = this.slot.getSlotXInPixels();
+            int y = this.slot.getSlotYInPixels();
+
+            if (this.external_x != null) {
+                x += this.external_x;
+            } else if (this.original_x != null) {
+                x += this.original_x;
+            }
+
+            if (this.external_y != null) {
+                y += this.external_y;
+            } else if (this.original_y != null) {
+                y += this.original_y;
+            }
+
+            this.texture.addToBuilder(builder, x, y);
+        }
+    }
 }
