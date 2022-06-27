@@ -24,6 +24,7 @@ import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.inventories.BaseInventory;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.mixin.ScreenHandlerAccessor;
+import rocks.blackblock.screenbuilder.mixin.ServerPlayerEntityAccessor;
 import rocks.blackblock.screenbuilder.slots.BaseSlot;
 import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
@@ -1043,13 +1044,17 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
-     * Show another screen
+     * Show another screen.
+     * Reuse the current syncid if possible.
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public TexturedScreenHandler showScreen(NamedScreenHandlerFactory factory) {
+
+        if (factory == null) {
+            return null;
+        }
 
         PlayerEntity player = this.getPlayer();
 
@@ -1057,19 +1062,44 @@ public class TexturedScreenHandler extends ScreenHandler {
             return null;
         }
 
-        OptionalInt result = server_player.openHandledScreen(factory);
+        // Get the current handler, if there is any
+        ScreenHandler current_handler = server_player.currentScreenHandler;
 
-        if (result.isEmpty()) {
+        // The new handler will go here
+        ScreenHandler new_handler = null;
+
+        if (server_player.currentScreenHandler instanceof TexturedScreenHandler current_textured_handler) {
+            // Get the sync id currently in use
+            int current_sync_id = current_textured_handler.syncId;
+
+            // Create the new handler
+            new_handler = factory.createMenu(current_sync_id, server_player.getInventory(), server_player);
+
+            if (new_handler instanceof TexturedScreenHandler new_textured_handler) {
+                new_textured_handler.forceSendTo(server_player);
+                server_player.currentScreenHandler = new_handler;
+
+                new_textured_handler.setCursorStack(current_handler.getCursorStack());
+
+                ((ServerPlayerEntityAccessor) server_player).invokeOnScreenHandlerOpened(new_handler);
+            }
+        }
+
+        if (new_handler == null) {
+            OptionalInt result = server_player.openHandledScreen(factory);
+
+            if (result.isEmpty()) {
+                return null;
+            }
+
+            new_handler = server_player.currentScreenHandler;
+        }
+
+        if (new_handler == null) {
             return null;
         }
 
-        ScreenHandler handler = server_player.currentScreenHandler;
-
-        if (handler == null) {
-            return null;
-        }
-
-        if (handler instanceof TexturedScreenHandler ts_handler) {
+        if (new_handler instanceof TexturedScreenHandler ts_handler) {
             return ts_handler;
         }
 
@@ -1123,19 +1153,48 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public void refresh() {
 
-        PlayerEntity player = this.getPlayer();
-
-        if (player instanceof ServerPlayerEntity sp) {
-
-            TextBuilder builder = this.getTextBuilder();
-            Text title = builder.build();
-
-            // Send the "OpenSCreen" packet to the client, with the existing sync id.
-            sp.networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, this.getType(), title));
-
-            // Always sync the state afterwards, that's needed to keep the contents of the cursor
-            this.syncState();
+        // Make sure there is a valid player instance
+        if (!(this.getPlayer() instanceof ServerPlayerEntity player)) {
+            return;
         }
+
+        // Get the current screen handler the player is using
+        ScreenHandler handler = player.currentScreenHandler;
+
+        // If there is no handler, the player probably closed it somehow
+        // and we shouldn't refresh.
+        if (handler == null) {
+            return;
+        }
+
+        // If the handler's syncid does not match, a new screen has opened.
+        // We should not refresh because that would send a broken screen.
+        if (handler.syncId != this.syncId) {
+            return;
+        }
+
+        // Even then: if it's not the same handler, don't do anything
+        if (handler != this) {
+            return;
+        }
+
+        this.forceSendTo(player);
+    }
+
+    /**
+     * Force send this screen again
+     *
+     * @since   0.2.1
+     */
+    public void forceSendTo(ServerPlayerEntity player) {
+        TextBuilder builder = this.getTextBuilder();
+        Text title = builder.build();
+
+        // Send the "OpenSCreen" packet to the client, with the existing sync id.
+        player.networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, this.getType(), title));
+
+        // Always sync the state afterwards, that's needed to keep the contents of the cursor
+        this.syncState();
     }
 
     /**
