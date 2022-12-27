@@ -11,6 +11,7 @@ import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
@@ -29,6 +30,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     private MutableText lore = null;
     private BackgroundType background_type = null;
     private String button_text = null;
+    private TextColor background_colour = null;
 
     /**
      * Set the title of this button
@@ -156,6 +158,27 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     }
 
     /**
+     * Set an optional background recolour
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    public ButtonWidgetSlot setBackgroundColour(TextColor colour) {
+        this.background_colour = colour;
+        return this;
+    }
+
+    /**
+     * Set an optional background recolour
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    public ButtonWidgetSlot setBackgroundColour(Formatting format) {
+        return this.setBackgroundColour(TextColor.fromFormatting(format));
+    }
+
+    /**
      * Set the button text
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -182,7 +205,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             return;
         }
 
-        WidgetTexture button_image;
+        BaseTexture button_image;
 
         button_image = switch (this.background_type) {
             case LARGE -> BBSB.BUTTON_LARGE;
@@ -216,6 +239,10 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
 
         int x = this.getSlotXInPixels() + offset;
         int y = this.getSlotYInPixels() + offset;
+
+        if (this.background_colour != null) {
+            button_image = button_image.getColoured(this.background_colour);
+        }
 
         button_image.addToBuilder(builder, x, y);
 
