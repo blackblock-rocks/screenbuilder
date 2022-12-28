@@ -5,10 +5,11 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.inputs.BooleanInput;
 import rocks.blackblock.screenbuilder.inputs.ItemInput;
@@ -22,11 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +84,7 @@ public class GuiUtils {
     public static GuiItem createGuiItem(String name) {
 
         Identifier identifier = BBSB.id(name);
-        GuiItem item = Registry.register(Registry.ITEM, identifier, new GuiItem());
+        GuiItem item = Registry.register(Registries.ITEM, identifier, new GuiItem());
 
         setGuiItem(name, item);
 

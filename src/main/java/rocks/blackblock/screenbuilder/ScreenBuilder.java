@@ -17,6 +17,8 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -25,7 +27,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
@@ -851,7 +852,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                     this.gui_item = new Item(new FabricItemSettings());
 
                     this.gui_item_identifier = new Identifier(this.namespace, this.gui_item_name);
-                    Registry.register(Registry.ITEM, this.gui_item_identifier, this.gui_item);
+                    Registry.register(Registries.ITEM, this.gui_item_identifier, this.gui_item);
 
                     gui_items.put(this.gui_item_name, this.gui_item);
                 }

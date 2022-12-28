@@ -100,4 +100,38 @@ public class NbtUtils {
 
         return ItemStack.areEqual(leftStack, rightStack);
     }
+
+    /**
+     * Are the 2 item stacks equal, ignoring damage?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    public static boolean areEqualIgnoreDamage(ItemStack left, ItemStack right) {
+
+        if (left.getItem() != right.getItem()) {
+            return false;
+        }
+
+        if (left.isDamageable()) {
+            left = left.copy();
+            right = right.copy();
+
+            left.setDamage(0);
+            right.setDamage(0);
+        }
+
+        NbtCompound left_nbt = left.getNbt();
+        NbtCompound right_nbt = right.getNbt();
+
+        if (left_nbt == right_nbt) {
+            return true;
+        }
+
+        if (left_nbt == null || right_nbt == null) {
+            return false;
+        }
+
+        return left.getNbt().equals(right.getNbt());
+    }
 }

@@ -44,7 +44,7 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
-	modImplementation "com.github.TheEpicBlock:polymc:${project.polymc_version}"
+	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
 
 	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
 

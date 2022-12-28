@@ -411,6 +411,17 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Method was renamed to `quickMove` in 1.19.3
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    @Deprecated
+    public ItemStack transferSlot(PlayerEntity player, int slot) {
+        return this.quickMove(player, slot);
+    }
+
+    /**
      * Handle a shift click on the specific screen slot
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -420,7 +431,7 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @param    screen_index    The index of the slot that was clicked on the screen
      */
     @Override
-    public ItemStack transferSlot(PlayerEntity player, int screen_index) {
+    public ItemStack quickMove(PlayerEntity player, int screen_index) {
 
         ItemStack new_stack = ItemStack.EMPTY;
 
