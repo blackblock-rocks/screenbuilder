@@ -152,6 +152,16 @@ public abstract class BaseSlot extends Slot {
     }
 
     /**
+     * Get the index in the screen of this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    public int getScreenIndex() {
+        return this.screen_index;
+    }
+
+    /**
      * Set the actual index to use in the inventory
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>

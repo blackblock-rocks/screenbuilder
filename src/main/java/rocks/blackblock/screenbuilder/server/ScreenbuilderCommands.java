@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -14,6 +15,7 @@ import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BookletInput;
+import rocks.blackblock.screenbuilder.inputs.FileInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
@@ -197,6 +199,29 @@ public class ScreenbuilderCommands {
                                             }))
                                     )
                             )
+                    )
+                    .then(literal("debug")
+                        .executes((context -> {
+                            var source = context.getSource();
+                            BBSB.DEBUG = !BBSB.DEBUG;
+                            source.sendFeedback(Text.literal("BBSB debug mode is now " + BBSB.DEBUG), false);
+
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                    )
+                    .then(literal("files")
+                            .executes((context -> {
+                                var source = context.getSource();
+
+                                FileInput input = new FileInput();
+                                input.setStart(FabricLoader.getInstance().getGameDir());
+                                input.setDisplayName(Text.literal("File Browser"));
+                                input.allowDirectoryCration(true);
+
+                                source.getPlayer().openHandledScreen(input);
+
+                                return Command.SINGLE_SUCCESS;
+                            }))
                     )
             );
         });

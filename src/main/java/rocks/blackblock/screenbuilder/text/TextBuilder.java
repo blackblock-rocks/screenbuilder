@@ -600,9 +600,7 @@ public class TextBuilder {
             text.append(title_with_font);
         }
 
-        boolean debug = false;
-
-        if (debug) {
+        if (BBSB.DEBUG) {
             System.out.println("Dumping GUI text to /tmp/mc_textbuilder.json");
             String json_string = Text.Serializer.toJson(text);
 

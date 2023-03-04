@@ -23,6 +23,8 @@ public class BBSB implements ModInitializer {
     public static final String NAMESPACE = "bbsb";
     public static final Logger LOGGER = LogManager.getLogger(NAMESPACE);
 
+    public static boolean DEBUG = false;
+
     // Log colours & formats
     private static Attribute BLACK_BACK = BACK_COLOR(0, 0, 0);
     private static AnsiFormat BoldYellowOnRed = new AnsiFormat(YELLOW_TEXT(), RED_BACK(), BOLD());
@@ -75,15 +77,47 @@ public class BBSB implements ModInitializer {
     public static final WidgetTexture ARROW_RIGHT = new WidgetTexture(id("gui/arrow_right"));
     public static final WidgetTexture PAGER = new WidgetTexture(id("gui/pager"));
     public static final GuiTexture EMPTY_54 = new GuiTexture(id("gui/generic_54_empty"), 0, 0);
+    public static final GuiTexture TOP_FOUR = new GuiTexture(id("gui/generic_54_top_4"), 0, 0);
     public static final GuiTexture BOOK_V2 = new GuiTexture(id("gui/book_big_v02"), 17, 106);
     public static final GuiTexture BOOK_V3 = new GuiTexture(id("gui/book_big_v03"), 40, 106);
-    public static final IconTexture ARROW_DOWN_ICON = new IconTexture(id("gui/icons/arrow_down"));
+
     public static final IconTexture COG_ICON = new IconTexture(id("gui/icons/cog"));
     public static final IconTexture PLUS_ICON = new IconTexture(id("gui/icons/plus"));
     public static final IconTexture DOWNLOAD_ICON = new IconTexture(id("gui/icons/download"));
     public static final IconTexture DIAMOND_ICON = new IconTexture(id("gui/icons/diamond"));
     public static final IconTexture WAREHOUSE_ICON = new IconTexture(id("gui/icons/warehouse"));
     public static final IconTexture TRASH_ICON = new IconTexture(id("gui/icons/trash"));
+
+    public static final IconTexture ARROW_DOWN_ICON = new IconTexture(id("gui/icons/arrow_down"));
+    public static final IconTexture ARROW_UP_ICON = new IconTexture(id("gui/icons/arrow_up"));
+    public static final IconTexture ARROW_RIGHT_ICON = new IconTexture(id("gui/icons/arrow_right"));
+    public static final IconTexture ARROW_LEFT_ICON = new IconTexture(id("gui/icons/arrow_left"));
+
+    public static final IconTexture CIRCLE_ICON = new IconTexture(id("gui/icons/circle"));
+    public static final IconTexture CLOUD_ICON = new IconTexture(id("gui/icons/cloud"));
+    public static final IconTexture EXCLAMATION_ICON = new IconTexture(id("gui/icons/exclamation"));
+    public static final IconTexture HOME_ICON = new IconTexture(id("gui/icons/home"));
+    public static final IconTexture CYCLE_ICON = new IconTexture(id("gui/icons/recycle"));
+    public static final IconTexture REDO_ICON = new IconTexture(id("gui/icons/redo"));
+    public static final IconTexture UNDO_ICON = new IconTexture(id("gui/icons/undo"));
+    public static final IconTexture STRIKE_ICON = new IconTexture(id("gui/icons/strike_thin"));
+    public static final IconTexture STRIKE_THICK_ICON = new IconTexture(id("gui/icons/strike_thick"));
+    public static final IconTexture TRIANGLE_ICON = new IconTexture(id("gui/icons/triangle"));
+    public static final IconTexture SUN_ICON = new IconTexture(id("gui/icons/sun"));
+    public static final IconTexture MOON_ICON = new IconTexture(id("gui/icons/moon"));
+    public static final IconTexture QUESTION_ICON = new IconTexture(id("gui/icons/question"));
+    public static final IconTexture CUBE_ICON = new IconTexture(id("gui/icons/cube"));
+    public static final IconTexture CHEVRON_RIGHT_ICON = new IconTexture(id("gui/icons/chevron_right"));
+    public static final IconTexture CHEVRON_LEFT_ICON = new IconTexture(id("gui/icons/chevron_left"));
+    public static final IconTexture CHEVRON_UP_ICON = new IconTexture(id("gui/icons/chevron_up"));
+    public static final IconTexture CHEVRON_DOWN_ICON = new IconTexture(id("gui/icons/chevron_down"));
+    public static final IconTexture DOTTED_LINE_ICON = new IconTexture(id("gui/icons/dotted_line"));
+    public static final IconTexture PENCIL_ICON = new IconTexture(id("gui/icons/pencil"));
+    public static final IconTexture FILE_ICON = new IconTexture(id("gui/icons/file"));
+    public static final IconTexture FOLDER_ICON = new IconTexture(id("gui/icons/folder"));
+    public static final IconTexture CHECK_ICON = new IconTexture(id("gui/icons/check"));
+    public static final IconTexture CROSS_ICON = new IconTexture(id("gui/icons/cross"));
+
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
     /**
@@ -224,20 +258,57 @@ public class BBSB implements ModInitializer {
 
             SLOT_FRAME.registerYOffset(dummy, 17 + offset);
 
+            EMPTY_54.registerYOffset(0);
+            TOP_FOUR.registerYOffset(0);
+            BOOK_V2.registerYOffset(0);
+            BOOK_V3.registerYOffset(0);
+
+            IconTexture[] icons = {
+                ARROW_DOWN_ICON,
+                COG_ICON,
+                PLUS_ICON,
+                DOWNLOAD_ICON,
+                DIAMOND_ICON,
+                WAREHOUSE_ICON,
+                TRASH_ICON,
+                ARROW_UP_ICON,
+                ARROW_LEFT_ICON,
+                ARROW_RIGHT_ICON,
+                CIRCLE_ICON,
+                CLOUD_ICON,
+                EXCLAMATION_ICON,
+                HOME_ICON,
+                CYCLE_ICON,
+                REDO_ICON,
+                UNDO_ICON,
+                STRIKE_ICON,
+                STRIKE_THICK_ICON,
+                TRIANGLE_ICON,
+                SUN_ICON,
+                MOON_ICON,
+                QUESTION_ICON,
+                CUBE_ICON,
+                CHEVRON_RIGHT_ICON,
+                CHEVRON_LEFT_ICON,
+                CHEVRON_UP_ICON,
+                CHEVRON_DOWN_ICON,
+                DOTTED_LINE_ICON,
+                PENCIL_ICON,
+                FILE_ICON,
+                FOLDER_ICON,
+                CHECK_ICON,
+                CROSS_ICON,
+            };
+
             for (int i = 0; i < 4; i++) {
-                ARROW_DOWN_ICON.registerYOffset(dummy, 17 + offset + i);
-                COG_ICON.registerYOffset(dummy, 17 + offset + i);
-                PLUS_ICON.registerYOffset(dummy, 17 + offset + i);
-                DOWNLOAD_ICON.registerYOffset(dummy, 17 + offset + i);
-                DIAMOND_ICON.registerYOffset(dummy, 17 + offset + i);
-                WAREHOUSE_ICON.registerYOffset(dummy, 17 + offset + i);
-                TRASH_ICON.registerYOffset(dummy, 17 + offset + i);
+
+                // Iterate over all the IconTextures and register them
+                // with the correct y-offset
+                for (IconTexture icon : icons) {
+                    icon.registerYOffset(dummy, 17 + offset + i);
+                }
             }
         }
-
-        EMPTY_54.registerYOffset(0);
-        BOOK_V2.registerYOffset(0);
-        BOOK_V3.registerYOffset(0);
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             // Make sure PX01 is loaded

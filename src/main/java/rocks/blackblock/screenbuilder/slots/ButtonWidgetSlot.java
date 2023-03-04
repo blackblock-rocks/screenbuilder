@@ -263,4 +263,23 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         super.addToTextBuilder(builder);
     }
 
+    /**
+     * Return a string representation of this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    @Override
+    public String toString() {
+        return "ButtonWidgetSlot{" +
+                ", button_text='" + button_text + '\'' +
+                ", index=" + this.getIndex() +
+                ", id=" + this.id +
+                ", screen_index=" + this.getScreenIndex() +
+                ", x=" + x +
+                ", y=" + y +
+                "}";
+
+    }
+
 }
