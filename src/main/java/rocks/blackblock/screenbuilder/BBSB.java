@@ -83,7 +83,7 @@ public class BBSB implements ModInitializer {
 
     public static final IconTexture COG_ICON = new IconTexture(id("gui/icons/cog"));
     public static final IconTexture PLUS_ICON = new IconTexture(id("gui/icons/plus"));
-    public static final IconTexture DOWNLOAD_ICON = new IconTexture(id("gui/icons/download"));
+    public static final IconTexture DOWNLOAD_ICON = new IconTexture(id("gui/icons/download"), 2);
     public static final IconTexture DIAMOND_ICON = new IconTexture(id("gui/icons/diamond"));
     public static final IconTexture WAREHOUSE_ICON = new IconTexture(id("gui/icons/warehouse"));
     public static final IconTexture TRASH_ICON = new IconTexture(id("gui/icons/trash"));
@@ -112,7 +112,7 @@ public class BBSB implements ModInitializer {
     public static final IconTexture CHEVRON_UP_ICON = new IconTexture(id("gui/icons/chevron_up"));
     public static final IconTexture CHEVRON_DOWN_ICON = new IconTexture(id("gui/icons/chevron_down"));
     public static final IconTexture DOTTED_LINE_ICON = new IconTexture(id("gui/icons/dotted_line"));
-    public static final IconTexture PENCIL_ICON = new IconTexture(id("gui/icons/pencil"));
+    public static final IconTexture PENCIL_ICON = new IconTexture(id("gui/icons/pencil"), 2);
     public static final IconTexture FILE_ICON = new IconTexture(id("gui/icons/file"));
     public static final IconTexture FOLDER_ICON = new IconTexture(id("gui/icons/folder"));
     public static final IconTexture CHECK_ICON = new IconTexture(id("gui/icons/check"));

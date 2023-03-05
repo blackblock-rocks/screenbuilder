@@ -2,7 +2,6 @@ package rocks.blackblock.screenbuilder.textures;
 
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 
@@ -92,13 +91,13 @@ public class ColouredTexture extends BaseTexture {
     }
 
     @Override
-    public int getMaxPieceWidth() {
-        return this.parent.getMaxPieceWidth();
+    public int getMaxImagePieceWidth() {
+        return this.parent.getMaxImagePieceWidth();
     }
 
     @Override
-    public int getPreferredPieceWidth() {
-        return this.parent.getPreferredPieceWidth();
+    public int getPreferredImagePieceWidth() {
+        return this.parent.getPreferredImagePieceWidth();
     }
 
     @Override
@@ -112,13 +111,13 @@ public class ColouredTexture extends BaseTexture {
     }
 
     @Override
-    public int getPieceWidth() {
-        return this.parent.getPieceWidth();
+    public int getImagePieceWidth() {
+        return this.parent.getImagePieceWidth();
     }
 
     @Override
-    public int getPieceWidth(int piece_index) {
-        return this.parent.getPieceWidth(piece_index);
+    public int getImagePieceWidth(int piece_index) {
+        return this.parent.getImagePieceWidth(piece_index);
     }
 
     @Override

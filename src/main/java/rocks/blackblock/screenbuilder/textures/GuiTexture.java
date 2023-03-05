@@ -302,7 +302,7 @@ public class GuiTexture extends BaseTexture {
             }
 
             builder.insertUnsafe(""+piece.getCharacter(), GUI_FONT);
-            width += piece.getWidth();
+            width += piece.getGuiWidth();
         }
 
         builder.moveCursorUnsafe(-width - 1);
@@ -494,7 +494,7 @@ public class GuiTexture extends BaseTexture {
     public String toString() {
         String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\""
                 + ", pieces=" + this.getPieceCount()
-                + ", piecewidth=" + this.getPieceWidth()
+                + ", piecewidth=" + this.getImagePieceWidth()
                 + ", original_x=" + this.original_x
                 + ", original_y=" + this.original_y
                 + "}";

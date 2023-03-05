@@ -10,7 +10,6 @@ import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.textures.TexturePiece;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -86,7 +85,7 @@ public class GuiFont extends Font {
                 provider.addProperty("type", "bitmap");
                 provider.addProperty("file", piece.getJsonFilename());
                 provider.addProperty("ascent", piece.getAscent());
-                provider.addProperty("height", piece.getHeight());
+                provider.addProperty("height", piece.getGuiHeight());
 
                 chars = new JsonArray();
                 provider.add("chars", chars);

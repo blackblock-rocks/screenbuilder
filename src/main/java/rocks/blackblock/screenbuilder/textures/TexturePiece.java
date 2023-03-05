@@ -125,9 +125,34 @@ public class TexturePiece {
     /**
      * Get the height of this piece
      *
+     * @since   0.3.0
+     */
+    public int getGuiHeight() {
+        return this.parent.height;
+    }
+
+    /**
+     * Get the width of this piece inside the gui
+     *
+     * @since   0.3.0
+     */
+    public int getGuiWidth() {
+
+        int gui_width = this.getImageWidth();
+
+        if (this.parent != null && this.parent.scale != 1d) {
+            gui_width = (int) Math.floor(gui_width / this.parent.scale);
+        }
+
+        return gui_width;
+    }
+
+    /**
+     * Get the height of this piece's image
+     *
      * @since   0.1.1
      */
-    public int getHeight() {
+    public int getImageHeight() {
         return image.getHeight();
     }
 
@@ -136,10 +161,10 @@ public class TexturePiece {
      *
      * @since   0.1.1
      */
-    public int getWidth() {
+    public int getImageWidth() {
 
         if (this.uses_shared_image) {
-            return this.parent.getPieceWidth();
+            return this.parent.getImagePieceWidth();
         }
 
         return image.getWidth();
@@ -153,7 +178,7 @@ public class TexturePiece {
      */
     @Override
     public String toString() {
-        String result = this.getClass().getSimpleName() + "{" + this.getPath() + ", piece=" + this.getIndex() + ", width=" + this.getWidth() + ", height=" + this.getHeight() + ", ascent=" + this.getAscent() + ", y_offset=" + this.getYOffset() + "}";
+        String result = this.getClass().getSimpleName() + "{" + this.getPath() + ", piece=" + this.getIndex() + ", image_width=" + this.getImageWidth() + ", image_height=" + this.getImageHeight() + ", ascent=" + this.getAscent() + ", y_offset=" + this.getYOffset() + "}";
         return result;
     }
 

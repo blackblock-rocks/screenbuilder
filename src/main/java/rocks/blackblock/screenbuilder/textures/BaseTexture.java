@@ -52,11 +52,20 @@ public abstract class BaseTexture {
     // Set the optional texture path
     protected Path texture_path = null;
 
-    // The height of the texture
+    // The height of the texture (as seen in the gui)
     protected int height = 0;
 
-    // The width of the texture
+    // The width of the texture (as seen in the gui)
     protected int width = 0;
+
+    // The original height of the texture
+    protected int original_height = 0;
+
+    // The original width of the texture
+    protected int original_width = 0;
+
+    // The scale of this texture (how bigger the texture is in the file)
+    protected double scale = 1;
 
     // The counter of this index
     protected Integer gui_nr = null;
@@ -266,11 +275,11 @@ public abstract class BaseTexture {
     public abstract int getAscent(int y_offset);
 
     /**
-     * Get the maximum width a piece can be
+     * Get the maximum width an image piece can be
      *
      * @since   0.1.1
      */
-    public int getMaxPieceWidth() {
+    public int getMaxImagePieceWidth() {
         return MAX_WIDTH;
     }
 
@@ -279,13 +288,13 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public int getPreferredPieceWidth() {
+    public int getPreferredImagePieceWidth() {
 
         if (this.getPreferredAmountOfPieces() != null) {
-            return this.width / this.getPreferredAmountOfPieces();
+            return this.original_width / this.getPreferredAmountOfPieces();
         }
 
-        return this.getMaxPieceWidth();
+        return this.getMaxImagePieceWidth();
     }
 
     /**
@@ -304,7 +313,7 @@ public abstract class BaseTexture {
      */
     public int getAmountOfPieces() {
         Integer min_amount = this.getPreferredAmountOfPieces();
-        int max_amount = (int) Math.ceil((double) this.width / (double) this.getPreferredPieceWidth());
+        int max_amount = (int) Math.ceil((double) this.original_width / (double) this.getPreferredImagePieceWidth());
 
         if (min_amount != null && min_amount > max_amount) {
             return min_amount;
@@ -316,8 +325,8 @@ public abstract class BaseTexture {
     /**
      * Get the width of a piece
      */
-    public int getPieceWidth() {
-        return this.getPieceWidth(0);
+    public int getImagePieceWidth() {
+        return this.getImagePieceWidth(0);
     }
 
     /**
@@ -325,8 +334,8 @@ public abstract class BaseTexture {
      *
      * @since   0.1.1
      */
-    public int getPieceWidth(int piece_index) {
-        return (int) Math.ceil((double) this.width / (double) this.getAmountOfPieces());
+    public int getImagePieceWidth(int piece_index) {
+        return (int) Math.ceil((double) this.original_width / (double) this.getAmountOfPieces());
     }
 
     /**
@@ -335,7 +344,7 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public int getTargetImageWidth() {
-        return this.getPieceWidth(0) * this.getAmountOfPieces();
+        return this.getImagePieceWidth(0) * this.getAmountOfPieces();
     }
 
     /**
@@ -344,7 +353,7 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public int getPieceSourceXStart(int piece_index) {
-        return piece_index * this.getMaxPieceWidth();
+        return piece_index * this.getMaxImagePieceWidth();
     }
 
     /**
@@ -353,7 +362,7 @@ public abstract class BaseTexture {
      * @since   0.1.1
      */
     public int getPieceSourceXEnd(int piece_index) {
-        return (piece_index * this.getMaxPieceWidth()) + this.getPieceWidth(piece_index);
+        return (piece_index * this.getMaxImagePieceWidth()) + this.getImagePieceWidth(piece_index);
     }
 
     /**
@@ -398,6 +407,15 @@ public abstract class BaseTexture {
     }
 
     /**
+     * Set the scale of this texture
+     *
+     * @since   0.3.0
+     */
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
+    /**
      * Calculate all the pieces of this texture
      * (without setting them)
      *
@@ -421,19 +439,21 @@ public abstract class BaseTexture {
             return image_pieces;
         }
 
-        this.height = source_image.getHeight();
-        this.width = source_image.getWidth();
+        this.original_height = source_image.getHeight();
+        this.original_width = source_image.getWidth();
 
-        int max_width = this.getMaxPieceWidth();
+        // Calculate the dimensions as seen in the GUI
+        this.height = (int) Math.floor(this.original_height / this.scale);
+        this.width = (int) Math.floor(this.original_width / this.scale);
 
         // Calculate the amount of pieces we need
         int pieces = this.getAmountOfPieces();
 
         int target_width = this.getTargetImageWidth();
-        int piece_width = this.getPieceWidth(0);
+        int piece_width = this.getImagePieceWidth(0);
 
         // Create the target image (the widths remain the same)
-        BufferedImage target_image = new BufferedImage(target_width, this.height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage target_image = new BufferedImage(target_width, this.original_height, BufferedImage.TYPE_INT_ARGB);
         Graphics target_graphics = target_image.getGraphics();
 
         for (int i = 0; i < pieces; i++) {
@@ -445,11 +465,11 @@ public abstract class BaseTexture {
                     source_image,
                     // Destination coordinates
                     x_start, 0,
-                    x_end, this.height,
+                    x_end, this.original_height,
 
                     // Source coordinates
                     x_start, 0,
-                    x_end, this.height,
+                    x_end, this.original_height,
                     null
             );
 
@@ -458,7 +478,7 @@ public abstract class BaseTexture {
             // Iterate over all the pixels in the last column.
             // If all the pixels are transparent,
             // we will make the top-right pixel a tiny bit opaque
-            for (int y = 0; y < this.height; y++) {
+            for (int y = 0; y < this.original_height; y++) {
                 int pixel = target_image.getRGB(x_end - 1, y);
 
                 int alpha = (pixel & 0xff000000) >>> 24;
@@ -597,7 +617,7 @@ public abstract class BaseTexture {
 
         // Should we mix texture pieces & negative spaces?
         boolean print_single_pass = true;
-        if (this.getPieceWidth() == 1 && piece_count > 6) {
+        if (this.getImagePieceWidth() == 1 && piece_count > 6) {
             print_single_pass = false;
         }
 
@@ -629,7 +649,7 @@ public abstract class BaseTexture {
                 }
 
                 placed++;
-                width += piece.getWidth();
+                width += piece.getGuiWidth();
             }
 
             if (placed > 0) {
@@ -726,7 +746,7 @@ public abstract class BaseTexture {
      */
     @Override
     public String toString() {
-        String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\", pieces=" + this.getPieceCount() + ", piecewidth=" + this.getPieceWidth() + "}";
+        String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\", pieces=" + this.getPieceCount() + ", piecewidth=" + this.getImagePieceWidth() + "}";
         return result;
     }
 
