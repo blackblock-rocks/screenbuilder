@@ -250,9 +250,15 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             int slot_y = this.getSlotY();
             Font font = Font.LH_INVENTORY_SLOT.getFontForLine(slot_y);
 
-            int text_x = x;
+            // Set the cursor to the middle of the button
+            // (A button is about 18 pixels, so 9 pixels from the left)
+            int text_x = x + 9;
 
-            text_x += (font.getWidth(this.button_text) + 9) / 2;
+            // Get the width of the text to place on the button
+            int text_width = font.getWidth(this.button_text);
+
+            // Change the cursor position so the text is centered
+            text_x -= text_width / 2;
 
             builder.setCursor(text_x);
             TextGroup group = builder.createNewGroup();
