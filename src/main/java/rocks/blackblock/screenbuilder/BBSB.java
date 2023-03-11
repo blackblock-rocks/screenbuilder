@@ -93,15 +93,15 @@ public class BBSB implements ModInitializer {
     public static final IconTexture ARROW_RIGHT_ICON = new IconTexture(id("gui/icons/arrow_right"));
     public static final IconTexture ARROW_LEFT_ICON = new IconTexture(id("gui/icons/arrow_left"));
 
-    public static final IconTexture CIRCLE_ICON = new IconTexture(id("gui/icons/circle"));
+    public static final IconTexture CIRCLE_ICON = new IconTexture(id("gui/icons/circle"), 2);
     public static final IconTexture CLOUD_ICON = new IconTexture(id("gui/icons/cloud"));
     public static final IconTexture EXCLAMATION_ICON = new IconTexture(id("gui/icons/exclamation"));
     public static final IconTexture HOME_ICON = new IconTexture(id("gui/icons/home"));
     public static final IconTexture CYCLE_ICON = new IconTexture(id("gui/icons/recycle"));
     public static final IconTexture REDO_ICON = new IconTexture(id("gui/icons/redo"));
     public static final IconTexture UNDO_ICON = new IconTexture(id("gui/icons/undo"));
-    public static final IconTexture STRIKE_ICON = new IconTexture(id("gui/icons/strike_thin"));
-    public static final IconTexture STRIKE_THICK_ICON = new IconTexture(id("gui/icons/strike_thick"));
+    public static final IconTexture STRIKE_ICON = new IconTexture(id("gui/icons/strike_thin"), 2);
+    public static final IconTexture STRIKE_THICK_ICON = new IconTexture(id("gui/icons/strike_thick"), 2);
     public static final IconTexture TRIANGLE_ICON = new IconTexture(id("gui/icons/triangle"));
     public static final IconTexture SUN_ICON = new IconTexture(id("gui/icons/sun"));
     public static final IconTexture MOON_ICON = new IconTexture(id("gui/icons/moon"));
@@ -117,6 +117,8 @@ public class BBSB implements ModInitializer {
     public static final IconTexture FOLDER_ICON = new IconTexture(id("gui/icons/folder"));
     public static final IconTexture CHECK_ICON = new IconTexture(id("gui/icons/check"));
     public static final IconTexture CROSS_ICON = new IconTexture(id("gui/icons/cross"));
+    public static final IconTexture CITY_ICON = new IconTexture(id("gui/icons/city"), 2);
+    public static final IconTexture WORLD_ICON = new IconTexture(id("gui/icons/world"), 2);
 
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
@@ -298,6 +300,8 @@ public class BBSB implements ModInitializer {
                 FOLDER_ICON,
                 CHECK_ICON,
                 CROSS_ICON,
+                CITY_ICON,
+                WORLD_ICON,
             };
 
             for (int i = 0; i < 4; i++) {
@@ -311,6 +315,7 @@ public class BBSB implements ModInitializer {
         }
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+
             // Make sure PX01 is loaded
             PixelFontCollection.PX01.getHeight();
 

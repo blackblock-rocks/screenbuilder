@@ -52,7 +52,6 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
     // Map the slots to the entries
     private Map<Integer, PathEntry> slot_map = new HashMap<>();
 
-
     // Show files?
     protected boolean show_files = true;
 
@@ -264,7 +263,6 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
             NamedScreenHandlerFactory factory = screen.getOriginFactory();
 
             if (factory instanceof FileInput input) {
-                ItemStack stack = slot.getStack();
 
                 PathEntry entry = input.getEntryBySlotIndex(slot.getScreenIndex());
 
@@ -404,7 +402,7 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
      * Get the value of the given widget
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @since   0.1.0
+     * @since   0.3.0
      */
     @Override
     public Object getWidgetValue(String widget_id) {
@@ -420,7 +418,7 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
      * Set a widget value
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @since   0.1.0
+     * @since   0.3.0
      */
     @Override
     public void setWidgetValue(String widget_id, Object value) {
