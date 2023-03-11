@@ -587,21 +587,29 @@ public abstract class BaseTexture {
         // Get the current cursor position
         int start_cursor = builder.getRawCursorPosition();
 
-        // Get the screenbuilder
+        // Get the screenbuilder, if it exists
         ScreenBuilder screenBuilder = builder.getScreenBuilder();
 
-        // Get the gui texture (if any)
-        GuiTexture gui_texture = screenBuilder.getFontTexture();
+        int container_y;
+        int title_y;
 
-        // Get the coordinate to use in the container
-        int container_y = screenBuilder.getContainerY(gui_y);
-        //int container_y = screenBuilder.calculateTitleOffsetY(gui_y);
-        //int container_y = gui_y;
+        if (screenBuilder != null) {
 
-        int title_y = screenBuilder.convertToUnderlyingTitleY(gui_y);
+            // Get the gui texture (if any)
+            GuiTexture gui_texture = screenBuilder.getFontTexture();
 
-        // Register the container gui_y
-        this.registerYOffset(container_y);
+            // Get the coordinate to use in the container
+            container_y = screenBuilder.getContainerY(gui_y);
+            //int container_y = screenBuilder.calculateTitleOffsetY(gui_y);
+            //int container_y = gui_y;
+
+            title_y = screenBuilder.convertToUnderlyingTitleY(gui_y);
+
+            // Register the container gui_y
+            this.registerYOffset(container_y);
+        } else {
+            title_y = gui_y;
+        }
 
         // Make sure the cursor is at the wanted position
         builder.setCursor(gui_x);
