@@ -249,6 +249,16 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Is the player holding down shift?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    public boolean isPressingShift() {
+        return this.current_action_type == SlotActionType.QUICK_MOVE;
+    }
+
+    /**
      * Are we currently swapping?
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>

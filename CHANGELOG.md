@@ -1,4 +1,11 @@
-# 0.2.1 (WIP)
+## 0.3.0 (2023-03-11)
+
+* Upgrade to 1.19.3
+* Add support for scaled icons
+* Add new select input
+* Add file selector input
+
+## 0.2.1 (2022-12-27)
 
 * Add icons
 * Allow textures to be recoloured
