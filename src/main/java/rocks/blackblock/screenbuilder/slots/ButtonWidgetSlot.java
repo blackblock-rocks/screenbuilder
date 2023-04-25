@@ -29,6 +29,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     private MutableText title = null;
     private MutableText lore = null;
     private BackgroundType background_type = null;
+    private boolean show_background_image = true;
     private String button_text = null;
     private TextColor background_colour = null;
 
@@ -124,6 +125,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         slot.background_type = this.background_type;
+        slot.show_background_image = this.show_background_image;
 
         ItemStack stack = this.getStack();
 
@@ -147,13 +149,24 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     }
 
     /**
-     * Set the background type
+     * Set the background type and use the default image for it
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3
      */
     public ButtonWidgetSlot setBackgroundType(BackgroundType type) {
+        return this.setBackgroundType(type, true);
+    }
+
+    /**
+     * Set the background type & optionally show the background image
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    public ButtonWidgetSlot setBackgroundType(BackgroundType type, boolean show_background_image) {
         this.background_type = type;
+        this.show_background_image = show_background_image;
         return this;
     }
 
@@ -205,14 +218,16 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             return;
         }
 
-        BaseTexture button_image;
+        BaseTexture button_image = null;
 
-        button_image = switch (this.background_type) {
-            case LARGE -> BBSB.BUTTON_LARGE;
-            case MEDIUM -> BBSB.BUTTON_MEDIUM;
-            case SMALL, LOWER_SMALL -> BBSB.BUTTON_SMALL;
-            case EXTRA_SMALL -> BBSB.BUTTON_EXTRA_SMALL;
-        };
+        if (this.show_background_image) {
+            button_image = switch (this.background_type) {
+                case LARGE -> BBSB.BUTTON_LARGE;
+                case MEDIUM -> BBSB.BUTTON_MEDIUM;
+                case SMALL, LOWER_SMALL -> BBSB.BUTTON_SMALL;
+                case EXTRA_SMALL -> BBSB.BUTTON_EXTRA_SMALL;
+            };
+        }
 
         // The different type of button images have different sizes,
         // so they don't all start at the top left corner of the slot.
@@ -240,11 +255,14 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         int x = this.getSlotXInPixels() + offset;
         int y = this.getSlotYInPixels() + offset;
 
-        if (this.background_colour != null) {
-            button_image = button_image.getColoured(this.background_colour);
-        }
+        if (button_image != null) {
 
-        button_image.addToBuilder(builder, x, y);
+            if (this.background_colour != null) {
+                button_image = button_image.getColoured(this.background_colour);
+            }
+
+            button_image.addToBuilder(builder, x, y);
+        }
 
         if (this.button_text != null) {
             int slot_y = this.getSlotY();
