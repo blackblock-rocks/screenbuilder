@@ -175,7 +175,12 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
             item_count = this.options.size();
         }
 
-        int max_page_value = (int) Math.ceil(item_count / (double) slots_per_page);
+        int max_page_value = 1;
+
+        if (item_count > 0) {
+            max_page_value = Math.max(1, (int) Math.ceil(item_count / (double) slots_per_page));
+        }
+
         int start = (page - 1) * slots_per_page;
         int end = Math.min(start + slots_per_page, item_count);
 

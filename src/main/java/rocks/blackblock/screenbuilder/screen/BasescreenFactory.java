@@ -7,6 +7,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 
@@ -82,6 +83,11 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
 
         TexturedScreenHandler handler;
         ScreenBuilder sb = this.getScreenBuilder();
+
+        if (sb == null) {
+            BBSB.LOGGER.error("No ScreenBuilder found for {}", this.getClass().getName());
+            return null;
+        }
 
         if (this instanceof Inventory inventory) {
             handler = sb.createScreenHandler(sync_id, player_inventory, inventory);
