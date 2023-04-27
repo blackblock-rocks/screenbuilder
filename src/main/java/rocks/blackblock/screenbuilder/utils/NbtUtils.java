@@ -6,8 +6,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.interfaces.CompareForScenario;
+
+import java.util.List;
 
 public class NbtUtils {
 
@@ -53,6 +56,23 @@ public class NbtUtils {
         }
 
         list.add(NbtString.of(Text.Serializer.toJson(text)));
+
+        display.put(ItemStack.LORE_KEY, list);
+    }
+
+    /**
+     * Replace the lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public static void replaceLore(ItemStack stack, List<MutableText> lines) {
+        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
+        NbtList list = new NbtList();
+
+        for (Text text : lines) {
+            list.add(NbtString.of(Text.Serializer.toJson(text)));
+        }
 
         display.put(ItemStack.LORE_KEY, list);
     }

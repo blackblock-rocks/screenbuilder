@@ -1,6 +1,7 @@
 ## 0.3.1 (WIP)
 
 * Get the correct title when using a ScreenBuilder as a screen factory
+* Support newlines when setting lore on a `ButtonWidgetSlot`
 
 ## 0.3.0 (2023-03-11)
 

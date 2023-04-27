@@ -16,6 +16,9 @@ import rocks.blackblock.screenbuilder.textures.IconTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ButtonWidgetSlot extends ListenerWidgetSlot {
 
     public enum BackgroundType {
@@ -27,7 +30,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     }
 
     private MutableText title = null;
-    private MutableText lore = null;
+    private List<MutableText> lore = null;
     private BackgroundType background_type = null;
     private boolean show_background_image = true;
     private String button_text = null;
@@ -51,10 +54,12 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ButtonWidgetSlot setLore(MutableText lore) {
-        this.lore = lore;
+
+        this.lore = new ArrayList<>();
+        this.lore.add(lore);
+
         this.updateStack();
         return this;
     }
@@ -64,21 +69,62 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ButtonWidgetSlot setTitle(String title) {
         return this.setTitle(Text.literal(title).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
     }
 
     /**
-     * Set the lore of this button
+     * Set the lore of this button.
+     * The lore can contain newlines (\n)
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ButtonWidgetSlot setLore(String lore) {
-        return this.setLore(Text.literal(lore).setStyle(Style.EMPTY.withItalic(false)));
+
+        this.lore = new ArrayList<>();
+
+        // If the lore contains newlines, split it up
+        if (lore.contains("\n")) {
+            String[] lines = lore.split("\n");
+
+            for (String line : lines) {
+                this.appendLoreLine(line);
+            }
+        } else {
+            this.appendLoreLine(lore);
+        }
+
+        this.updateStack();
+
+        return this;
+    }
+
+    /**
+     * Add a line of pre-spliced lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    private void appendLoreLine(String line) {
+        MutableText text_line = Text.literal(line).setStyle(Style.EMPTY.withItalic(false));
+        this.appendLoreLine(text_line);
+    }
+
+    /**
+     * Add a line of lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.0
+     */
+    private void appendLoreLine(MutableText line) {
+
+        if (this.lore == null) {
+            this.lore = new ArrayList<>();
+        }
+
+        this.lore.add(line);
     }
 
     /**
@@ -101,7 +147,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         if (this.lore != null) {
-            NbtUtils.appendLore(stack, this.lore);
+            NbtUtils.replaceLore(stack, this.lore);
             this.markDirty();
         }
 
