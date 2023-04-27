@@ -25,6 +25,7 @@ import rocks.blackblock.screenbuilder.inventories.BaseInventory;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.mixin.ScreenHandlerAccessor;
 import rocks.blackblock.screenbuilder.mixin.ServerPlayerEntityAccessor;
+import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
 import rocks.blackblock.screenbuilder.slots.BaseSlot;
 import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
@@ -1324,7 +1325,9 @@ public class TexturedScreenHandler extends ScreenHandler {
         if (title == null) {
             NamedScreenHandlerFactory factory = this.getOriginFactory();
 
-            if (factory != null) {
+            if (factory instanceof BasescreenFactory basescreen_factory) {
+                title = basescreen_factory.getNonDefaultDisplayName();
+            } else if (factory != null) {
                 title = factory.getDisplayName();
             }
 

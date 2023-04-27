@@ -1,3 +1,7 @@
+## 0.3.1 (WIP)
+
+* Get the correct title when using a ScreenBuilder as a screen factory
+
 ## 0.3.0 (2023-03-11)
 
 * Upgrade to 1.19.3

@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -45,6 +46,17 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Get the non-default name to put on this screen
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.3.1
+     */
+    @Nullable
+    public Text getNonDefaultDisplayName() {
+        return this.display_name_text;
+    }
+
+    /**
      * Get the name to put on this screen
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
@@ -52,6 +64,7 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
      * @version 0.1.0
      */
     @Override
+    @NotNull
     public Text getDisplayName() {
 
         if (this.display_name_text != null) {
