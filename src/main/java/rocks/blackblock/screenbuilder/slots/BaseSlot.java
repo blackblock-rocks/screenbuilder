@@ -1,19 +1,15 @@
 package rocks.blackblock.screenbuilder.slots;
 
-import net.minecraft.client.gui.screen.Overlay;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
-import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 
-import javax.swing.plaf.basic.BasicButtonListener;
 import java.util.ArrayList;
 import java.util.List;
 

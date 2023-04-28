@@ -839,7 +839,6 @@ public class TexturedScreenHandler extends ScreenHandler {
                 }
             }
         }
-
     }
 
     /**
@@ -850,13 +849,14 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @param    player      The player that was using this GUI
      */
-    public void close(PlayerEntity player) {
+    @Override
+    public void onClosed(PlayerEntity player) {
 
         if (this.builder != null) {
             this.builder.handleClose(player);
         }
 
-        super.close(player);
+        super.onClosed(player);
         this.dropInputs(player);
 
         if (this.base_inventory != null) {

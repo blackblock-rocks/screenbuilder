@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.inputs;
 
-import net.minecraft.client.input.Input;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
