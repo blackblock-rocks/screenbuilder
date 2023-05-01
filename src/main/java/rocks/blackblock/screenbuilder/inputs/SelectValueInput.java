@@ -12,10 +12,7 @@ import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Select a value from a list of options
@@ -67,6 +64,16 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
      */
     public void addOption(T option) {
         this.options.add(option);
+    }
+
+    /**
+     * Add multiple options
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.3.1
+     */
+    public void addOptions(Collection<T> options) {
+        this.options.addAll(options);
     }
 
     /**
