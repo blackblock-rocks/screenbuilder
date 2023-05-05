@@ -1046,15 +1046,16 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
-    public void showPreviousScreen() {
+    public TexturedScreenHandler showPreviousScreen() {
 
         if (this.previous_factory != null) {
-            this.showScreen(this.previous_factory);
+            return this.showScreen(this.previous_factory);
         } else {
             this.close();
         }
+
+        return null;
     }
 
     /**

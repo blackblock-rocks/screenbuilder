@@ -3,6 +3,7 @@ package rocks.blackblock.screenbuilder.inputs;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.RenamedEventListener;
 
 public class StringInput extends BaseInput {
@@ -21,7 +22,6 @@ public class StringInput extends BaseInput {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setRenamedListener(RenamedEventListener listener) {
         this.on_rename_listener = listener;
@@ -32,7 +32,6 @@ public class StringInput extends BaseInput {
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.0
-     * @version 0.1.0
      */
     @Override
     public ScreenBuilder getScreenBuilder() {
@@ -44,7 +43,6 @@ public class StringInput extends BaseInput {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public static ScreenBuilder registerScreen() {
 
@@ -63,12 +61,14 @@ public class StringInput extends BaseInput {
 
             if (factory instanceof StringInput input) {
 
+                String new_value = screen.getRenamedValue();
+
                 // Handle screen behaviour first (might close this screen)
-                input.handleScreenBehaviour(screen);
+                TexturedScreenHandler new_screen = input.handleScreenBehaviour(screen);
 
                 // Call rename listener afterwards
                 if (input.on_rename_listener != null) {
-                    input.on_rename_listener.onRenamed(screen, screen.getRenamedValue());
+                    input.on_rename_listener.onRenamed(new_screen, new_value);
                 }
 
             } else {

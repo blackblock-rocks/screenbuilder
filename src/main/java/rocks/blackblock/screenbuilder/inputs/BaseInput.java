@@ -1,5 +1,6 @@
 package rocks.blackblock.screenbuilder.inputs;
 
+import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -160,23 +161,24 @@ public abstract class BaseInput extends BasescreenFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
-    public void handleScreenBehaviour(TexturedScreenHandler screen) {
+    @Nullable
+    public TexturedScreenHandler handleScreenBehaviour(TexturedScreenHandler screen) {
 
         if (this.change_behaviour == ChangeBehaviour.DO_NOTHING) {
-            return;
+            return screen;
         }
 
         if (this.change_behaviour == ChangeBehaviour.SHOW_PREVIOUS_SCREEN) {
-            screen.showPreviousScreen();
-            return;
+            return screen.showPreviousScreen();
         }
 
         if (this.change_behaviour == ChangeBehaviour.CLOSE_SCREEN) {
             screen.close();
-            return;
+            return null;
         }
+
+        return null;
     }
 
     /**
