@@ -964,6 +964,16 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * Set the display name
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void setDisplayName(String display_name) {
+        this.setDisplayName(Text.literal(display_name));
+    }
+
+    /**
+     * Set the display name
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
      */
     public void setDisplayName(Text display_name) {
