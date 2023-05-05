@@ -11,7 +11,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-public class ObjectValue extends Value {
+public class ObjectValue extends Value<Object> {
     @Override
     public Item getIcon() {
         return Items.BARREL;

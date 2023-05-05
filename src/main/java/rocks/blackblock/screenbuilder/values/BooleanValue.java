@@ -17,7 +17,7 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BooleanInput;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
-public class BooleanValue extends Value {
+public class BooleanValue extends Value<Boolean> {
 
     @Override
     public Item getIcon() {
@@ -65,7 +65,6 @@ public class BooleanValue extends Value {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     @Override
     public Boolean getValue() {
@@ -74,7 +73,7 @@ public class BooleanValue extends Value {
             return false;
         }
 
-        return (Boolean) this.value;
+        return this.value;
     }
 
     @Override

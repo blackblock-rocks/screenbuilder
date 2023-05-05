@@ -19,7 +19,7 @@ import rocks.blackblock.screenbuilder.inputs.BaseInput;
 import rocks.blackblock.screenbuilder.inputs.StringInput;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
-public class NumberValue extends Value {
+public class NumberValue extends Value<Double> {
 
     /**
      * Get an Item representation
@@ -75,7 +75,7 @@ public class NumberValue extends Value {
             return 0D;
         }
 
-        return (Double) this.value;
+        return this.value;
     }
 
     @Override

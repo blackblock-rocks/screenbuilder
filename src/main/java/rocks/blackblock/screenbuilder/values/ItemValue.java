@@ -17,29 +17,12 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.ItemInput;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
-public class ItemValue extends Value {
+public class ItemValue extends Value<ItemStack> {
 
     protected Boolean check_damage = null;
     protected Boolean check_name = null;
     protected Boolean check_nbt = null;
     protected NbtCompound boolean_data = null;
-
-    /**
-     * Get the actual value
-     *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
-     * @since    0.1.1
-     * @version  0.1.1
-     */
-    @Override
-    public ItemStack getValue() {
-
-        if (this.value == null) {
-            return null;
-        }
-
-        return (ItemStack) this.value;
-    }
 
     /**
      * Does this value equal the given one?

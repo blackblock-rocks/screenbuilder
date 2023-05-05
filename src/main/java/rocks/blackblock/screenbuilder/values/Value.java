@@ -9,9 +9,9 @@ import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 
-public abstract class Value implements NamedScreenHandlerFactory {
+public abstract class Value<ContainedType> implements NamedScreenHandlerFactory {
 
-    protected Object value;
+    protected ContainedType value = null;
 
     /**
      * Get an Item representation
@@ -83,7 +83,6 @@ public abstract class Value implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      *
      * @param    other   The other value to compare against
      */
@@ -105,9 +104,8 @@ public abstract class Value implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
-    public void setValue(Object value) {
+    public void setValue(ContainedType value) {
         this.value = value;
     };
 
@@ -116,9 +114,8 @@ public abstract class Value implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
-    public Object getValue() {
+    public ContainedType getValue() {
         return this.value;
     }
 

@@ -20,7 +20,7 @@ import rocks.blackblock.screenbuilder.inputs.BaseInput;
 import rocks.blackblock.screenbuilder.inputs.StringInput;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
-public class StringValue extends Value {
+public class StringValue extends Value<String> {
 
     @Override
     public Item getIcon() {
@@ -55,13 +55,12 @@ public class StringValue extends Value {
 
     @Override
     public String getValue() {
-        Object value = super.getValue();
 
-        if (value == null || !(value instanceof String str)) {
+        if (this.value == null) {
             return "";
         }
 
-        return str;
+        return this.value;
     }
 
     @Override
