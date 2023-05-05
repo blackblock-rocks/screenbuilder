@@ -87,10 +87,13 @@ public class SettingValue extends Value {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public void setValue(Object value) {
         this.value.setValue(value);
+
+        if (this.on_change != null) {
+            this.on_change.run();
+        }
     };
 
     /**
@@ -190,6 +193,13 @@ public class SettingValue extends Value {
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+
+        this.value.setOnChange(() -> {
+            if (this.on_change != null) {
+                this.on_change.run();
+            }
+        });
+
         return this.value.createMenu(syncId, inv, player);
     }
 }

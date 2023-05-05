@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public abstract class Value<ContainedType> implements NamedScreenHandlerFactory {
 
     protected ContainedType value = null;
+    protected Runnable on_change = null;
 
     /**
      * Get an Item representation
@@ -100,6 +101,16 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
     public abstract ItemStack getStack(ItemStack result);
 
     /**
+     * Set a callback to run when the value changes
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void setOnChange(Runnable callback) {
+        this.on_change = callback;
+    }
+
+    /**
      * Set the value
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -107,6 +118,10 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      */
     public void setValue(ContainedType value) {
         this.value = value;
+
+        if (this.on_change != null) {
+            this.on_change.run();
+        }
     };
 
     /**

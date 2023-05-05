@@ -3,6 +3,9 @@
 * Upgrade to 1.19.4
 * Get the correct title when using a ScreenBuilder as a screen factory
 * Support newlines when setting lore on a `ButtonWidgetSlot`
+* Allow setting a ScreenBuilder's display name with just a string
+* Add generics to the Value class
+* Add `Value#setOnChange(Runnable)` method
 
 ## 0.3.0 (2023-03-11)
 
