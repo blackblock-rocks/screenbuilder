@@ -169,7 +169,6 @@ public class WidgetTexture extends BaseTexture {
     @Override
     public int getAscent(int y_offset) {
         int result = -y_offset;
-
         return result;
     }
 
