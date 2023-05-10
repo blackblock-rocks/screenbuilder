@@ -28,6 +28,28 @@ public class BookletAnswerInput extends BookletInput {
     protected List<Answer> answers = new ArrayList<>();
 
     /**
+     * Clear everything
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    @Override
+    public void clearAll() {
+        this.clearAnswers();
+        super.clearAll();
+    }
+
+    /**
+     * Clear all the answers
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void clearAnswers() {
+        this.answers.clear();
+    }
+
+    /**
      * Add an answer
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>

@@ -25,6 +25,28 @@ public class BookletOfferItemInput extends BookletAnswerInput {
     protected List<Answer> offers = new ArrayList<>();
 
     /**
+     * Clear everything
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    @Override
+    public void clearAll() {
+        this.clearOffers();
+        super.clearAll();
+    }
+
+    /**
+     * Clear the offers
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void clearOffers() {
+        this.offers.clear();
+    }
+
+    /**
      * Add an item to offer
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -50,10 +72,6 @@ public class BookletOfferItemInput extends BookletAnswerInput {
 
         List<Answer> result = new ArrayList<>();
         List<Integer> indexes = this.getSlotIndexesToUseForOffers();
-
-        BBSB.log("There are", this.offers.size(), "offers available");
-        BBSB.log("There are", indexes.size(), "indexes available");
-        BBSB.log("There are", this.answers.size(), "answers to show");
 
         if (indexes.isEmpty()) {
             return result;

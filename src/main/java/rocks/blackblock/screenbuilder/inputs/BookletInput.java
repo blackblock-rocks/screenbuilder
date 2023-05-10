@@ -62,6 +62,26 @@ public class BookletInput extends EmptyInput {
     }
 
     /**
+     * Clear everything
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void clearAll() {
+        this.clearText();
+    }
+
+    /**
+     * Clear all the text
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public void clearText() {
+        this.text.clear();
+    }
+
+    /**
      * Print text and a new line
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
