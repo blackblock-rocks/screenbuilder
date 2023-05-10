@@ -3,8 +3,10 @@ package rocks.blackblock.screenbuilder.textures;
 import io.github.theepicblock.polymc.api.resource.ModdedResources;
 import io.github.theepicblock.polymc.api.resource.PolyMcResourcePack;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
+import net.minecraft.block.MapColor;
 import net.minecraft.text.Style;
 import net.minecraft.text.TextColor;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -113,6 +115,48 @@ public abstract class BaseTexture {
         for (BaseTexture texture : TEXTURES) {
             texture.calculate();
         }
+    }
+
+    /**
+     * Get a coloured version of this texture
+     *
+     * @since   0.3.1
+     */
+    public BaseTexture getColoured(MapColor colour) {
+
+        if (colour == null) {
+            return this;
+        }
+
+        TextColor text_color = TextColor.fromRgb(colour.color);
+
+        return this.getColoured(text_color);
+    }
+
+    /**
+     * Get a coloured version of this texture
+     *
+     * @since   0.3.1
+     */
+    public BaseTexture getColoured(DyeColor colour) {
+
+        if (colour == null) {
+            return this;
+        }
+
+        float[] colours = colour.getColorComponents();
+
+        int r = (int) (colours[0] * 255);
+        int g = (int) (colours[1] * 255);
+        int b = (int) (colours[2] * 255);
+
+        // Get a big RGB integer
+        int rgb = (r << 16) | (g << 8) | b;
+
+        TextColor text_color = TextColor.fromRgb(rgb);
+
+        return this.getColoured(text_color);
+
     }
 
     /**
