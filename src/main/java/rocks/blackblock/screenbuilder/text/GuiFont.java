@@ -82,10 +82,21 @@ public class GuiFont extends Font {
 
                 JsonObject provider = new JsonObject();
 
+                int ascent = piece.getAscent();
+                int height = piece.getGuiHeight();
+
+                // If the ascent is larger than the height,
+                // minecraft will refuse to load the entire font
+                if (ascent > height) {
+                    ascent = height;
+
+                    BBSB.log("The ascent of " + piece.getJsonFilename() + " is larger than its height, this will cause issues!");
+                }
+
                 provider.addProperty("type", "bitmap");
                 provider.addProperty("file", piece.getJsonFilename());
-                provider.addProperty("ascent", piece.getAscent());
-                provider.addProperty("height", piece.getGuiHeight());
+                provider.addProperty("ascent", ascent);
+                provider.addProperty("height", height);
 
                 chars = new JsonArray();
                 provider.add("chars", chars);
