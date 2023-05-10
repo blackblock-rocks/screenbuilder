@@ -3,13 +3,12 @@ package rocks.blackblock.screenbuilder.server;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -23,11 +22,9 @@ import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 
-import javax.swing.plaf.basic.BasicButtonListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +35,8 @@ import static net.minecraft.server.command.CommandManager.literal;
  */
 public class ScreenbuilderCommands {
     public static void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("bbsb").requires(source -> source.hasPermissionLevel(2))
                     .then(literal("json")
                             .then(CommandManager.argument("targets", EntityArgumentType.players())
