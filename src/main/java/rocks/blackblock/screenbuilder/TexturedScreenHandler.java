@@ -1135,19 +1135,25 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
-    public void pushScreen(NamedScreenHandlerFactory factory) {
+    public boolean pushScreen(NamedScreenHandlerFactory factory) {
+
+        if (factory == null) {
+            return false;
+        }
 
         TexturedScreenHandler handler = this.showScreen(factory);
 
         if (handler == null) {
-            return;
+            return false;
         }
 
         if (this.origin_factory != null) {
             handler.setPreviousFactory(this.origin_factory);
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -1156,17 +1162,24 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3
      */
-    public void replaceScreen(NamedScreenHandlerFactory factory) {
+    public boolean replaceScreen(NamedScreenHandlerFactory factory) {
+
+        if (factory == null) {
+            return false;
+        }
 
         TexturedScreenHandler handler = this.showScreen(factory);
 
         if (handler == null) {
-            return;
+            return false;
         }
 
         if (this.previous_factory != null) {
             handler.setPreviousFactory(this.previous_factory);
+            return true;
         }
+
+        return false;
     }
 
     /**
