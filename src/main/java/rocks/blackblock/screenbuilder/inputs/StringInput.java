@@ -66,6 +66,10 @@ public class StringInput extends BaseInput {
                 // Handle screen behaviour first (might close this screen)
                 TexturedScreenHandler new_screen = input.handleScreenBehaviour(screen);
 
+                if (new_screen == null) {
+                    new_screen = screen;
+                }
+
                 // Call rename listener afterwards
                 if (input.on_rename_listener != null) {
                     input.on_rename_listener.onRenamed(new_screen, new_value);
