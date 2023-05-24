@@ -44,7 +44,7 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
     protected AcceptedValueListener<T> on_accepted_value_listener = null;
 
     // Extra buttons
-    protected List<CustomButtonAdder> extra_button_adders = new ArrayList<>();
+    protected List<CustomButtonAdderEntry> extra_button_adders = new ArrayList<>();
 
     /**
      * Is a confirm button needed?
@@ -103,7 +103,17 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
      * @since   0.3.0
      */
     public void addButton(CustomButtonAdder adder) {
-        this.extra_button_adders.add(adder);
+        this.extra_button_adders.add(new CustomButtonAdderEntry(adder));
+    }
+
+    /**
+     * Add a new button to the screen, but prefer the given index
+     *
+     * @author  Jelle De Loecker   <jelle@elevenways.be>
+     * @since   0.3.0
+     */
+    public void addButton(int preferred_slot, CustomButtonAdder adder) {
+        this.extra_button_adders.add(new CustomButtonAdderEntry(adder, preferred_slot));
     }
 
     /**
@@ -198,6 +208,8 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
 
         this.slot_map.clear();
 
+        Set<Integer> used_slots = new HashSet<>();
+
         // The actual slot listener
         SlotEventListener slot_listener = (screen, slot) -> {
 
@@ -235,6 +247,12 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
             }
 
             if (item_count > 36) {
+
+                used_slots.add(45);
+                used_slots.add(46);
+                used_slots.add(47);
+                used_slots.add(48);
+
                 PaginationWidget pagination = new PaginationWidget();
                 pagination.setId("pagination");
                 pagination.setSlotIndex(45);
@@ -258,6 +276,7 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
         int current_index = 44;
 
         if (this.require_confirm_button) {
+            used_slots.add(current_index);
             ButtonWidgetSlot confirm_button = sb.addButton(current_index);
             confirm_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
             confirm_button.addOverlay(BBSB.CHECK_ICON.getColoured(TextColor.fromRgb(0x15b700)));
@@ -272,14 +291,29 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
 
         if (!this.extra_button_adders.isEmpty()) {
 
-            for (CustomButtonAdder adder : this.extra_button_adders) {
-                ButtonWidgetSlot button = adder.addButton(sb, current_index);
+            for (CustomButtonAdderEntry entry : this.extra_button_adders) {
+                CustomButtonAdder adder = entry.adder;
+                Integer preferred_slot = entry.preferred_slot;
+
+                Integer slot_index = null;
+
+                if (preferred_slot != null && preferred_slot >= current_index && !used_slots.contains(preferred_slot)) {
+                    slot_index = preferred_slot;
+                    used_slots.add(preferred_slot);
+                } else {
+                    preferred_slot = null;
+                    slot_index = current_index;
+                }
+
+                ButtonWidgetSlot button = adder.addButton(sb, slot_index);
 
                 if (button == null) {
                     continue;
                 }
 
-                current_index--;
+                if (preferred_slot == null || preferred_slot == current_index) {
+                    current_index--;
+                }
 
                 if (has_pagination) {
                     if (current_index < 49 && current_index > 44) {
@@ -355,6 +389,27 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
      */
     public interface OptionDecorator<T> {
         void decorateOption(ScreenBuilder sb, T option, ButtonWidgetSlot button);
+    }
+
+    /**
+     * The custom button class
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public static class CustomButtonAdderEntry {
+
+        protected final CustomButtonAdder adder;
+        protected Integer preferred_slot = null;
+
+        public CustomButtonAdderEntry(CustomButtonAdder adder) {
+            this.adder = adder;
+        }
+
+        public CustomButtonAdderEntry(CustomButtonAdder adder, int preferred_slot) {
+            this.adder = adder;
+            this.preferred_slot = preferred_slot;
+        }
     }
 
     /**

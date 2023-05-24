@@ -153,10 +153,17 @@ public abstract class BaseTexture {
         // Get a big RGB integer
         int rgb = (r << 16) | (g << 8) | b;
 
+        return this.getColoured(rgb);
+    }
+
+    /**
+     * Get a coloured version of this texture
+     *
+     * @since   0.3.1
+     */
+    public BaseTexture getColoured(int rgb) {
         TextColor text_color = TextColor.fromRgb(rgb);
-
         return this.getColoured(text_color);
-
     }
 
     /**
