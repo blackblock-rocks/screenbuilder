@@ -57,6 +57,8 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
             GuiUtils.writeToPath(location, LineHeightFont.getFontImage(1));
         });
 
+        overrideInventoryTranslation(moddedResources, pack);
+
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/pixel.png");
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/space_nosplit.png");
         copyFile(moddedResources, pack, BBSB.NAMESPACE, "textures/font/space_split.png");
@@ -69,6 +71,33 @@ public class ScreenBuilderPoly implements PolyMcEntrypoint {
         PixelFontCollection.PX01.addToResourcePack(moddedResources, pack, logger);
 
         BaseTexture.addToResourcePack(moddedResources, pack, logger);
+    }
+
+    /**
+     * Override the "Inventory" translation
+     *
+     * @since   0.3.1
+     */
+    private static void overrideInventoryTranslation(ModdedResources moddedResources, PolyMcResourcePack pack) {
+
+        byte[] bytes = null;
+
+        try {
+            bytes = moddedResources.getInputStream(BBSB.NAMESPACE, "lang/mc_override.json").readAllBytes();
+        } catch (Exception e) {
+            return;
+        }
+
+        if (bytes == null) {
+            return;
+        }
+
+        byte[] finalBytes = bytes;
+
+        // @TODO: all other languages
+        pack.setAsset("minecraft", "lang/en_us.json", (location, gson) -> {
+            GuiUtils.writeToPath(location, finalBytes);
+        });
     }
 
     /**
