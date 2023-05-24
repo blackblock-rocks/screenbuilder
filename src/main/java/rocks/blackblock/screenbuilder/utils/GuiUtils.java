@@ -5,8 +5,10 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -274,6 +276,32 @@ public class GuiUtils {
         }
         byte[] bytes = baos.toByteArray();
         return bytes;
+    }
+
+    /**
+     * Send the player's inventory to the client
+     *
+     * @param   player   The actual player
+     *
+     * @since   0.3.1
+     */
+    public static void sendPlayerInventory(PlayerEntity player) {
+        if (player instanceof ServerPlayerEntity spe) {
+            sendPlayerInventory(spe);
+        }
+    }
+
+    /**
+     * Send the player's inventory to the client
+     *
+     * @param   player   The actual player
+     *
+     * @since   0.3.1
+     */
+    public static void sendPlayerInventory(ServerPlayerEntity player) {
+        PlayerScreenHandler handler = player.playerScreenHandler;
+        InventoryS2CPacket packet = new InventoryS2CPacket(handler.syncId, handler.nextRevision(), handler.getStacks(), handler.getCursorStack());
+        player.networkHandler.sendPacket(packet);
     }
 
 }

@@ -31,6 +31,7 @@ import rocks.blackblock.screenbuilder.slots.SlotBuilder;
 import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.slots.WidgetSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.utils.GuiUtils;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
@@ -872,6 +873,10 @@ public class TexturedScreenHandler extends ScreenHandler {
                 this.simple_inventory.removeListener(this.listener);
             }
         }
+
+        // Send the player their inventory again
+        // (Especially needed when the GUI used the player's inventory)
+        GuiUtils.sendPlayerInventory(player);
     }
 
     /**
