@@ -119,6 +119,9 @@ public class BBSB implements ModInitializer {
     public static final IconTexture CROSS_ICON = new IconTexture(id("gui/icons/cross"));
     public static final IconTexture CITY_ICON = new IconTexture(id("gui/icons/city"), 2);
     public static final IconTexture WORLD_ICON = new IconTexture(id("gui/icons/world"), 2);
+    public static final IconTexture PEOPLE_ICON = new IconTexture(id("gui/icons/people"), 2);
+    public static final IconTexture FLAG_ICON = new IconTexture(id("gui/icons/flag"), 2);
+    public static final IconTexture PERSON_ICON = new IconTexture(id("gui/icons/person"), 2);
 
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
@@ -302,6 +305,9 @@ public class BBSB implements ModInitializer {
                 CROSS_ICON,
                 CITY_ICON,
                 WORLD_ICON,
+                FLAG_ICON,
+                PEOPLE_ICON,
+                PERSON_ICON
             };
 
             for (int i = 0; i < 4; i++) {
