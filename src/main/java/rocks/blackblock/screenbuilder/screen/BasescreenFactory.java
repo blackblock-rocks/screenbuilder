@@ -24,6 +24,16 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
     protected String default_name = "Placeholder name";
 
     /**
+     * Get the screen handler factory
+     * (This is the same as this class)
+     *
+     * @since   0.3.1
+     */
+    public NamedScreenHandlerFactory getScreenHandlerFactory() {
+        return this;
+    }
+
+    /**
      * Set the name to put on this screen
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>

@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.TextColor;
+import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -20,7 +21,7 @@ import java.util.*;
  * @author  Jelle De Loecker   <jelle@elevenways.be>
  * @since   0.3.0
  */
-public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvider {
+public class SelectValueInput<T> extends EmptyInput implements PageableInput<T> {
 
     // The page we're on
     protected int page = 1;
@@ -45,6 +46,52 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
 
     // Extra buttons
     protected List<CustomButtonAdderEntry> extra_button_adders = new ArrayList<>();
+
+    /**
+     * Set the current page
+     *
+     * @since   0.3.0
+     */
+    @Override
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    /**
+     * Get the current page
+     *
+     * @since   0.3.0
+     */
+    @Override
+    public int getPage() {
+        return this.page;
+    }
+
+    /**
+     * Get the pageable items
+     *
+     * @since   0.3.1
+     */
+    @Override
+    @NotNull
+    public List<T> getPageableItems() {
+
+        if (this.options == null) {
+            return Collections.emptyList();
+        }
+
+        return this.options;
+    }
+
+    /**
+     * Get the maximum amount of items per page
+     *
+     * @since   0.3.1
+     */
+    @Override
+    public int getMaxItemsPerPage() {
+        return 36;
+    }
 
     /**
      * Is a confirm button needed?
@@ -184,31 +231,7 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
         sb.setCloneSlots(false);
         sb.setDisplayName(this.getDisplayName());
 
-        int slots_per_page = 36;
-        int page = this.page;
-        int item_count = 0;
-
-        if (this.options != null) {
-            item_count = this.options.size();
-        }
-
-        int max_page_value = 1;
-
-        if (item_count > 0) {
-            max_page_value = Math.max(1, (int) Math.ceil(item_count / (double) slots_per_page));
-        }
-
-        int start = (page - 1) * slots_per_page;
-        int end = Math.min(start + slots_per_page, item_count);
-
-        if (page > max_page_value) {
-            page = max_page_value;
-            this.page = page;
-        }
-
         this.slot_map.clear();
-
-        Set<Integer> used_slots = new HashSet<>();
 
         // The actual slot listener
         SlotEventListener slot_listener = (screen, slot) -> {
@@ -234,49 +257,19 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
             screen.replaceScreen(this);
         };
 
-        boolean has_pagination = false;
+        // Populate the page
+        this.forEachItemsOnCurrentPage((item, index_on_page) -> {
+            ButtonWidgetSlot button = this.decorateOption(sb, item, index_on_page);
+            button.addLeftClickListener(slot_listener);
+        });
 
-        if (item_count > 0) {
-            List<T> items = this.options.subList(start, end);
-
-            for (int i = 0; i < items.size(); i++) {
-                T value = items.get(i);
-
-                ButtonWidgetSlot button = this.decorateOption(sb, value, i);
-                button.addLeftClickListener(slot_listener);
-            }
-
-            if (item_count > 36) {
-
-                used_slots.add(45);
-                used_slots.add(46);
-                used_slots.add(47);
-                used_slots.add(48);
-
-                PaginationWidget pagination = new PaginationWidget();
-                pagination.setId("pagination");
-                pagination.setSlotIndex(45);
-                pagination.setMaxValue(max_page_value);
-
-                int current_page = page;
-                pagination.setOnChangeListener((texturedScreenHandler, widget) -> {
-
-                    if (current_page == this.page) {
-                        return;
-                    }
-
-                    texturedScreenHandler.replaceScreen(this);
-                });
-
-                sb.addWidget(pagination);
-                has_pagination = true;
-            }
-        }
+        // Add the pagination control widget
+        PaginationWidget pagination = this.addPaginationWidget(sb, 45);
+        boolean has_pagination = pagination != null;
 
         int current_index = 44;
 
         if (this.require_confirm_button) {
-            used_slots.add(current_index);
             ButtonWidgetSlot confirm_button = sb.addButton(current_index);
             confirm_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
             confirm_button.addOverlay(BBSB.CHECK_ICON.getColoured(TextColor.fromRgb(0x15b700)));
@@ -297,9 +290,8 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
 
                 Integer slot_index = null;
 
-                if (preferred_slot != null && preferred_slot >= current_index && !used_slots.contains(preferred_slot)) {
+                if (preferred_slot != null && preferred_slot >= current_index && !sb.isSlotUsed(preferred_slot)) {
                     slot_index = preferred_slot;
-                    used_slots.add(preferred_slot);
                 } else {
                     preferred_slot = null;
                     slot_index = current_index;
@@ -340,8 +332,8 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
     @Override
     public Object getWidgetValue(String widget_id) {
 
-        if (widget_id.equals("pagination")) {
-            return this.page;
+        if (widget_id.equals(this.getPaginationWidgetId())) {
+            return this.getPage();
         }
 
         return null;
@@ -356,8 +348,8 @@ public class SelectValueInput<T> extends EmptyInput implements WidgetDataProvide
     @Override
     public void setWidgetValue(String widget_id, Object value) {
 
-        if (widget_id.equals("pagination")) {
-            this.page = (int) value;
+        if (widget_id.equals(this.getPaginationWidgetId())) {
+            this.setPage((int) value);
         }
     }
 

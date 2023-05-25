@@ -135,6 +135,9 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     // Error messages
     protected List<String> error_messages = null;
 
+    // Keep track of the slots that have been used
+    protected Map<Integer, Boolean> used_slots = new HashMap<>();
+
     /**
      * Create a new ScreenBuilder with the 9x6 generic container
      *
@@ -571,6 +574,35 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Specifically mark a slot as not available
+     *
+     * @since    0.3.1
+     *
+     * @param    index   The index of the slot inside this GUI
+     */
+    public void markSlotAsUsed(int index) {
+        this.used_slots.put(index, true);
+    }
+
+    /**
+     * Is the slot at the given index available?
+     *
+     * @since    0.3.1
+     *
+     * @param    index   The index of the slot inside this GUI
+     */
+    public boolean isSlotUsed(int index) {
+
+        Boolean result = this.used_slots.get(index);
+
+        if (result == null) {
+            return false;
+        }
+
+        return result;
+    }
+
+    /**
      * Set a Slot with the given ItemStack at the specified index
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -580,7 +612,15 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @param    slot    The slot to set
      */
     public Slot setSlot(int index, Slot slot) {
-        this.slots.set(index, slot);
+
+        this.used_slots.put(index, true);
+
+        if (index >= this.getScreenTypeSlotCount()) {
+            int player_slot_index = index - this.getScreenTypeSlotCount();
+            this.player_slots.set(player_slot_index, slot);
+        } else {
+            this.main_slots.set(index, slot);
+        }
 
         if (slot instanceof SlotBuilder build_slot) {
             // SlotBuilder slots should always be cloned
