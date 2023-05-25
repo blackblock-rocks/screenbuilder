@@ -500,6 +500,7 @@ public abstract class BaseTexture {
         // Calculate the amount of pieces we need
         int pieces = this.getAmountOfPieces();
 
+        // The target image might be wider than the source image
         int target_width = this.getTargetImageWidth();
         int piece_width = this.getImagePieceWidth(0);
 
@@ -511,6 +512,10 @@ public abstract class BaseTexture {
 
             int x_start = i * piece_width;
             int x_end = x_start + piece_width;
+
+            if (x_end > this.original_width) {
+                x_end = this.original_width;
+            }
 
             target_graphics.drawImage(
                     source_image,
