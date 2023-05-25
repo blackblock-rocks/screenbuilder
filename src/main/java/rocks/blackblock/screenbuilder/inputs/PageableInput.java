@@ -139,8 +139,10 @@ public interface PageableInput<T> {
     default void forEachItemsOnCurrentPage(PageableItemAdder<T> adder) {
         List<T> items = this.getPageableItemsForPage(this.getPage());
 
-        for (int i = 0; i < items.size(); i++) {
-            adder.add(items.get(i), i);
+        int items_on_this_page = items.size();
+
+        for (int i = 0; i < items_on_this_page; i++) {
+            adder.add(items.get(i), i, items_on_this_page);
         }
     }
 
@@ -203,6 +205,6 @@ public interface PageableInput<T> {
      */
     @FunctionalInterface
     interface PageableItemAdder<T> {
-        void add(T item, int index_on_page);
+        void add(T item, int index_on_page, int amount_on_this_page);
     }
 }

@@ -258,7 +258,7 @@ public class SelectValueInput<T> extends EmptyInput implements PageableInput<T> 
         };
 
         // Populate the page
-        this.forEachItemsOnCurrentPage((item, index_on_page) -> {
+        this.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
             ButtonWidgetSlot button = this.decorateOption(sb, item, index_on_page);
             button.addLeftClickListener(slot_listener);
         });
