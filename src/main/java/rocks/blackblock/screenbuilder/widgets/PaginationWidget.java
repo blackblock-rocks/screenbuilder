@@ -5,6 +5,7 @@ import net.minecraft.text.TextColor;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.inputs.PageableInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.text.Font;
@@ -53,6 +54,21 @@ public class PaginationWidget extends CombinedWidget<Integer> {
 
         ScreenBuilder builder = handler.getScreenBuilder();
         NamedScreenHandlerFactory factory = handler.getOriginFactory();
+
+        if (factory instanceof PageableInput<?> pageable_input) {
+            int current_value = pageable_input.getPage();
+            int new_value = current_value + amount;
+            pageable_input.setPage(new_value);
+
+            if (this.on_change != null) {
+                this.on_change.onEvent(handler, this);
+            }
+
+            handler.refresh();
+
+            return;
+        }
+
         WidgetDataProvider provider = handler.getWidgetDataProvider();
 
         if (provider != null) {

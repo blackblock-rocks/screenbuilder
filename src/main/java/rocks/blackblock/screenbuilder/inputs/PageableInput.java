@@ -4,7 +4,6 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
-import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @author  Jelle De Loecker   <jelle@elevenways.be>
  * @since   0.3.1
  */
-public interface PageableInput<T> extends WidgetDataProvider {
+public interface PageableInput<T> {
 
     /**
      * Get the pagination widget id
@@ -37,18 +36,47 @@ public interface PageableInput<T> extends WidgetDataProvider {
     }
 
     /**
+     * Set the current page value
+     *
+     * @since   0.3.1
+     */
+    void setPageValue(int page);
+
+    /**
+     * Get the current page value
+     *
+     * @since   0.3.1
+     */
+    int getPageValue();
+
+    /**
      * Set the current page
      *
      * @since   0.3.1
      */
-    void setPage(int page);
+    default void setPage(int page) {
+
+        if (page < 1) {
+            page = 1;
+        } else {
+            int max_page = this.getPageCount();
+
+            if (page > max_page) {
+                page = max_page;
+            }
+        }
+
+        this.setPageValue(page);
+    }
 
     /**
      * Get the current page
      *
      * @since   0.3.1
      */
-    int getPage();
+    default int getPage() {
+        return this.getPageValue();
+    }
 
     /**
      * Get all the available options

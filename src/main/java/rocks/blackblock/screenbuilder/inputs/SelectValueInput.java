@@ -9,7 +9,6 @@ import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
-import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
 
@@ -21,6 +20,7 @@ import java.util.*;
  * @author  Jelle De Loecker   <jelle@elevenways.be>
  * @since   0.3.0
  */
+@SuppressWarnings({"unused"})
 public class SelectValueInput<T> extends EmptyInput implements PageableInput<T> {
 
     // The page we're on
@@ -48,22 +48,22 @@ public class SelectValueInput<T> extends EmptyInput implements PageableInput<T> 
     protected List<CustomButtonAdderEntry> extra_button_adders = new ArrayList<>();
 
     /**
-     * Set the current page
+     * Set the current page value
      *
-     * @since   0.3.0
+     * @since   0.3.1
      */
     @Override
-    public void setPage(int page) {
+    public void setPageValue(int page) {
         this.page = page;
     }
 
     /**
-     * Get the current page
+     * Get the current page value
      *
-     * @since   0.3.0
+     * @since   0.3.1
      */
     @Override
-    public int getPage() {
+    public int getPageValue() {
         return this.page;
     }
 
@@ -321,36 +321,6 @@ public class SelectValueInput<T> extends EmptyInput implements PageableInput<T> 
         }
 
         return sb;
-    }
-
-    /**
-     * Get the value of the given widget
-     *
-     * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @since   0.3.0
-     */
-    @Override
-    public Object getWidgetValue(String widget_id) {
-
-        if (widget_id.equals(this.getPaginationWidgetId())) {
-            return this.getPage();
-        }
-
-        return null;
-    }
-
-    /**
-     * Set a widget value
-     *
-     * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @since   0.3.0
-     */
-    @Override
-    public void setWidgetValue(String widget_id, Object value) {
-
-        if (widget_id.equals(this.getPaginationWidgetId())) {
-            this.setPage((int) value);
-        }
     }
 
     /**
