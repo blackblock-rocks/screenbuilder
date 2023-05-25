@@ -317,6 +317,29 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Prepare a slot that is about to be added to the screen
+     *
+     * @since    0.3.1
+     */
+    private Slot prepareSlot(Slot slot, int screen_index) {
+
+        if (slot instanceof SlotBuilder build_slot) {
+            SlotBuilder generated_slot = build_slot.createSlot(this);
+
+            generated_slot.setScreenIndex(screen_index);
+
+            slot = generated_slot;
+        } else if (slot instanceof BaseSlot base_slot) {
+            BaseSlot generated_slot = base_slot.createSlot(this);
+            generated_slot.setScreenIndex(screen_index);
+
+            slot = generated_slot;
+        }
+
+        return slot;
+    }
+
+    /**
      * Set the slots
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -327,20 +350,7 @@ public class TexturedScreenHandler extends ScreenHandler {
         int screen_index = 0;
 
         for (Slot slot : this.builder.getMainSlots()) {
-
-            if (slot instanceof SlotBuilder build_slot) {
-                SlotBuilder generated_slot = build_slot.createSlot(this);
-
-                generated_slot.setScreenIndex(screen_index);
-
-                slot = generated_slot;
-            } else if (slot instanceof BaseSlot base_slot) {
-                BaseSlot generated_slot = base_slot.createSlot(this);
-                generated_slot.setScreenIndex(screen_index);
-
-                slot = generated_slot;
-            }
-
+            slot = this.prepareSlot(slot, screen_index);
             this.addSlot(slot);
             screen_index++;
         }
@@ -353,13 +363,16 @@ public class TexturedScreenHandler extends ScreenHandler {
                 for (int x = 0; x < 9; ++x) {
                     Slot slot = new Slot(this.player_inventory, x + y * 9 + 9, 0, 0);
                     this.addSlot(slot);
+                    screen_index++;
                 }
             }
         } else {
             player_slots = this.builder.getPlayerSlots();
 
             for (int i = 0; i < 27; i++) {
-                this.addSlot(player_slots.get(i));
+                Slot slot = this.prepareSlot(player_slots.get(i), screen_index);
+                this.addSlot(slot);
+                screen_index++;
             }
         }
 
@@ -369,6 +382,7 @@ public class TexturedScreenHandler extends ScreenHandler {
             for (int hotbar = 0; hotbar < 9; ++hotbar) {
                 Slot slot = new Slot(this.player_inventory, hotbar, 0, 0);
                 this.addSlot(slot);
+                screen_index++;
             }
         } else {
 
@@ -377,7 +391,9 @@ public class TexturedScreenHandler extends ScreenHandler {
             }
 
             for (int i = 27; i < 36; i++) {
-                this.addSlot(player_slots.get(i));
+                Slot slot = this.prepareSlot(player_slots.get(i), screen_index);
+                this.addSlot(slot);
+                screen_index++;
             }
         }
     }
