@@ -35,6 +35,7 @@ import rocks.blackblock.screenbuilder.utils.GuiUtils;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalInt;
 
 /**
@@ -325,7 +326,7 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         int screen_index = 0;
 
-        for (Slot slot : this.builder.getSlots()) {
+        for (Slot slot : this.builder.getMainSlots()) {
 
             if (slot instanceof SlotBuilder build_slot) {
                 SlotBuilder generated_slot = build_slot.createSlot(this);
@@ -344,6 +345,8 @@ public class TexturedScreenHandler extends ScreenHandler {
             screen_index++;
         }
 
+        List<Slot> player_slots = null;
+
         if (this.builder.getShowPlayerInventory()) {
             // Show the player's inventory
             for (int y = 0; y < 3; ++y) {
@@ -353,12 +356,10 @@ public class TexturedScreenHandler extends ScreenHandler {
                 }
             }
         } else {
-            // Do not show the player's inventory
-            for (int y = 0; y < 3; ++y) {
-                for (int x = 0; x < 9; ++x) {
-                    Slot slot = new StaticSlot(new ItemStack(Items.AIR));
-                    this.addSlot(slot);
-                }
+            player_slots = this.builder.getPlayerSlots();
+
+            for (int i = 0; i < 27; i++) {
+                this.addSlot(player_slots.get(i));
             }
         }
 
@@ -370,10 +371,13 @@ public class TexturedScreenHandler extends ScreenHandler {
                 this.addSlot(slot);
             }
         } else {
-            // Don't show the hotbar
-            for (int hotbar = 0; hotbar < 9; ++hotbar) {
-                Slot slot = new StaticSlot(new ItemStack(Items.AIR));
-                this.addSlot(slot);
+
+            if (player_slots == null) {
+                player_slots = this.builder.getPlayerSlots();
+            }
+
+            for (int i = 27; i < 36; i++) {
+                this.addSlot(player_slots.get(i));
             }
         }
     }

@@ -27,6 +27,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
@@ -91,8 +92,12 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     private Integer texture_slot_x;
     private Integer texture_slot_y;
 
-    // The defined slots
-    protected DefaultedList<Slot> slots;
+    // The main slots of the screen
+    // (excluding the player inventory and hotbar)
+    protected DefaultedList<Slot> main_slots;
+
+    // The player's own slots (inventory + hotbar)
+    protected DefaultedList<Slot> player_slots;
 
     // Has this been registered?
     private boolean has_been_registered = false;
@@ -195,12 +200,22 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
-     * Get the amount of slots the underlying screen type has
+     * Get the amount of slots the underlying screen type has.
+     * This does not include the player inventory or the hotbar.
      *
      * @since   0.1.1
      */
     public int getScreenTypeSlotCount() {
-        return this.screen_info.getSlotCount();
+        return this.screen_info.getOwnSlotCount();
+    }
+
+    /**
+     * Get the total amount of slots on the screen
+     *
+     * @since   0.3.1
+     */
+    public int getVisibleSlotCount() {
+        return this.screen_info.getTotalSlotCount();
     }
 
     /**
@@ -459,7 +474,8 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     public ScreenBuilder setType(ScreenHandlerType<?> type) {
         this.screen_type = type;
         this.screen_info = ScreenInfo.get(screen_type);
-        this.slots = DefaultedList.ofSize(this.getScreenTypeSlotCount(), AIR_SLOT);
+        this.main_slots = DefaultedList.ofSize(this.getScreenTypeSlotCount(), AIR_SLOT);
+        this.player_slots = DefaultedList.ofSize(36, AIR_SLOT);
         return this;
     }
 
@@ -520,12 +536,13 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
-     * Get all the slots
+     * Get all the slots of the main screen
+     * (Excluding the player inventory & hotbar)
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
      */
-    public List<Slot> getSlots() {
+    public List<Slot> getMainSlots() {
         List<Slot> slots = new ArrayList<>();
 
         // Iterate over all the widgets
@@ -533,8 +550,23 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             widget.prepareSlots(this);
         }
 
-        slots.addAll(this.slots);
+        slots.addAll(this.main_slots);
 
+        return slots;
+    }
+
+    /**
+     * Get all the player slots
+     * (Inventory & hotbar)
+     * Preparing should have been done by the main slots already
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    @NotNull
+    public List<Slot> getPlayerSlots() {
+        List<Slot> slots = new ArrayList<>();
+        slots.addAll(this.player_slots);
         return slots;
     }
 
@@ -1024,7 +1056,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         }
 
         // Iterate over all the WidgetSlots
-        for (Slot slot : this.getSlots()) {
+        for (Slot slot : this.getMainSlots()) {
 
             if (slot instanceof BaseSlot baseSlot) {
                 baseSlot.addToTextBuilder(text_builder);

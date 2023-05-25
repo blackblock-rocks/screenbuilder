@@ -402,7 +402,7 @@ public class GuiTexture extends BaseTexture {
             int default_slot_color = 0xFF000000 + 0x8b8b8b;
 
             // Get all the defined slots
-            List<Slot> slots = this.screenbuilder.getSlots();
+            List<Slot> slots = this.screenbuilder.getMainSlots();
 
             // Iterate over all the slots
             for (int i = 0; i < slots.size(); i++) {

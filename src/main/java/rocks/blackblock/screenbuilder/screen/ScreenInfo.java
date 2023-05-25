@@ -117,12 +117,23 @@ public class ScreenInfo {
     }
 
     /**
-     * Get the slot count
+     * Get the slot count of the main screen,
+     * excluding the player inventory or hotbar
      *
      * @since   0.1.1
      */
-    public int getSlotCount() {
+    public int getOwnSlotCount() {
         return slot_count;
+    }
+
+    /**
+     * Get the total slot count,
+     * including the player inventory and hotbar
+     *
+     * @since   0.3.1
+     */
+    public int getTotalSlotCount() {
+        return slot_count + 36;
     }
 
     /**
@@ -208,6 +219,16 @@ public class ScreenInfo {
 
         coords.y = this.getSlotRowY() + ((slot_index / slots_per_row) * slot_height);
         coords.x = this.getSlotRowX() + ((slot_index % slots_per_row) * slot_width);
+
+        if (slot_index >= this.getOwnSlotCount()) {
+            // Player inventory
+            coords.y += 14;
+
+            if (slot_index >= this.getOwnSlotCount() + 27) {
+                // Player hotbar
+                coords.y += 4;
+            }
+        }
 
         return coords;
     }
