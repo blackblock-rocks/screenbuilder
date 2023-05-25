@@ -89,9 +89,9 @@ public class NumberPicker extends CombinedWidget<Integer> {
         }
 
         int x = this.minus_button.getSlotXInPixels();
-        int y = this.minus_button.getSlotY();
+        int font_line_number = this.minus_button.getFontLineNumber();
 
-        Font font = Font.LH_INVENTORY_SLOT.getFontForLine(y);
+        Font font = Font.LH_INVENTORY_SLOT.getFontForLine(font_line_number);
 
         builder.setCursor(x + 6);
         TextGroup group = builder.createNewGroup();

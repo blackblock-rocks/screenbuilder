@@ -311,8 +311,8 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         if (this.button_text != null) {
-            int slot_y = this.getSlotY();
-            Font font = Font.LH_INVENTORY_SLOT.getFontForLine(slot_y);
+            int font_line_number = this.getFontLineNumber();
+            Font font = Font.LH_INVENTORY_SLOT.getFontForLine(font_line_number);
 
             // Set the cursor to the middle of the button
             // (A button is about 18 pixels, so 9 pixels from the left)

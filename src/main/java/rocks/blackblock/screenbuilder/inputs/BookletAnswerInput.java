@@ -150,7 +150,7 @@ public class BookletAnswerInput extends BookletInput {
                 tw.setText(answer.text);
                 tw.setX(70);
                 tw.setWidth(170);
-                tw.setYLine(button.getSlotY());
+                tw.setYLine(button.getFontLineNumber());
                 tw.setFontCollection(Font.LH_INVENTORY_SLOT);
                 tw.setColor(TextColor.fromRgb(0x0012a5));
 

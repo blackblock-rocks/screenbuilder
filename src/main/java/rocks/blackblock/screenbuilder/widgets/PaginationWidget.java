@@ -105,7 +105,7 @@ public class PaginationWidget extends CombinedWidget<Integer> {
 
         int x = this.previous_button.getSlotXInPixels();
         int y = this.previous_button.getSlotYInPixels();
-        int y_line = this.previous_button.getSlotY();
+        int y_line = this.previous_button.getFontLineNumber();
 
         Font font = Font.LH_INVENTORY_SLOT.getFontForLine(y_line);
 

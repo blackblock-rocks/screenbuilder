@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 
@@ -337,6 +338,38 @@ public abstract class BaseSlot extends Slot {
 
         return this.screen_index / 9;
     }
+
+    /**
+     * Get the line number of this slot
+     * (for use in fonts)
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public int getFontLineNumber() {
+
+        int result = this.getSlotY();
+
+        if (this.active_builder == null) {
+            return result;
+        }
+
+        ScreenInfo info = this.active_builder.getScreenInfo();
+        int own_slots = info.getOwnSlotCount();
+
+        if (this.screen_index >= own_slots) {
+            int player_slot_index = this.screen_index - own_slots;
+            int player_slot_y = player_slot_index / 9;
+
+            result = (own_slots / 9) + player_slot_y;
+
+            // Add 1 for the gap between the main inventory & the player inventory
+            result += 1;
+        }
+
+        return result;
+    }
+
 
     /**
      * Get the absolute Y coordinate of this slot
