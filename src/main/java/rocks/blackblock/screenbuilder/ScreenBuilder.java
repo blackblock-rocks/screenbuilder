@@ -539,6 +539,21 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Get all the slots
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public List<Slot> getAllSlots() {
+        List<Slot> slots = new ArrayList<>();
+
+        slots.addAll(this.getMainSlots());
+        slots.addAll(this.getPlayerSlots());
+
+        return slots;
+    }
+
+    /**
      * Get all the slots of the main screen
      * (Excluding the player inventory & hotbar)
      *
@@ -1096,8 +1111,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
         }
 
         // Iterate over all the WidgetSlots
-        for (Slot slot : this.getMainSlots()) {
-
+        for (Slot slot : this.getAllSlots()) {
             if (slot instanceof BaseSlot baseSlot) {
                 baseSlot.addToTextBuilder(text_builder);
             }
