@@ -231,44 +231,43 @@ public class BBSB implements ModInitializer {
     public void onInitialize() {
         ScreenbuilderCommands.registerCommands();
 
-        ScreenBuilder dummy = new ScreenBuilder("dummy");
+        EMPTY_54.registerYOffset(0);
+        TOP_FOUR.registerYOffset(0);
+        BOOK_V2.registerYOffset(0);
+        BOOK_V3.registerYOffset(0);
 
-        for (int row = 0; row < 6; row++) {
-            int offset = 18 * row;
-            BUTTON_LARGE.registerYOffset(dummy, 16 + offset);
-            BUTTON_MEDIUM.registerYOffset(dummy, 17 + offset);
+        WidgetTexture.forEachRowOffset((dummy, row, row_offset, jitter) -> {
+
+            BUTTON_LARGE.registerYOffset(dummy, 16 + row_offset);
+            BUTTON_MEDIUM.registerYOffset(dummy, 17 + row_offset);
 
             // Aligned to the top
-            BUTTON_SMALL.registerYOffset(dummy, 17 + offset);
+            BUTTON_SMALL.registerYOffset(dummy, 17 + row_offset);
 
             // Aligned to the bottom
-            BUTTON_SMALL.registerYOffset(dummy, 18 + offset);
+            BUTTON_SMALL.registerYOffset(dummy, 18 + row_offset);
 
-            BUTTON_EXTRA_SMALL.registerYOffset(dummy, 18 + offset);
+            BUTTON_EXTRA_SMALL.registerYOffset(dummy, 18 + row_offset);
 
-            WRENCH_SMALL.registerYOffset(dummy, 17 + offset);
-            LOCK_RED.registerYOffset(dummy, 17 + offset);
-            UNLOCK_GREEN.registerYOffset(dummy, 17 + offset);
+            WRENCH_SMALL.registerYOffset(dummy, 17 + row_offset);
+            LOCK_RED.registerYOffset(dummy, 17 + row_offset);
+            UNLOCK_GREEN.registerYOffset(dummy, 17 + row_offset);
 
-            BLACK_FRAME.registerYOffset(dummy, 17 + offset);
-            BLACK_FRAME_3X.registerYOffset(dummy, 17 + offset);
+            BLACK_FRAME.registerYOffset(dummy, 17 + row_offset);
+            BLACK_FRAME_3X.registerYOffset(dummy, 17 + row_offset);
 
-            BUTTON_ACCEPT.registerYOffset(dummy, 17 + offset);
-            BUTTON_DENY.registerYOffset(dummy, 17 + offset);
-            MIRROR_SLOT.registerYOffset(dummy, 17 + offset);
+            BUTTON_ACCEPT.registerYOffset(dummy, 17 + row_offset);
+            BUTTON_DENY.registerYOffset(dummy, 17 + row_offset);
+            MIRROR_SLOT.registerYOffset(dummy, 17 + row_offset);
 
-            ARROW_LEFT.registerYOffset(dummy, 17 + 5 + offset);
-            ARROW_RIGHT.registerYOffset(dummy, 17 + 5 + offset);
-            PAGER.registerYOffset(dummy, 17 + 1 + offset);
+            ARROW_LEFT.registerYOffset(dummy, 17 + 5 + row_offset);
+            ARROW_RIGHT.registerYOffset(dummy, 17 + 5 + row_offset);
+            PAGER.registerYOffset(dummy, 17 + 1 + row_offset);
 
-            SLOT_FRAME.registerYOffset(dummy, 17 + offset);
+            SLOT_FRAME.registerYOffset(dummy, 17 + row_offset);
+        });
 
-            EMPTY_54.registerYOffset(0);
-            TOP_FOUR.registerYOffset(0);
-            BOOK_V2.registerYOffset(0);
-            BOOK_V3.registerYOffset(0);
-
-            IconTexture[] icons = {
+        IconTexture[] icons = {
                 ARROW_DOWN_ICON,
                 COG_ICON,
                 PLUS_ICON,
@@ -308,22 +307,14 @@ public class BBSB implements ModInitializer {
                 FLAG_ICON,
                 PEOPLE_ICON,
                 PERSON_ICON
-            };
+        };
 
-            for (int i = 0; i < 4; i++) {
-
-                // Iterate over all the IconTextures and register them
-                // with the correct y-offset
-                for (IconTexture icon : icons) {
-                    icon.registerYOffset(dummy, 17 + offset + i);
-                }
-            }
-        }
+        WidgetTexture.registerForAllSlots(icons);
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 
             // Make sure PX01 is loaded
-            PixelFontCollection.PX01.getHeight();
+            PixelFontCollection.PX01.getCharacterHeight();
 
             BaseTexture.calculateAll();
         });

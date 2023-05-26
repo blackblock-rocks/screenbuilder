@@ -131,7 +131,6 @@ public class BookletAnswerInput extends BookletInput {
             }
 
             if (answer.item_stack != null) {
-                BBSB.log("Setting stack of button:", answer.item_stack);
                 button.setStack(answer.item_stack);
                 button.setDummyStack(answer.item_stack);
             }
@@ -150,7 +149,8 @@ public class BookletAnswerInput extends BookletInput {
                 tw.setText(answer.text);
                 tw.setX(70);
                 tw.setWidth(170);
-                tw.setYLine(button.getFontLineNumber());
+                //tw.setYLine(button.getFontLineNumber());
+                tw.setY(button.getYForVerticallyCenteredText());
                 tw.setFontCollection(Font.LH_INVENTORY_SLOT);
                 tw.setColor(TextColor.fromRgb(0x0012a5));
 

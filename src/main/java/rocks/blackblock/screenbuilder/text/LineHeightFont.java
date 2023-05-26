@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class LineHeightFont extends Font {
      * @since   0.1.1
      */
     public LineHeightFont(LineHeightFontCollection collection, int line_index) {
-        super(collection.getFontIdForLine(line_index), collection.getOriginalHeight(), collection.getParentFont());
+        super(collection.getFontIdForLine(line_index), collection.getCharacterHeight(), collection.getParentFont());
         this.collection = collection;
         this.line_index = line_index;
     }
@@ -46,21 +47,40 @@ public class LineHeightFont extends Font {
         JsonObject json;
 
         if (this.line_index < 0) {
-            json = LineHeightFontCollection.BASE_NEGATIVE.deepCopy();
+            json = AbsoluteFontCollection.BASE_NEGATIVE.deepCopy();
         } else {
-            json = LineHeightFontCollection.BASE_POSITIVE.deepCopy();
+            json = AbsoluteFontCollection.BASE_POSITIVE.deepCopy();
         }
 
         JsonArray providers = json.getAsJsonArray("providers");
 
-        int height_adjustment = this.line_index * this.collection.getHeightAdjustment();
-        int ascent_adjustment = this.line_index * this.collection.getAscentAdjustment() * -1;
+        int height_adjustment = this.line_index * 0;
 
         Integer height;
         Integer ascent;
 
+        ArrayList<JsonElement> to_remove = new ArrayList<>();
+
         for (JsonElement element : providers) {
             JsonObject provider = element.getAsJsonObject();
+
+            if (provider.has("file")) {
+                String name = provider.get("file").getAsString();
+
+                // Always remove the nonlatin ones for now
+                if (name.equals("minecraft:font/nonlatin_european.png")) {
+                    to_remove.add(element);
+                    continue;
+                }
+
+                // And remove the negative accented ones too, they don't work
+                if (this.line_index < -10) {
+                    if (name.equals("minecraft:font/accented.png")) {
+                        to_remove.add(element);
+                        continue;
+                    }
+                }
+            }
 
             if (provider.has("height")) {
                 height = provider.get("height").getAsInt();
@@ -79,11 +99,22 @@ public class LineHeightFont extends Font {
                 provider.addProperty("height", height);
             }
 
+            int new_ascent = this.collection.getAscentForLine(ascent, this.line_index);
+
+            if (new_ascent > 256) {
+                to_remove.add(element);
+                continue;
+            }
+
             /*if (ascent_adjustment != 0) {
                 ascent += ascent_adjustment;
                 provider.addProperty("ascent", ascent);
             }*/
-            provider.addProperty("ascent", this.collection.getAscentForLine(ascent, this.line_index));
+            provider.addProperty("ascent", new_ascent);
+        }
+
+        for (JsonElement element : to_remove) {
+            providers.remove(element);
         }
 
         return json.toString();

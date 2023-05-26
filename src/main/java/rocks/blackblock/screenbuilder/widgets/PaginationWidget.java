@@ -105,9 +105,6 @@ public class PaginationWidget extends CombinedWidget<Integer> {
 
         int x = this.previous_button.getSlotXInPixels();
         int y = this.previous_button.getSlotYInPixels();
-        int y_line = this.previous_button.getFontLineNumber();
-
-        Font font = Font.LH_INVENTORY_SLOT.getFontForLine(y_line);
 
         BBSB.PAGER.addToBuilder(builder, x, y + 1);
 
@@ -120,7 +117,7 @@ public class PaginationWidget extends CombinedWidget<Integer> {
             str_value += " / " + this.max_value;
         }
 
-        int width = font.getWidth(str_value);
+        int width = Font.DEFAULT.getWidth(str_value);
         int left = 34 - width;
         int text_x = x + 18;
 
@@ -129,7 +126,7 @@ public class PaginationWidget extends CombinedWidget<Integer> {
         }
 
         builder.setCursor(text_x);
-        builder.print(str_value, font);
+        builder.print(str_value, this.previous_button.getYForVerticallyCenteredText());
     }
 
 }

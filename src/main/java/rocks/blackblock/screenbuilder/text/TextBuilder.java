@@ -29,8 +29,8 @@ import java.util.List;
  */
 public class TextBuilder {
 
-    // The current VIRTUAL Y-index the cursor is on
-    private int line = 0;
+    // The current Y-index the cursor is on
+    private int raw_y = 0;
 
     // The current X-index the cursor is on
     private int raw_x = 0;
@@ -43,9 +43,6 @@ public class TextBuilder {
 
     // The X coordinate where text can start
     private int x_text_start = 0;
-
-    // The current line coordinate
-    private int line_origin = 0;
 
     // The default color, if it is known
     private TextColor default_color = null;
@@ -219,7 +216,6 @@ public class TextBuilder {
      */
     public TextBuilder makeCurrentPositionOrigin() {
         this.x_origin = this.raw_x;
-        this.line_origin = this.line;
 
         // @TODO: fix
         this.y_origin = 0;
@@ -322,6 +318,18 @@ public class TextBuilder {
     }
 
     /**
+     * Set the line value
+     *
+     * @param   line
+     */
+    @Deprecated
+    public TextBuilder setLine(int line) {
+        int y = line * 8;
+        this.setY(y);
+        return this;
+    }
+
+    /**
      * Set the current virtual Y index with pixels
      *
      * @param   y
@@ -329,24 +337,13 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextBuilder setY(int y) {
-        int line = this.convertYToLine(y);
-        this.line = this.translateY(line);
+        this.raw_y = y;
         return this;
     }
 
     /**
-     * Convert a Y value to a line number
-     *
-     * @param   y
-     *
-     * @since   0.1.1
-     */
-    public int convertYToLine(int y) {
-        return Font.DEFAULT_LH.convertYToLine(y);
-    }
-
-    /**
      * Convert a Y value to a pixel line number
+     * (For printing images)
      *
      * @param   y
      *
@@ -358,39 +355,17 @@ public class TextBuilder {
     }
 
     /**
-     * Set the current virtual Y index
-     *
-     * @param   line_index
-     *
-     * @since   0.1.1
-     */
-    public TextBuilder setLine(int line_index) {
-        //this.line = this.translateY(line_index);
-        this.line = line_index;
-        return this;
-    }
-
-    /**
-     * Get the current line the cursor is on
-     *
-     * @since   0.1.1
-     */
-    public int getLine() {
-        return this.line;
-    }
-
-    /**
      * Get the font to use for the current line
      *
      * @since   0.1.1
      */
     public Font getCurrentFont() {
 
-        if (this.line == 0) {
+        if (this.raw_y == 0) {
             return Font.DEFAULT;
         }
 
-        Font font = Font.getLhFont(this.line);
+        Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(this.raw_y);
 
         if (font == null) {
             font = Font.DEFAULT;
@@ -441,6 +416,25 @@ public class TextBuilder {
     }
 
     /**
+     * Insert some text on the given Y coordinate
+     *
+     * @param   text
+     * @param   y
+     *
+     * @return  TextBuilder
+     */
+    public TextBuilder print(String text, int y) {
+
+        Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(y);
+
+        if (font == null) {
+            font = Font.DEFAULT;
+        }
+
+        return this.print(text, font);
+    }
+
+    /**
      * Insert some text on the current line and update the cursor
      *
      * @param   text
@@ -475,28 +469,23 @@ public class TextBuilder {
 
     /**
      * Add some text to the current line and move to the next line
-     * @param line
+     * @param text
      * @return
      */
-    public TextBuilder addLine(String line) {
-        
-        Text text = null;
-        Font font = Font.getLhFont(this.line);
+    public TextBuilder addLine(String text) {
 
+        Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(this.raw_y);
 
-        //text = text.getWithStyle(text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("HI " + this.line)))).get(0);
+        this.setY(this.raw_y + font.getCharacterHeight() + 1);
 
-        this.line++;
+        font.addTo(this, text);
 
-        font.addTo(this, line);
-
-        int width = Font.DEFAULT.getWidth(line);
+        int width = Font.DEFAULT.getWidth(text);
 
         if (width != 0) {
             Font.SPACE.addMovementToBuilder(this, 0, width);
         }
 
-        
         return this;
     }
 
@@ -582,7 +571,7 @@ public class TextBuilder {
 
         // If there is a title, move the cursor to the right start
         if (this.title != null) {
-            this.setLine(0);
+            this.setY(0);
             this.setCursor(this.x_text_start);
         }
 

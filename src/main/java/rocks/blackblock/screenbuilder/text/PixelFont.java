@@ -10,7 +10,7 @@ public class PixelFont extends Font {
     private final int line_index;
 
     public PixelFont(PixelFontCollection collection, int line_index) {
-        super(collection.getFontIdForLine(line_index), collection.getHeight());
+        super(collection.getFontIdForLine(line_index), collection.getCharacterHeight());
         this.collection = collection;
         this.line_index = line_index;
 

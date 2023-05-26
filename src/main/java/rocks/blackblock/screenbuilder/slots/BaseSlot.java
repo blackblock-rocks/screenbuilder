@@ -5,6 +5,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
@@ -346,6 +347,7 @@ public abstract class BaseSlot extends Slot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.3.1
      */
+    @Deprecated
     public int getFontLineNumber() {
 
         int result = this.getSlotY();
@@ -370,10 +372,45 @@ public abstract class BaseSlot extends Slot {
         return result;
     }
 
+    /**
+     * Get the Y coordinate where text should be printed
+     * for it to be shown in the center of this slot
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.3.1
+     */
+    public int getYForVerticallyCenteredText() {
+
+        // Get the (top) Y coordinate of this slot
+        int result = this.getSlotYInPixels();
+
+        // Let's assume the text is 8 pixels high
+        int text_height = 8;
+
+        // A slot is always 18 pixels high
+        int slot_height = 18;
+
+        // The difference between the slot height and the text height
+        int difference = slot_height - text_height;
+
+        // Half of the difference
+        int half_difference = difference / 2;
+
+        // Calculate where the bottom of the text should be
+        // for it to appear vertically centered
+        // @TODO: No idea why, but the text is perfectly centered by just using
+        // the slotYInPixels result
+        //result -= half_difference;
+
+        //BBSB.log("Y for vertically centered text: " + result + " (slot: " + this.getSlotYInPixels() + ")");
+
+        return result;
+    }
 
     /**
      * Get the absolute Y coordinate of this slot
-     * in the current applied GUI
+     * in the current applied GUI.
+     * This is the top-left corner of the slot.
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3
@@ -394,7 +431,8 @@ public abstract class BaseSlot extends Slot {
 
     /**
      * Get the absolute X coordinate of this slot
-     * in the current applied GUI
+     * in the current applied GUI.
+     * This is the top-left corner of the slot.
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.3

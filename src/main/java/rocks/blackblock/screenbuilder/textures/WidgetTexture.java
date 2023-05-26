@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.textures;
 
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.ScreenBuilder;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -47,6 +48,70 @@ public class WidgetTexture extends BaseTexture {
         }
 
         return widget_textures.get(texture_identifier).get(min_pieces);
+    }
+
+    /**
+     * Register the given texture so it fits in all the slots
+     *
+     * @since   0.3.1
+     */
+    public static void registerForAllSlots(WidgetTexture texture) {
+        registerForAllSlots(new WidgetTexture[]{texture});
+    }
+
+    /**
+     * Register the given texture so it fits in all the slots
+     *
+     * @since   0.3.1
+     */
+    public static void registerForAllSlots(WidgetTexture[] textures) {
+
+        forEachRowOffset((dummy, row, row_offset, jitter) -> {
+            for (WidgetTexture texture : textures) {
+                texture.registerYOffset(dummy, 17 + row_offset + jitter);
+            }
+        });
+    }
+
+    /**
+     * Do something for each row offset
+     *
+     * @since   0.3.1
+     */
+    public static void forEachRowOffset(RowOffsetCallback callback) {
+
+        ScreenBuilder dummy = new ScreenBuilder("dummy");
+
+        // The are 10 rows in total:
+        // 6 top inventory rows,
+        // 4 bottom inventory rows
+        // 1 hotbar row
+        for (int row = 0; row < 10; row++) {
+            int offset = 18 * row;
+
+            if (row >= 6) {
+                offset += 14;
+            }
+
+            if (row == 9) {
+                offset += 4;
+            }
+
+            // Let the texture have 4 different Y offsets
+            for (int i = 0; i < 4; i++) {
+                callback.call(dummy, row, offset, i);
+            }
+        }
+    }
+
+    /**
+     * The callback for the forEachRowOffset method
+     *
+     * @since   0.3.1
+     */
+    @FunctionalInterface
+    public interface RowOffsetCallback {
+        void call(ScreenBuilder dummy, int row, int row_offset, int jitter);
     }
 
     /**

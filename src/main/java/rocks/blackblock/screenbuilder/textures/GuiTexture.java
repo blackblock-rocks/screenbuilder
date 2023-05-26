@@ -320,7 +320,7 @@ public class GuiTexture extends BaseTexture {
 
         // For now we'll assume the first line is only for the title.
         // So move a line down
-        builder.setLine(1);
+        builder.setY(8);
     }
 
     /**

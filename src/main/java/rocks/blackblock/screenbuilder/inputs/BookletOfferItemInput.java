@@ -82,8 +82,6 @@ public class BookletOfferItemInput extends BookletAnswerInput {
             int index = indexes.get(i);
             answer.setSlotIndex(index);
             result.add(answer);
-
-            BBSB.log("Adding offer", answer);
         }
 
         for (int i = 0; i < this.answers.size(); i++) {
@@ -94,8 +92,6 @@ public class BookletOfferItemInput extends BookletAnswerInput {
 
             answer.setSlotIndex(index);
             result.add(answer);
-
-            BBSB.log("Adding answer", answer);
         }
 
         return result;

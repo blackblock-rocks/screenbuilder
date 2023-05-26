@@ -12,7 +12,7 @@ public class StringWidget extends Widget {
     protected String text = null;
     protected boolean centered = false;
     protected int width = 0;
-    protected LineHeightFontCollection font_collection = Font.LH01;
+    protected LineHeightFontCollection font_collection = Font.ABSOLUTE_DEFAULT_COLLECTION;
     protected TextColor color = TextColor.fromRgb(0x3f3f3f);
     protected Integer y_line = null;
 
@@ -24,8 +24,10 @@ public class StringWidget extends Widget {
         this.y = y;
     }
 
+    @Deprecated
     public void setYLine(int line) {
-        this.y_line = line;
+        int y = this.font_collection.lineIndexToY(line);
+        this.setY(y);
     }
 
     public void setText(String text) {
@@ -76,6 +78,22 @@ public class StringWidget extends Widget {
     }
 
     /**
+     * Get the starting Y index adjusted to the current GUI texture
+     *
+     * @since   0.1.3
+     */
+    public int getAdjustedY() {
+
+        ScreenBuilder screen_builder = this.getScreenBuilder();
+
+        if (screen_builder == null) {
+            return this.y;
+        }
+
+        return screen_builder.getContainerY(this.y);
+    }
+
+    /**
      * Add the widget to the text builder
      *
      * @since   0.1.1
@@ -86,15 +104,7 @@ public class StringWidget extends Widget {
             return;
         }
 
-        int line_index;
-
-        if (this.y_line == null) {
-            line_index = this.getLineIndex(this.y);
-        } else {
-            line_index = this.y_line;
-        }
-
-        Font font = this.font_collection.getFontForLine(line_index);
+        Font font = this.font_collection.getClosestFont(this.getAdjustedY());
         int start_x = this.x;
 
         int string_width = font.getWidth(this.text);

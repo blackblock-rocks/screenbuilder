@@ -211,16 +211,13 @@ public abstract class BaseTexture {
      * @param   title_y   The Y coordinate relative to the title
      */
     public List<TexturePiece> getPieces(int title_y) {
-
-        if (!this.y_pieces.containsKey(title_y)) {
-            this.y_pieces.put(title_y, this.generateTexturePieces(title_y));
-        }
-
+        this.registerYOffset(title_y);
         return this.y_pieces.get(title_y);
     }
 
     /**
-     * Register an absolute Y offset
+     * Register an absolute Y offset,
+     * and generate the required texture pieces
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.3

@@ -176,12 +176,21 @@ public class ScreenbuilderCommands {
                                                         } else if (name.equalsIgnoreCase("lh11")) {
                                                             font = Font.LH11;
                                                         } else {
-                                                            font = Font.DEFAULT_LH;
+                                                            font = Font.ABSOLUTE_DEFAULT_COLLECTION;
                                                         }
 
-                                                        for (int i = -10; i < 20; i++) {
-                                                            builder.addFontString(i, "|^_^| Line " + i, font.getFontForLine(i));
+                                                        BBSB.log("Using font collection", font);
+
+                                                        if (font == Font.ABSOLUTE_DEFAULT_COLLECTION) {
+                                                            for (int i = -15; i < 29; i++) {
+                                                                builder.addFontString(i, "|^_^| Line " + i + " @ Y " + (i*8), font.getFontForLine(i*8));
+                                                            }
+                                                        } else {
+                                                            for (int i = -10; i < 20; i++) {
+                                                                builder.addFontString(i, "|^_^| Line " + i, font.getFontForLine(i));
+                                                            }
                                                         }
+
 
                                                         builder.addError("              Error line 1");
                                                         builder.addError("              Error line 2");

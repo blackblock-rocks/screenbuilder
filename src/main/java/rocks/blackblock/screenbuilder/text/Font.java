@@ -4,7 +4,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,41 +30,30 @@ public class Font {
     // Register the spacer font
     public static final SpacerFont SPACE = new SpacerFont("bbsb:space", 8);
 
-    // The LH01 font collection (each line is separated by 1 pixel)
-    public static final LineHeightFontCollection LH01 = new LineHeightFontCollection(
-            8,
+    // The default font collection (each line is separated by 1 pixel)
+    public static final AbsoluteFontCollection ABSOLUTE_DEFAULT_COLLECTION = new AbsoluteFontCollection();
+
+    public static final LineHeightFontCollection LH01 = new CombinedLineHeightFontCollection(
+            ABSOLUTE_DEFAULT_COLLECTION,
             1,
-            9,
-            0,
-            0,
-            null,
-            DEFAULT
+            17
     );
 
     // Use the LH01 font collection as the default one
     public static final LineHeightFontCollection DEFAULT_LH = LH01;
 
-    public static final LineHeightFontCollection LH09 = new LineHeightFontCollection(
-            8,
+    public static final LineHeightFontCollection LH09 = new CombinedLineHeightFontCollection(
+            ABSOLUTE_DEFAULT_COLLECTION,
             9,
-            18,
-            0,
-            17,
-            "slot",
-            DEFAULT
+            17
     );
 
     public static final LineHeightFontCollection LH_INVENTORY_SLOT = LH09;
 
-    // The LH22 font collection (each line is separated by 22 pixels)
-    public static final LineHeightFontCollection LH11 = new LineHeightFontCollection(
-            8,
+    public static final LineHeightFontCollection LH11 = new CombinedLineHeightFontCollection(
+            ABSOLUTE_DEFAULT_COLLECTION,
             11,
-            18,
-            0,
-            0,
-            null,
-            DEFAULT
+            0
     );
 
     protected Style font_style;
@@ -196,6 +184,15 @@ public class Font {
      */
     public void registerWidth(char character, int width) {
         widths.put(character, width);
+    }
+
+    /**
+     * Return the perceived height of a character
+     *
+     * @since   0.3.1
+     */
+    public int getCharacterHeight() {
+        return this.height;
     }
 
     /**

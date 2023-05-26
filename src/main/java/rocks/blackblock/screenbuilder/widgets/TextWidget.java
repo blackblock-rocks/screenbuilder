@@ -67,14 +67,6 @@ public class TextWidget extends StringWidget {
     @Override
     public void addToTextBuilder(TextBuilder builder) {
 
-        int line_index;
-
-        if (this.y_line == null) {
-            line_index = this.getLineIndex(this.y);
-        } else {
-            line_index = this.y_line;
-        }
-
         int space_width = this.font_collection.getWidth(" ");
 
         // Add each line of text
@@ -135,11 +127,12 @@ public class TextWidget extends StringWidget {
                 }
             }
 
+            int current_y = this.getAdjustedY();
 
             // Now iterate over the actual lines
             for (String actual_line : actual_lines) {
 
-                Font font = this.font_collection.getFontForLine(line_index);
+                Font font = this.font_collection.getClosestFont(current_y);
                 int start_x = this.x;
                 int string_width = font.getWidth(actual_line);
 
@@ -151,13 +144,8 @@ public class TextWidget extends StringWidget {
                 builder.setColor(TextColor.fromRgb(0x3f3f3f));
                 builder.print(actual_line, font);
 
-                line_index++;
+                current_y += 9;
             }
-
         }
-
     }
-
-
-
 }

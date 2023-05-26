@@ -14,7 +14,7 @@ import java.awt.image.IndexColorModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PixelFontCollection {
+public class PixelFontCollection extends LineHeightFontCollection {
 
     // All the generated line fonts (each line has to get its own font)
     private final HashMap<Integer, PixelFont> line_fonts = new HashMap<>();
@@ -29,7 +29,6 @@ public class PixelFontCollection {
 
     // The width & height of a character in this font
     private int width;
-    private int height;
 
     // The map of colors: Top pixel color, bottom pixel color »» character
     protected HashMap<Integer, HashMap<Integer, Character>> color_map = new HashMap<>();
@@ -50,8 +49,8 @@ public class PixelFontCollection {
      * @param   height
      */
     public PixelFontCollection(int width, int height) {
+        super(height);
         this.width = width;
-        this.height = height;
 
         this.generateFonts();
     }
@@ -215,7 +214,8 @@ public class PixelFontCollection {
      *
      * @since   0.1.1
      */
-    private void generateFonts() {
+    @Override
+    protected void generateFonts() {
 
         // Generate the colors & pixels first
         int color_count = COLORS.size();
@@ -270,10 +270,26 @@ public class PixelFontCollection {
      *
      * @since   0.1.1
      */
+    @Override
     public Font getFontForLine(int line_index) {
         Font result = this.line_fonts.getOrDefault(line_index, null);
 
         return result;
+    }
+
+    @Override
+    public int convertYToLine(int y) {
+        return y / 2;
+    }
+
+    /**
+     * Get the name of the font's folder
+     *
+     * @since   0.1.1
+     */
+    @Override
+    public String getFontFolderId() {
+        return "px" + this.width + "x" + this.character_height;
     }
 
     /**
@@ -286,21 +302,13 @@ public class PixelFontCollection {
     }
 
     /**
-     * Get the height of the font
-     *
-     * @since   0.1.1
-     */
-    public int getHeight() {
-        return this.height;
-    }
-
-    /**
      * Get the font-id for the given line index
      *
      * @since   0.1.1
      */
+    @Override
     public String getFontIdForLine(int line_index) {
-        return "bbsb:px" + this.width + "x" + this.height + "/l"+line_index;
+        return "bbsb:" + this.getFontFolderId() + "/l"+line_index;
     }
 
     /**
@@ -328,11 +336,12 @@ public class PixelFontCollection {
      *
      * @since   0.1.1
      */
+    @Override
     public void addToResourcePack(ModdedResources moddedResources, PolyMcResourcePack pack, SimpleLogger logger) {
 
         for (PixelFont font : this.line_fonts.values()) {
             String json = font.getJson().toString();
-            String path_str = "font/px" + this.width + "x" + this.height + "/l" + font.getLineIndex() + ".json";
+            String path_str = "font/px" + this.width + "x" + this.character_height + "/l" + font.getLineIndex() + ".json";
 
             pack.setAsset(BBSB.NAMESPACE, path_str, (location, gson) -> {
                 GuiUtils.writeToPath(location, json);

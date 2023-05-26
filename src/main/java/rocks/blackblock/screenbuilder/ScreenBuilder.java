@@ -129,8 +129,8 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     // Should the player hotbar be shown?
     protected boolean show_player_hotbar = true;
 
-    // The line where error messages should be shown
-    protected Integer show_error_line = -2;
+    // The Y coordinate where errors should be printed
+    protected Integer show_error_y = -16;
 
     // Error messages
     protected List<String> error_messages = null;
@@ -1317,24 +1317,25 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             return;
         }
 
-        int line = this.show_error_line;
+        int y = this.show_error_y;
 
         // Will break for inputs that are taller than normal, oh well
-        if (line < 0) {
-            line -= this.error_messages.size() - 1;
+        if (y < 0) {
+            y -= (this.error_messages.size() * 8);
         }
 
         TextGroup error_group = builder.createNewGroup();
         error_group.setColor(TextColor.fromRgb(0xFF0000));
 
         for (String message : this.error_messages) {
-            Font font = Font.DEFAULT_LH.getFontForLine(line);
+            Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(y);
             int message_width = font.getWidth(message);
 
             int start_x = (176 - message_width) / 2;
             builder.setCursor(start_x);
             builder.print(message, font);
-            line++;
+
+            y += 8;
         }
     }
 
