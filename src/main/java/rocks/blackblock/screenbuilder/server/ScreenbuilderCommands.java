@@ -211,7 +211,7 @@ public class ScreenbuilderCommands {
                         .executes((context -> {
                             var source = context.getSource();
                             BBSB.DEBUG = !BBSB.DEBUG;
-                            source.sendFeedback(Text.literal("BBSB debug mode is now " + BBSB.DEBUG), false);
+                            source.sendFeedback(() -> Text.literal("BBSB debug mode is now " + BBSB.DEBUG), false);
 
                             return Command.SINGLE_SUCCESS;
                         }))
