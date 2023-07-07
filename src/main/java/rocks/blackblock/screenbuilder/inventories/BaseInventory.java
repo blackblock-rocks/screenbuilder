@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface BaseInventory extends Inventory, Iterable<ItemStack> {
 
     /**
@@ -21,7 +22,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     DefaultedList<ItemStack> getContents();
 
@@ -30,7 +30,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     void setContents(DefaultedList<ItemStack> contents);
 
@@ -40,7 +39,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default BlockItem getDroppedItem() {
         return null;
@@ -51,7 +49,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default ItemStack getItemStack() {
 
@@ -85,8 +82,8 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
+    @Override
     default boolean isEmpty() {
         Iterator<ItemStack> var1 = this.getContents().iterator();
 
@@ -107,7 +104,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default int countStacks() {
 
@@ -127,8 +123,8 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
+    @Override
     default ItemStack getStack(int slot) {
         return this.getContents().get(slot);
     }
@@ -138,10 +134,10 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.1
      */
+    @Override
     default ItemStack removeStack(int slot, int amount) {
-        ItemStack result = Inventories.splitStack(this.getContents(), slot, amount);
+        ItemStack result = this.removeStackSilently(slot, amount);
         this.onStackRemoved(slot, result);
         this.fireContentChangedEvents();
         return result;
@@ -152,13 +148,39 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.1
      */
+    @Override
     default ItemStack removeStack(int slot) {
-        ItemStack result = Inventories.removeStack(this.getContents(), slot);
-        this.onStackRemoved(slot, result);
-        this.fireContentChangedEvents();
+
+        ItemStack result = null;
+
+        try {
+            result = this.removeStackSilently(slot);
+            this.onStackRemoved(slot, result);
+            this.fireContentChangedEvents();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return result;
+    }
+
+    /**
+     * Remove a stack silently
+     *
+     * @since    0.4.0
+     */
+    default ItemStack removeStackSilently(int slot) {
+        return Inventories.removeStack(this.getContents(), slot);
+    }
+
+    /**
+     * Remove a stack silently
+     *
+     * @since    0.4.0
+     */
+    default ItemStack removeStackSilently(int slot, int amount) {
+        return Inventories.splitStack(this.getContents(), slot, amount);
     }
 
     /**
@@ -177,11 +199,20 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
+    @Override
     default void setStack(int slot, ItemStack stack) {
-        this.getContents().set(slot, stack);
+        this.setStackSilently(slot, stack);
         this.fireContentChangedEvents();
+    }
+
+    /**
+     * Set the ItemStack at the given slot silently
+     *
+     * @since    0.4.1
+     */
+    default void setStackSilently(int slot, ItemStack stack) {
+        this.getContents().set(slot, stack);
     }
 
     /**
@@ -189,7 +220,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void setContentsFromNbt(NbtCompound nbt) {
         DefaultedList<ItemStack> contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
@@ -202,7 +232,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default NbtCompound writeInventoryToNbt(NbtCompound nbt) {
 
@@ -219,7 +248,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void clear() {
         this.getContents().clear();
@@ -231,8 +259,8 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
+    @Override
     default void markDirty() {
 
         if (this.getContents() == null) {
@@ -247,7 +275,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void fireContentChangedEvents() {
 
@@ -266,6 +293,7 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
         this.contentsChanged();
     }
 
+    @Override
     default boolean canPlayerUse(PlayerEntity player) {
         return false;
     }
@@ -275,7 +303,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     @NotNull
     @Override
@@ -288,7 +315,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default List<InventoryChangedListener> getListeners() {
         return null;
@@ -299,7 +325,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void setListeners(List<InventoryChangedListener> listeners) {}
 
@@ -308,7 +333,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void addListener(InventoryChangedListener listener) {
 
@@ -324,7 +348,6 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     default void removeListener(InventoryChangedListener listener) {
 

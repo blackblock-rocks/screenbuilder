@@ -110,7 +110,6 @@ public abstract class WidgetSlot extends StaticSlot {
      * @since   0.1.0
      */
     public ItemStack takeStack(int amount) {
-        System.out.println("Huh? TakeStack shouldn't be called");
         return ItemStack.EMPTY;
     }
 

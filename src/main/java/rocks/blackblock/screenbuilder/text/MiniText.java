@@ -1,10 +1,8 @@
 package rocks.blackblock.screenbuilder.text;
 
 import com.google.common.collect.Lists;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
+import net.minecraft.util.Identifier;
 
 /**
  * Basically the same as LiteralText,
@@ -98,6 +96,97 @@ public class MiniText extends MutableText {
         result.setStyle(text.getStyle());
 
         return result;
+    }
+
+    /**
+     * Walk over this text's strings and all its siblings
+     *
+     * @since   0.4.1
+     */
+    public static void walkOver(Text text, TextStringWalker walker) {
+        walkOver(text, walker, null);
+    }
+
+    /**
+     * Walk over this text's strings and all its siblings
+     *
+     * @since   0.4.1
+     */
+    public static void walkOver(Text text, TextStringWalker walker, Identifier parent_font) {
+
+        Style style = text.getStyle();
+        TextContent content = text.getContent();
+        String str = null;
+
+        Identifier font = null;
+
+        if (style != null) {
+            font = style.getFont();
+        }
+
+        if (font != null) {
+            font = parent_font;
+        }
+
+        if (content instanceof LiteralTextContent literal) {
+            str = literal.string();
+        } else if (content instanceof TranslatableTextContent translatable) {
+            str = translatable.getKey();
+        }
+
+        if (str != null && !str.isEmpty()) {
+            walker.accept(str, content, style, font);
+        }
+
+        Identifier finalFont = font;
+        text.getSiblings().forEach(sibling -> {
+            walkOver(sibling, walker, finalFont);
+        });
+    }
+
+    /**
+     * Walk over this text and all its siblings
+     *
+     * @since   0.4.1
+     */
+    public static void walkOver(Text text, TextContentWalker walker) {
+        walkOver(text, walker, null);
+    }
+
+    /**
+     * Walk over this text and all its siblings
+     *
+     * @since   0.4.1
+     */
+    private static void walkOver(Text text, TextContentWalker walker, Identifier parent_font) {
+
+        Style style = text.getStyle();
+        TextContent content = text.getContent();
+
+        Identifier font = null;
+
+        if (style != null) {
+            font = style.getFont();
+        }
+
+        if (font != null) {
+            font = parent_font;
+        }
+
+        walker.accept(content, style, font);
+
+        Identifier finalFont = font;
+        text.getSiblings().forEach(sibling -> {
+            walkOver(sibling, walker, finalFont);
+        });
+    }
+
+    public interface TextContentWalker {
+        void accept(TextContent text_content, Style style, Identifier font);
+    }
+
+    public interface TextStringWalker {
+        void accept(String string, TextContent text_content, Style style, Identifier font);
     }
 
 }

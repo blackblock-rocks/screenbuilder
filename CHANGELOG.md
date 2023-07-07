@@ -1,4 +1,14 @@
-## 0.3.1 (WIP)
+## 0.4.1 (2023-07-07)
+
+* Add `InventoryProxy` class
+* Improve error area handling
+* Fix certain positioning issues
+
+## 0.4.0
+
+* Upgrade to 1.20
+
+## 0.3.1 (2023-05-26)
 
 * Upgrade to 1.19.4
 * Get the correct title when using a ScreenBuilder as a screen factory

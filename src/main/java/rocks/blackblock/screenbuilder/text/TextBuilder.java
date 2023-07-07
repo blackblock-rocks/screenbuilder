@@ -3,6 +3,7 @@ package rocks.blackblock.screenbuilder.text;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -41,8 +42,17 @@ public class TextBuilder {
     // The current Y-start coordinate
     private int y_origin = 0;
 
+    // The Y coordinate of the gui
+    private int gui_y_origin = 0;
+
     // The X coordinate where text can start
     private int x_text_start = 0;
+
+    // The optional X coordinate where the title should be put centered
+    private Integer x_title_center = null;
+
+    // The Y coordinate where text can start
+    private Integer y_text_start = null;
 
     // The default color, if it is known
     private TextColor default_color = null;
@@ -232,10 +242,11 @@ public class TextBuilder {
      *
      * @since   0.1.1
      */
-    public TextBuilder setCurrentOriginPosition(int x_pixels, int y_pixels) {
+    public TextBuilder setCurrentOriginPosition(int x_pixels, int y_pixels, int gui_y_origin) {
 
         this.x_origin = x_pixels;
         this.y_origin = y_pixels;
+        this.gui_y_origin = gui_y_origin;
 
         //this.line_origin = Font.LH04.convertYToLine(y_pixels);
         //this.y_origin = y_pixels + y_text;
@@ -252,6 +263,36 @@ public class TextBuilder {
         this.title = title;
         return this;
     }
+
+    /**
+     * Set the X coordinate of where the title should be placed centered
+     *
+     * @since   0.4.1
+     */
+    public TextBuilder setTitleCenteredX(Integer x) {
+        this.x_title_center = x;
+        return this;
+    }
+
+    /**
+     * Get the X coordinate of where the title should be placed centered
+     *
+     * @since   0.4.1
+     */
+    @Nullable
+    public Integer getTitleCenteredX() {
+        return this.x_title_center;
+    }
+
+    /**
+     * Should the title be placed centered?
+     *
+     * @since   0.4.1
+     */
+    public boolean displayTitleCentered() {
+        return this.x_title_center != null;
+    }
+
 
     /**
      * Set the X text start coordinate
@@ -273,12 +314,42 @@ public class TextBuilder {
     }
 
     /**
+     * Set the Y text start coordinate
+     * (Compared to the current origin)
+     *
+     * @since   0.4.1
+     */
+    public void setTextStartY(int y) {
+        this.y_text_start = y;
+    }
+
+    /**
+     * Get the Y text start coordinate
+     *
+     * @since   0.4.1
+     */
+    public Integer getTextStartY() {
+        return this.y_text_start;
+    }
+
+    /**
      * Go to the start X position of where text can be put
      *
      * @since   0.1.1
      */
     public void moveCursorToTextStart() {
         this.setCursor(this.x_text_start);
+
+        Integer y_text = this.getTextStartY();
+
+        if (y_text != null) {
+
+            /*if (this.screen_builder != null) {
+                y_text = this.screen_builder.getContainerY(y_text);
+            }*/
+
+            this.setY(y_text);
+        }
     }
 
     /**
@@ -296,7 +367,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public int translateY(int y) {
-        return y + this.y_origin;
+        return y + this.gui_y_origin;
     }
 
     /**
@@ -325,7 +396,7 @@ public class TextBuilder {
     @Deprecated
     public TextBuilder setLine(int line) {
         int y = line * 8;
-        this.setY(y);
+        this.setRawY(y);
         return this;
     }
 
@@ -334,9 +405,21 @@ public class TextBuilder {
      *
      * @param   y
      *
-     * @since   0.1.1
+     * @since   0.4.1
      */
     public TextBuilder setY(int y) {
+        this.raw_y = this.translateY(y);
+        return this;
+    }
+
+    /**
+     * Set the current raw Y index with pixels
+     *
+     * @param   y
+     *
+     * @since   0.1.1
+     */
+    public TextBuilder setRawY(int y) {
         this.raw_y = y;
         return this;
     }
@@ -360,10 +443,6 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public Font getCurrentFont() {
-
-        if (this.raw_y == 0) {
-            return Font.DEFAULT;
-        }
 
         Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(this.raw_y);
 
@@ -476,7 +555,7 @@ public class TextBuilder {
 
         Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(this.raw_y);
 
-        this.setY(this.raw_y + font.getCharacterHeight() + 1);
+        this.setRawY(this.raw_y + font.getCharacterHeight() + 1);
 
         font.addTo(this, text);
 
@@ -571,8 +650,14 @@ public class TextBuilder {
 
         // If there is a title, move the cursor to the right start
         if (this.title != null) {
-            this.setY(0);
-            this.setCursor(this.x_text_start);
+            this.moveCursorToTextStart();
+
+            if (this.displayTitleCentered()) {
+                Font font = this.getCurrentFont();
+                int width = font.getWidth(this.title);
+                int x = this.x_title_center - (width / 2);
+                this.setCursor(x);
+            }
         }
 
         for (TextGroup group : this.groups) {
@@ -582,11 +667,9 @@ public class TextBuilder {
         if (this.title != null) {
 
             Font font = this.getCurrentFont();
-            MutableText title_with_font = MiniText.shallowClone(this.title);
-            //title_with_font.setStyle(font.font_style);
-            //System.out.println("Title with font: " + Text.Serializer.toJson(title_with_font));
+            MutableText title_text = font.getText(this.title);
 
-            text.append(title_with_font);
+            text.append(title_text);
         }
 
         if (BBSB.DEBUG) {
@@ -741,6 +824,7 @@ public class TextBuilder {
 
         this.setCursor(info.getTitleX());
         this.setTextStartX(info.getTitleX());
+        this.setTextStartY(info.getTitleTopY());
     }
 
     /**

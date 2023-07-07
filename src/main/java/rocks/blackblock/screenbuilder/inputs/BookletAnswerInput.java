@@ -3,7 +3,6 @@ package rocks.blackblock.screenbuilder.inputs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
@@ -140,18 +139,17 @@ public class BookletAnswerInput extends BookletInput {
 
             button.addLeftClickListener((screen, slot) -> {
                 if (answer.listener != null) {
-                    answer.listener.onAnswer(screen);
+                    answer.listener.onAnswer(screen, button);
                 }
             });
 
             if (answer.shouldLabelBePrinted()) {
                 TextWidget tw = new TextWidget();
                 tw.setText(answer.text);
-                tw.setX(70);
-                tw.setWidth(170);
+                tw.setX(131);
+                tw.setWidth(245);
                 //tw.setYLine(button.getFontLineNumber());
                 tw.setY(button.getYForVerticallyCenteredText());
-                tw.setFontCollection(Font.LH_INVENTORY_SLOT);
                 tw.setColor(TextColor.fromRgb(0x0012a5));
 
                 sb.addWidget(tw);
@@ -403,6 +401,6 @@ public class BookletAnswerInput extends BookletInput {
      */
     @FunctionalInterface
     public interface AnswerListener {
-        void onAnswer(TexturedScreenHandler screen);
+        void onAnswer(TexturedScreenHandler screen, ButtonWidgetSlot button);
     }
 }

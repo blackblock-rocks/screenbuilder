@@ -28,13 +28,13 @@ public class BookletInput extends EmptyInput {
         super();
 
         // The X coordinate of the main text widget
-        this.text.setX(16);
+        this.text.setX(25);
 
         // The Y coordinate of the top of the main text widget
         this.text.setY(14);
 
         // The maximum width of the text widget
-        this.text.setWidth(223);
+        this.text.setWidth(333);
 
         // The default text color
         this.text.setColor(TextColor.fromRgb(0x3f3f3f));
@@ -57,7 +57,7 @@ public class BookletInput extends EmptyInput {
         sb.setTitle("");
 
         sb.setNamespace(BBSB.NAMESPACE);
-        sb.setFontTexture(BBSB.BOOK_V3);
+        sb.setFontTexture(BBSB.BOOK_V4);
         return sb;
     }
 

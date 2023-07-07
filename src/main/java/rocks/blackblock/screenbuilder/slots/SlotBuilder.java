@@ -25,6 +25,9 @@ import java.util.Objects;
 
 public class SlotBuilder extends Slot implements Cloneable {
 
+    // The optional forced inventory to use
+    private Inventory forced_inventory = null;
+
     // The index in the inventory this slot is mapped to
     private Integer inventory_index = null;
 
@@ -118,6 +121,21 @@ public class SlotBuilder extends Slot implements Cloneable {
     public SlotBuilder mapInventory(int inventory_index) {
         this.inventory_index = inventory_index;
         return this;
+    }
+
+    /**
+     * Set the actual index to use in the inventory,
+     * and the actual inventory to use.
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.0
+     *
+     * @param    inventory_index   The inventory index to use
+     * @param    forced_inventory
+     */
+    public SlotBuilder mapInventory(int inventory_index, Inventory forced_inventory) {
+        this.forced_inventory = forced_inventory;
+        return this.mapInventory(inventory_index);
     }
 
     /**
@@ -414,7 +432,6 @@ public class SlotBuilder extends Slot implements Cloneable {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      *
      * @param    handler   The handler we're creating a slot for
      */
@@ -424,7 +441,9 @@ public class SlotBuilder extends Slot implements Cloneable {
         Inventory inventory;
         Integer inventory_index = this.inventory_index;
 
-        if (inventory_index != null) {
+        if (this.forced_inventory != null) {
+            inventory = this.forced_inventory;
+        } else if (inventory_index != null) {
             // When this slot is specifically mapped to an inventory slot,
             // the handler's main inventory is what we should use
             inventory = handler.getActualInventory();

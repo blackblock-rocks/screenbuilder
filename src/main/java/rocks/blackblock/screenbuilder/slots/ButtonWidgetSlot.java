@@ -65,6 +65,50 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     }
 
     /**
+     * Set the lore of this button
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.0
+     */
+    public ButtonWidgetSlot setLore(List<MutableText> lore) {
+
+        this.lore = new ArrayList<>(lore);
+
+        this.updateStack();
+        return this;
+    }
+
+    /**
+     * Add to the lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.0
+     */
+    public ButtonWidgetSlot addLore(List<MutableText> lore) {
+
+        if (this.lore == null) {
+            this.lore = new ArrayList<>();
+        }
+
+        this.lore.addAll(lore);
+
+        this.updateStack();
+        return this;
+    }
+
+    /**
+     * Add to the lore
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.0
+     */
+    public ButtonWidgetSlot addLore(MutableText lore) {
+        this.appendLoreLine(lore);
+        this.updateStack();
+        return this;
+    }
+
+    /**
      * Set the title of this button
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -311,8 +355,11 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         if (this.button_text != null) {
-            int font_line_number = this.getFontLineNumber();
-            Font font = Font.LH_INVENTORY_SLOT.getFontForLine(font_line_number);
+            //int font_line_number = this.getFontLineNumber();
+            //Font font = Font.LH_INVENTORY_SLOT.getFontForLine(font_line_number);
+
+            int vertical_centered_y = this.getYForVerticallyCenteredText();
+            Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(vertical_centered_y);
 
             // Set the cursor to the middle of the button
             // (A button is about 18 pixels, so 9 pixels from the left)

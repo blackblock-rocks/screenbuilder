@@ -183,7 +183,10 @@ public class ScreenbuilderCommands {
 
                                                         if (font == Font.ABSOLUTE_DEFAULT_COLLECTION) {
                                                             for (int i = -15; i < 29; i++) {
-                                                                builder.addFontString(i, "|^_^| Line " + i + " @ Y " + (i*8), font.getFontForLine(i*8));
+                                                                int y = i * 8;
+                                                                int line = font.convertYToLine(y);
+
+                                                                builder.addFontString(i, "|^_^| Index " + i + " @ Y " + y + " (line " + line + ")", font.getFontForLine(line));
                                                             }
                                                         } else {
                                                             for (int i = -10; i < 20; i++) {

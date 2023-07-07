@@ -374,21 +374,19 @@ public abstract class BaseSlot extends Slot {
 
     /**
      * Get the Y coordinate where text should be printed
-     * for it to be shown in the center of this slot
+     * for it to be shown in the center of this slot.
+     * This should return the Y coordinate of the top of the text.
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.3.1
      */
     public int getYForVerticallyCenteredText() {
 
-        // Get the (top) Y coordinate of this slot
-        int result = this.getSlotYInPixels();
+        // A slot is always 18 pixels high
+        int slot_height = 18;
 
         // Let's assume the text is 8 pixels high
         int text_height = 8;
-
-        // A slot is always 18 pixels high
-        int slot_height = 18;
 
         // The difference between the slot height and the text height
         int difference = slot_height - text_height;
@@ -396,13 +394,11 @@ public abstract class BaseSlot extends Slot {
         // Half of the difference
         int half_difference = difference / 2;
 
-        // Calculate where the bottom of the text should be
-        // for it to appear vertically centered
-        // @TODO: No idea why, but the text is perfectly centered by just using
-        // the slotYInPixels result
-        //result -= half_difference;
+        // Get the (top) Y coordinate of this slot
+        int slot_y = this.getSlotYInPixels();
 
-        //BBSB.log("Y for vertically centered text: " + result + " (slot: " + this.getSlotYInPixels() + ")");
+        // Add half the difference
+        int result = slot_y + half_difference;
 
         return result;
     }

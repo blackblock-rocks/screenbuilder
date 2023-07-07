@@ -80,7 +80,6 @@ public class ScreenInfo {
      * This is when using the original font.
      *
      * @since   0.1.1
-     * @deprecated Use {@link #getTitleBaselineY()} instead
      */
     public int getTitleTopY() {
         return title_y;
@@ -211,8 +210,6 @@ public class ScreenInfo {
         //coords.y = 18 + ((slot_index / 9) * 18);
         //coords.x = 8 + ((slot_index % 9) * 18);
 
-        int title_y = this.getTitleTopY() + this.getTitleHeight();
-        int title_x = this.getTitleX();
         int slot_height = 18;
         int slot_width = 18;
         int slots_per_row = this.getSlotsPerRow();

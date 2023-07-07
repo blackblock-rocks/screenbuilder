@@ -80,6 +80,7 @@ public class BBSB implements ModInitializer {
     public static final GuiTexture TOP_FOUR = new GuiTexture(id("gui/generic_54_top_4"), 0, 0);
     public static final GuiTexture BOOK_V2 = new GuiTexture(id("gui/book_big_v02"), 17, 106);
     public static final GuiTexture BOOK_V3 = new GuiTexture(id("gui/book_big_v03"), 40, 106);
+    public static final GuiTexture BOOK_V4 = new GuiTexture(id("gui/book_big_v04"), 104, 106);
 
     public static final IconTexture COG_ICON = new IconTexture(id("gui/icons/cog"));
     public static final IconTexture PLUS_ICON = new IconTexture(id("gui/icons/plus"));
@@ -124,6 +125,10 @@ public class BBSB implements ModInitializer {
     public static final IconTexture PERSON_ICON = new IconTexture(id("gui/icons/person"), 2);
 
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
+
+    static {
+        BOOK_V4.setTextCoordinates(25, 14);
+    }
 
     /**
      * Create an identifier
@@ -235,6 +240,7 @@ public class BBSB implements ModInitializer {
         TOP_FOUR.registerYOffset(0);
         BOOK_V2.registerYOffset(0);
         BOOK_V3.registerYOffset(0);
+        BOOK_V4.registerYOffset(0);
 
         WidgetTexture.forEachRowOffset((dummy, row, row_offset, jitter) -> {
 

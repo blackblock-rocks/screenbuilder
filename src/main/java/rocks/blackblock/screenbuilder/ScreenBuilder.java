@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
+import rocks.blackblock.screenbuilder.screen.ErrorAreaInfo;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.slots.*;
 import rocks.blackblock.screenbuilder.text.Font;
@@ -1331,25 +1332,47 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             return;
         }
 
-        int y = this.show_error_y;
+        ErrorAreaInfo info = null;
+        GuiTexture texture = this.getFontTexture();
 
-        // Will break for inputs that are taller than normal, oh well
-        if (y < 0) {
-            y -= (this.error_messages.size() * 8);
+        if (texture != null) {
+            info = texture.getErrorAreaInfo();
+        }
+
+        if (info == null) {
+            info = new ErrorAreaInfo();
+
+            int y = this.show_error_y;
+
+            // Will break for inputs that are taller than normal, oh well
+            if (y < 0) {
+                info.setShouldStartFromBottom(true);
+                //y -= (this.error_messages.size() * 8);
+            } else {
+                info.setShouldStartFromBottom(false);
+            }
+
+            info.setStartY(y);
+            info.setStartX(0);
+            info.setWidth(176);
+            info.setHeight(100);
         }
 
         TextGroup error_group = builder.createNewGroup();
         error_group.setColor(TextColor.fromRgb(0xFF0000));
 
-        for (String message : this.error_messages) {
+        for (int i = 0; i < this.error_messages.size(); i++) {
+            String message = this.error_messages.get(i);
+
+            int y = info.getYForLine(i);
+            int x = info.getXForLine(i, message);
+
+            x = this.getContainerX(x);
+            y = this.getContainerY(y);
+
             Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(y);
-            int message_width = font.getWidth(message);
-
-            int start_x = (176 - message_width) / 2;
-            builder.setCursor(start_x);
+            builder.setCursor(x);
             builder.print(message, font);
-
-            y += 8;
         }
     }
 

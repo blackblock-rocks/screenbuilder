@@ -4,9 +4,11 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The base font class
@@ -223,6 +225,37 @@ public class Font {
     }
 
     /**
+     * Get the width of the given text
+     *
+     * @param   original_text_group    The text to calculate the width for
+     *
+     * @since   0.4.1
+     */
+    public int getWidth(Text original_text_group) {
+
+        AtomicInteger result = new AtomicInteger();
+
+        MiniText.walkOver(original_text_group, (str, text_content, style, font_id) -> {
+
+            Font font = null;
+
+            if (font_id != null) {
+                font = Font.getRegistered(font_id.toString());
+            }
+
+            if (font == null) {
+                font = DEFAULT;
+            }
+
+            int width = font.getWidth(str);
+
+            result.addAndGet(width);
+        });
+
+        return result.get();
+    }
+
+    /**
      * Calculate the width of the given string for this font
      *
      * @param   text    The String to calculate the width for
@@ -260,6 +293,26 @@ public class Font {
         MutableText result = Text.literal(text);
 
         result.setStyle(this.font_style);
+
+        return result;
+    }
+
+    /**
+     * Return Text with this font
+     *
+     * @param text  The String to turn into Text
+     */
+    public MutableText getText(Text text) {
+
+        MutableText result = text.copy();
+
+        result.setStyle(this.font_style);
+
+        Style original_style = text.getStyle();
+
+        if (original_style != null) {
+            result.setStyle(original_style.withFont(this.font_style.getFont()));
+        }
 
         return result;
     }

@@ -114,9 +114,6 @@ public class BookletOfferItemInput extends BookletAnswerInput {
             available_rows = 1;
         }
 
-        BBSB.log("There are", available_rows, "rows available");
-        BBSB.log("There are", this.offers.size(), "item offers");
-
         int item_offers = this.offers.size();
 
         if (available_rows == 1) {
@@ -171,7 +168,8 @@ public class BookletOfferItemInput extends BookletAnswerInput {
                     indexes.add(7);
                     indexes.add(8);
                 }
-                case 9 -> {
+
+                default -> {
                     indexes.add(0);
                     indexes.add(1);
                     indexes.add(2);
@@ -237,7 +235,7 @@ public class BookletOfferItemInput extends BookletAnswerInput {
                     indexes.add(16);
                     indexes.add(8);
                 }
-                case 9 -> {
+                default -> {
                     indexes.add(0);
                     indexes.add(10);
                     indexes.add(2);
@@ -303,7 +301,7 @@ public class BookletOfferItemInput extends BookletAnswerInput {
                     indexes.add(22);
                     indexes.add(24);
                 }
-                case 9 -> {
+                default -> {
                     indexes.add(0);
                     indexes.add(2);
                     indexes.add(4);

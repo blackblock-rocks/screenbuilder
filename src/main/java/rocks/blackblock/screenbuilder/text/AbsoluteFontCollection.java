@@ -116,6 +116,33 @@ public class AbsoluteFontCollection extends LineHeightFontCollection {
     }
 
     /**
+     * Get the ascent for the given line
+     * @since   0.4.1
+     */
+    @Override
+    public int getAscentForLine(int base_ascent, int line_index) {
+
+        int ascent_adjustment = line_index * this.getAscentAdjustment() * -1;
+
+        // - top margin?
+        //ascent_adjustment += 14;
+
+        return base_ascent + ascent_adjustment;
+    }
+
+    /**
+     * Convert an old-style "line index" to a Y value
+     *
+     * @param   line_index   The line index to get the font for
+     *
+     * @since   0.4.1
+     */
+    @Override
+    public int lineIndexToY(int line_index) {
+        return line_index + 6;
+    }
+
+    /**
      * Convert the given Y pixel coordinate into a line index.
      * For this collection, the line index matches the Y pixel value.
      *
@@ -125,7 +152,7 @@ public class AbsoluteFontCollection extends LineHeightFontCollection {
      */
     @Override
     public int convertYToLine(int y) {
-        return y;
+        return y - 6;
     }
 
     /**

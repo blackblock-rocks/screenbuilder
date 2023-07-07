@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.text.TextColor;
+import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
@@ -69,6 +70,8 @@ public class TextWidget extends StringWidget {
 
         int space_width = this.font_collection.getWidth(" ");
 
+        int current_y = this.getAdjustedY();
+
         // Add each line of text
         for (MiniText line : this.text) {
             String raw_string = line.getRawString();
@@ -94,11 +97,11 @@ public class TextWidget extends StringWidget {
                     continue;
                 }
 
-                // It doesn't fit, so plit it into each word first
+                // It doesn't fit, so split it into each word first
                 String[] words = line_string.split(" ");
 
                 int current_width = 0;
-                String current_line = "";
+                StringBuilder current_line = new StringBuilder();
 
                 // Add each word to the line
                 for (String word : words) {
@@ -110,24 +113,22 @@ public class TextWidget extends StringWidget {
                     }
 
                     // If the word fits, just add it as is
-                    if (current_width + word_width <= this.width) {
+                    if (this.width <= 0 || current_width + word_width <= this.width || (current_line.length() == 0)) {
                         current_width += word_width;
 
                         // It's safe to always add the space at the end
-                        current_line += word + " ";
+                        current_line.append(word).append(" ");
                     } else {
-                        actual_lines.add(current_line);
+                        actual_lines.add(current_line.toString());
                         current_width = word_width;
-                        current_line = word + " ";
+                        current_line = new StringBuilder(word + " ");
                     }
                 }
 
                 if (current_line.length() > 0) {
-                    actual_lines.add(current_line);
+                    actual_lines.add(current_line.toString());
                 }
             }
-
-            int current_y = this.getAdjustedY();
 
             // Now iterate over the actual lines
             for (String actual_line : actual_lines) {
