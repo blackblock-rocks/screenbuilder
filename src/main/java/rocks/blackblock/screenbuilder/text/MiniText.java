@@ -15,7 +15,7 @@ public class MiniText extends MutableText {
     protected boolean can_be_primitive = false;
 
     public MiniText(String string) {
-        super(new LiteralTextContent(string), Lists.newArrayList(), Style.EMPTY);
+        super(new PlainTextContent.Literal(string), Lists.newArrayList(), Style.EMPTY);
     }
 
     /**
@@ -128,8 +128,8 @@ public class MiniText extends MutableText {
             font = parent_font;
         }
 
-        if (content instanceof LiteralTextContent literal) {
-            str = literal.string();
+        if (content instanceof PlainTextContent plain) {
+            str = plain.string();
         } else if (content instanceof TranslatableTextContent translatable) {
             str = translatable.getKey();
         }

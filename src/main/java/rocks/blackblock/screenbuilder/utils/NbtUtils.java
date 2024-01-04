@@ -55,7 +55,7 @@ public class NbtUtils {
             list = new NbtList();
         }
 
-        list.add(NbtString.of(Text.Serializer.toJson(text)));
+        list.add(NbtString.of(Text.Serialization.toJsonString(text)));
 
         display.put(ItemStack.LORE_KEY, list);
     }
@@ -71,7 +71,7 @@ public class NbtUtils {
         NbtList list = new NbtList();
 
         for (Text text : lines) {
-            list.add(NbtString.of(Text.Serializer.toJson(text)));
+            list.add(NbtString.of(Text.Serialization.toJsonString(text)));
         }
 
         display.put(ItemStack.LORE_KEY, list);
@@ -87,7 +87,7 @@ public class NbtUtils {
         NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
         NbtList list = new NbtList();
 
-        list.add(NbtString.of(Text.Serializer.toJson(text)));
+        list.add(NbtString.of(Text.Serialization.toJsonString(text)));
 
         display.put(ItemStack.LORE_KEY, list);
     }

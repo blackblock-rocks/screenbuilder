@@ -1,3 +1,7 @@
+## 0.4.2 (WIP)
+
+* Upgrade to 1.20.4
+
 ## 0.4.1 (2023-07-07)
 
 * Add `InventoryProxy` class

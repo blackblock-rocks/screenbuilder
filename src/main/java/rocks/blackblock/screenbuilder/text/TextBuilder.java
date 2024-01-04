@@ -674,7 +674,7 @@ public class TextBuilder {
 
         if (BBSB.DEBUG) {
             System.out.println("Dumping GUI text to /tmp/mc_textbuilder.json");
-            String json_string = Text.Serializer.toJson(text);
+            String json_string = Text.Serialization.toJsonString(text);
 
             Path path = Paths.get("/tmp/mc_textbuilder.json");
             byte[] strToBytes = json_string.getBytes();
@@ -695,7 +695,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public String getJsonString() {
-        return Text.Serializer.toJson(this.build());
+        return Text.Serialization.toJsonString(this.build());
     }
 
     /**

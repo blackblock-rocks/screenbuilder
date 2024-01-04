@@ -64,11 +64,10 @@ public class ScreenbuilderCommands {
                                             }
 
                                             // Read in the json file in a string reader
-                                            StringReader reader = new StringReader(json_string);
-                                            MutableText text = Text.Serializer.fromJson(reader);
+                                            MutableText text = Text.Serialization.fromJson(json_string);
 
                                             BBSB.log("Using text: " + text);
-                                            BBSB.log(" -- json:", Text.Serializer.toJson(text));
+                                            BBSB.log(" -- json:", Text.Serialization.toJsonString(text));
 
                                             builder.setDisplayName(text);
                                             builder.setShowPlayerInventory(false);
