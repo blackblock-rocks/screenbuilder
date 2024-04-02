@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -106,7 +107,7 @@ public class GuiUtils {
      * @since   0.2.0
      */
     public static boolean writeToPath(OutputStream output, String data) {
-        return writeToPath(output, data.getBytes());
+        return writeToPath(output, data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
