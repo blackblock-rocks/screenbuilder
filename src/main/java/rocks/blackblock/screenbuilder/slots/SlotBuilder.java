@@ -11,7 +11,6 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.GuiListener;
 import rocks.blackblock.screenbuilder.interfaces.SlotAccessListener;

@@ -6,9 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -509,7 +507,6 @@ public class TexturedScreenHandler extends ScreenHandler {
 
             } else {
 
-                Item item = original_stack.getItem();
                 int index = -1;
                 boolean inserted_all = false;
                 ItemStack wrapped_stack = original_stack;
@@ -528,11 +525,8 @@ public class TexturedScreenHandler extends ScreenHandler {
 
                     original_stack.setCount(wrapped_stack.getCount());
 
-                    if (slot instanceof SlotBuilder sb) {
-                        wrapped_stack = sb.wrapStack(original_stack);
-                    }
-
                     if (slot instanceof SlotBuilder build_slot) {
+                        wrapped_stack = build_slot.wrapStack(original_stack);
                         Integer inventory_index = build_slot.getInventoryIndex();
 
                         // If it's a sided inventory we can also check that
@@ -687,14 +681,14 @@ public class TexturedScreenHandler extends ScreenHandler {
         // We might have to wrap the source for putting it into some slots
         ItemStack wrapped_source_stack = source_stack;
 
-        int index = start_index - 1;
+        int index = end_index;
 
         // First pass: see if any stacks can be merged
         if (source_stack.isStackable()) {
             while (!source_stack.isEmpty()) {
-                index++;
+                index--;
 
-                if (index >= end_index) {
+                if (index <= start_index) {
                     break;
                 }
 
@@ -770,13 +764,13 @@ public class TexturedScreenHandler extends ScreenHandler {
             return true;
         }
 
-        index = start_index - 1;
+        index = end_index;
 
         // Now do moving to empty slots
         while (true) {
-            index++;
+            index--;
 
-            if (index >= end_index) {
+            if (index <= start_index) {
                 break;
             }
 
