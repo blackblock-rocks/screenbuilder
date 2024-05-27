@@ -26,7 +26,11 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         MEDIUM,
         SMALL,
         EXTRA_SMALL,
-        LOWER_SMALL
+        LOWER_SMALL,
+        TOP_TAB_SELECTED,
+        TOP_TAB_UNSELECTED,
+        LEFT_TAB_SELECTED,
+        LEFT_TAB_UNSELECTED
     }
 
     private MutableText title = null;
@@ -316,16 +320,20 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
                 case MEDIUM -> BBSB.BUTTON_MEDIUM;
                 case SMALL, LOWER_SMALL -> BBSB.BUTTON_SMALL;
                 case EXTRA_SMALL -> BBSB.BUTTON_EXTRA_SMALL;
+                case TOP_TAB_SELECTED -> BBSB.BUTTON_TAB_TOP_SELECTED;
+                case TOP_TAB_UNSELECTED -> BBSB.BUTTON_TAB_TOP_UNSELECTED;
+                case LEFT_TAB_SELECTED -> BBSB.BUTTON_TAB_LEFT_SELECTED;
+                case LEFT_TAB_UNSELECTED -> BBSB.BUTTON_TAB_LEFT_UNSELECTED;
             };
         }
 
         // The different type of button images have different sizes,
         // so they don't all start at the top left corner of the slot.
         int offset = switch (this.background_type) {
+            case TOP_TAB_SELECTED, TOP_TAB_UNSELECTED, LEFT_TAB_SELECTED, LEFT_TAB_UNSELECTED  -> -2;
             case LARGE -> -1;
             case MEDIUM, SMALL -> 0;
-            case LOWER_SMALL -> 1;
-            case EXTRA_SMALL -> 1;
+            case LOWER_SMALL, EXTRA_SMALL -> 1;
         };
 
         if (this.overlays != null) {

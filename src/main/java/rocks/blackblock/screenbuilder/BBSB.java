@@ -65,6 +65,10 @@ public class BBSB implements ModInitializer {
     public static final WidgetTexture BUTTON_MEDIUM = new WidgetTexture(id("gui/button_m"));
     public static final WidgetTexture BUTTON_SMALL = new WidgetTexture(id("gui/button_s"));
     public static final WidgetTexture BUTTON_EXTRA_SMALL = new WidgetTexture(id("gui/button_xs"));
+    public static final WidgetTexture BUTTON_TAB_TOP_SELECTED = new WidgetTexture(id("gui/tab_top_selected"));
+    public static final WidgetTexture BUTTON_TAB_TOP_UNSELECTED = new WidgetTexture(id("gui/tab_top_unselected"));
+    public static final WidgetTexture BUTTON_TAB_LEFT_SELECTED = new WidgetTexture(id("gui/tab_left_selected"));
+    public static final WidgetTexture BUTTON_TAB_LEFT_UNSELECTED = new WidgetTexture(id("gui/tab_left_unselected"));
     public static final WidgetTexture WRENCH_SMALL = new WidgetTexture(id("gui/wrench_small"));
     public static final WidgetTexture LOCK_RED = new WidgetTexture(id("gui/lock_red"));
     public static final WidgetTexture UNLOCK_GREEN = new WidgetTexture(id("gui/unlock_green"));
@@ -89,6 +93,18 @@ public class BBSB implements ModInitializer {
     public static final IconTexture WAREHOUSE_ICON = new IconTexture(id("gui/icons/warehouse"));
     public static final IconTexture TRASH_ICON = new IconTexture(id("gui/icons/trash"));
 
+    public static final IconTexture SORT_ICON = new IconTexture(id("gui/icons/sort_icon"));
+    public static final IconTexture SORT_ALPHABETICAL = new IconTexture(id("gui/icons/sort_alphabetical"));
+    public static final IconTexture SORT_OWNER = new IconTexture(id("gui/icons/sort_owner"));
+    public static final IconTexture SORT_MINED = new IconTexture(id("gui/icons/sort_mined"));
+    public static final IconTexture SORT_BROKEN = new IconTexture(id("gui/icons/sort_broken"));
+    public static final IconTexture SORT_CRAFTED = new IconTexture(id("gui/icons/sort_crafted"));
+    public static final IconTexture SORT_USED = new IconTexture(id("gui/icons/sort_used"));
+    public static final IconTexture SORT_PICKED_UP = new IconTexture(id("gui/icons/sort_picked_up"));
+    public static final IconTexture SORT_DROPPED = new IconTexture(id("gui/icons/sort_dropped"));
+    public static final IconTexture SORT_DESCENDING = new IconTexture(id("gui/icons/sort_descending"));
+    public static final IconTexture SORT_ASCENDING = new IconTexture(id("gui/icons/sort_ascending"));
+
     public static final IconTexture ARROW_DOWN_ICON = new IconTexture(id("gui/icons/arrow_down"));
     public static final IconTexture ARROW_UP_ICON = new IconTexture(id("gui/icons/arrow_up"));
     public static final IconTexture ARROW_RIGHT_ICON = new IconTexture(id("gui/icons/arrow_right"));
@@ -107,7 +123,9 @@ public class BBSB implements ModInitializer {
     public static final IconTexture SUN_ICON = new IconTexture(id("gui/icons/sun"));
     public static final IconTexture MOON_ICON = new IconTexture(id("gui/icons/moon"));
     public static final IconTexture QUESTION_ICON = new IconTexture(id("gui/icons/question"));
+    public static final IconTexture ASTERISK_ICON = new IconTexture(id("gui/icons/asterisk"));
     public static final IconTexture CUBE_ICON = new IconTexture(id("gui/icons/cube"));
+    public static final IconTexture CUBE_SPECIAL_ICON = new IconTexture(id("gui/icons/cube_special"));
     public static final IconTexture CHEVRON_RIGHT_ICON = new IconTexture(id("gui/icons/chevron_right"));
     public static final IconTexture CHEVRON_LEFT_ICON = new IconTexture(id("gui/icons/chevron_left"));
     public static final IconTexture CHEVRON_UP_ICON = new IconTexture(id("gui/icons/chevron_up"));
@@ -119,10 +137,17 @@ public class BBSB implements ModInitializer {
     public static final IconTexture CHECK_ICON = new IconTexture(id("gui/icons/check"));
     public static final IconTexture CROSS_ICON = new IconTexture(id("gui/icons/cross"));
     public static final IconTexture CITY_ICON = new IconTexture(id("gui/icons/city"), 2);
+    public static final IconTexture HEART_ICON = new IconTexture(id("gui/icons/heart"), 2);
+    public static final IconTexture DRUMSTICK_ICON = new IconTexture(id("gui/icons/drumstick"));
+    public static final IconTexture INGOT_ICON = new IconTexture(id("gui/icons/ingot"));
     public static final IconTexture WORLD_ICON = new IconTexture(id("gui/icons/world"), 2);
     public static final IconTexture PEOPLE_ICON = new IconTexture(id("gui/icons/people"), 2);
+    public static final IconTexture STEVE_ICON = new IconTexture(id("gui/icons/steve"), 2);
     public static final IconTexture FLAG_ICON = new IconTexture(id("gui/icons/flag"), 2);
+    public static final IconTexture MINI_FLAG_ICON = new IconTexture(id("gui/icons/mini_flag"));
     public static final IconTexture PERSON_ICON = new IconTexture(id("gui/icons/person"), 2);
+    public static final IconTexture VILLAGER_ICON = new IconTexture(id("gui/icons/villager"), 2);
+    public static final IconTexture TOPHAT_ICON = new IconTexture(id("gui/icons/tophat"));
 
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
@@ -255,6 +280,11 @@ public class BBSB implements ModInitializer {
 
             BUTTON_EXTRA_SMALL.registerYOffset(dummy, 18 + row_offset);
 
+            BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 16 + row_offset);
+            BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 16 + row_offset);
+            BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 16 + row_offset);
+            BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 16 + row_offset);
+
             WRENCH_SMALL.registerYOffset(dummy, 17 + row_offset);
             LOCK_RED.registerYOffset(dummy, 17 + row_offset);
             UNLOCK_GREEN.registerYOffset(dummy, 17 + row_offset);
@@ -281,6 +311,17 @@ public class BBSB implements ModInitializer {
                 DIAMOND_ICON,
                 WAREHOUSE_ICON,
                 TRASH_ICON,
+                SORT_ICON,
+                SORT_ALPHABETICAL,
+                SORT_OWNER,
+                SORT_MINED,
+                SORT_BROKEN,
+                SORT_CRAFTED,
+                SORT_USED,
+                SORT_PICKED_UP,
+                SORT_DROPPED,
+                SORT_DESCENDING,
+                SORT_ASCENDING,
                 ARROW_UP_ICON,
                 ARROW_LEFT_ICON,
                 ARROW_RIGHT_ICON,
@@ -297,7 +338,9 @@ public class BBSB implements ModInitializer {
                 SUN_ICON,
                 MOON_ICON,
                 QUESTION_ICON,
+                ASTERISK_ICON,
                 CUBE_ICON,
+                CUBE_SPECIAL_ICON,
                 CHEVRON_RIGHT_ICON,
                 CHEVRON_LEFT_ICON,
                 CHEVRON_UP_ICON,
@@ -309,10 +352,17 @@ public class BBSB implements ModInitializer {
                 CHECK_ICON,
                 CROSS_ICON,
                 CITY_ICON,
+                HEART_ICON,
+                DRUMSTICK_ICON,
+                INGOT_ICON,
                 WORLD_ICON,
                 FLAG_ICON,
+                MINI_FLAG_ICON,
                 PEOPLE_ICON,
-                PERSON_ICON
+                STEVE_ICON,
+                PERSON_ICON,
+                VILLAGER_ICON,
+                TOPHAT_ICON
         };
 
         WidgetTexture.registerForAllSlots(icons);
