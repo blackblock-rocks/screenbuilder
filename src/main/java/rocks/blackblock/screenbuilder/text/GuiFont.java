@@ -54,6 +54,7 @@ public class GuiFont extends Font {
 
         if (BBSB.HAS_INITIALIZED) {
             BBSB.log("Warning! Registering texture piece after initialization:", piece);
+            //Thread.dumpStack();
         }
     }
 
@@ -82,6 +83,8 @@ public class GuiFont extends Font {
 
             JsonArray chars = provider_chars.get(ascent_id);
 
+            // If this provider doesn't have an entry for the current ascent_id yet,
+            // create it
             if (chars == null) {
 
                 JsonObject provider = new JsonObject();

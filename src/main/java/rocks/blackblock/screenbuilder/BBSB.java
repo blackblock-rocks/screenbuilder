@@ -269,39 +269,8 @@ public class BBSB implements ModInitializer {
         BOOK_V4.registerYOffset(0);
 
         WidgetTexture.forEachRowOffset((dummy, row, row_offset, jitter) -> {
-
-            BUTTON_LARGE.registerYOffset(dummy, 16 + row_offset);
-            BUTTON_MEDIUM.registerYOffset(dummy, 17 + row_offset);
-
-            // Aligned to the top
-            BUTTON_SMALL.registerYOffset(dummy, 17 + row_offset);
-
-            // Aligned to the bottom
-            BUTTON_SMALL.registerYOffset(dummy, 18 + row_offset);
-
-            BUTTON_EXTRA_SMALL.registerYOffset(dummy, 18 + row_offset);
-
-            BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 16 + row_offset);
-            BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 16 + row_offset);
-            BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 16 + row_offset);
-            BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 16 + row_offset);
-
-            WRENCH_SMALL.registerYOffset(dummy, 17 + row_offset);
-            LOCK_RED.registerYOffset(dummy, 17 + row_offset);
-            UNLOCK_GREEN.registerYOffset(dummy, 17 + row_offset);
-
-            BLACK_FRAME.registerYOffset(dummy, 17 + row_offset);
-            BLACK_FRAME_3X.registerYOffset(dummy, 17 + row_offset);
-
-            BUTTON_ACCEPT.registerYOffset(dummy, 17 + row_offset);
-            BUTTON_DENY.registerYOffset(dummy, 17 + row_offset);
-            MIRROR_SLOT.registerYOffset(dummy, 17 + row_offset);
-
-            ARROW_LEFT.registerYOffset(dummy, 17 + 5 + row_offset);
-            ARROW_RIGHT.registerYOffset(dummy, 17 + 5 + row_offset);
-            PAGER.registerYOffset(dummy, 17 + 1 + row_offset);
-
-            SLOT_FRAME.registerYOffset(dummy, 17 + row_offset);
+            registerIconsForRow(dummy, row, row_offset - 19, jitter);
+            registerIconsForRow(dummy, row, row_offset, jitter);
         });
 
         IconTexture[] icons = {
@@ -377,5 +346,55 @@ public class BBSB implements ModInitializer {
 
             BBSB.HAS_INITIALIZED = true;
         });
+    }
+
+    private static void registerIconsForRow(ScreenBuilder dummy, int row, int row_offset, int jitter) {
+        BUTTON_LARGE.registerYOffset(dummy, 16 + row_offset + jitter);
+        BUTTON_MEDIUM.registerYOffset(dummy, 17 + row_offset + jitter);
+
+        // Aligned to the top
+        BUTTON_SMALL.registerYOffset(dummy, 17 + row_offset + jitter);
+
+        // Aligned to the bottom
+        BUTTON_SMALL.registerYOffset(dummy, 18 + row_offset + jitter);
+
+        BUTTON_EXTRA_SMALL.registerYOffset(dummy, 18 + row_offset + jitter);
+
+        BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 10 + row_offset + jitter);
+        BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 10 + row_offset + jitter);
+        BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 10 + row_offset + jitter);
+        BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 10 + row_offset + jitter);
+
+        BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 12 + row_offset + jitter);
+        BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 12 + row_offset + jitter);
+        BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 12 + row_offset + jitter);
+        BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 12 + row_offset + jitter);
+
+        BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 14 + row_offset + jitter);
+        BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 14 + row_offset + jitter);
+        BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 14 + row_offset + jitter);
+        BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 14 + row_offset + jitter);
+
+        BUTTON_TAB_TOP_SELECTED.registerYOffset(dummy, 16 + row_offset + jitter);
+        BUTTON_TAB_TOP_UNSELECTED.registerYOffset(dummy, 16 + row_offset + jitter);
+        BUTTON_TAB_LEFT_SELECTED.registerYOffset(dummy, 16 + row_offset + jitter);
+        BUTTON_TAB_LEFT_UNSELECTED.registerYOffset(dummy, 16 + row_offset + jitter);
+
+        WRENCH_SMALL.registerYOffset(dummy, 17 + row_offset + jitter);
+        LOCK_RED.registerYOffset(dummy, 17 + row_offset + jitter);
+        UNLOCK_GREEN.registerYOffset(dummy, 17 + row_offset + jitter);
+
+        BLACK_FRAME.registerYOffset(dummy, 17 + row_offset + jitter);
+        BLACK_FRAME_3X.registerYOffset(dummy, 17 + row_offset + jitter);
+
+        BUTTON_ACCEPT.registerYOffset(dummy, 17 + row_offset + jitter);
+        BUTTON_DENY.registerYOffset(dummy, 17 + row_offset + jitter);
+        MIRROR_SLOT.registerYOffset(dummy, 17 + row_offset + jitter);
+
+        ARROW_LEFT.registerYOffset(dummy, 17 + 5 + row_offset + jitter);
+        ARROW_RIGHT.registerYOffset(dummy, 17 + 5 + row_offset + jitter);
+        PAGER.registerYOffset(dummy, 17 + 1 + row_offset + jitter);
+
+        SLOT_FRAME.registerYOffset(dummy, 17 + row_offset + jitter);
     }
 }
