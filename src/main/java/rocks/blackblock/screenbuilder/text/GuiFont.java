@@ -51,6 +51,10 @@ public class GuiFont extends Font {
      */
     public void registerTexturePiece(TexturePiece piece) {
         this.texture_pieces.add(piece);
+
+        if (BBSB.HAS_INITIALIZED) {
+            BBSB.log("Warning! Registering texture piece after initialization:", piece);
+        }
     }
 
     /**

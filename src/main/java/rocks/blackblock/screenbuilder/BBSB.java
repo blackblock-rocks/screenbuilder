@@ -22,6 +22,7 @@ public class BBSB implements ModInitializer {
 
     public static final String NAMESPACE = "bbsb";
     public static final Logger LOGGER = LogManager.getLogger(NAMESPACE);
+    public static boolean HAS_INITIALIZED = false;
 
     public static boolean DEBUG = false;
 
@@ -373,6 +374,8 @@ public class BBSB implements ModInitializer {
             PixelFontCollection.PX01.getCharacterHeight();
 
             BaseTexture.calculateAll();
+
+            BBSB.HAS_INITIALIZED = true;
         });
     }
 }
