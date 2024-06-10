@@ -45,7 +45,7 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public int getIndex() {
-        return index;
+        return this.index;
     }
 
     /**
@@ -54,7 +54,7 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public char getCharacter() {
-        return character;
+        return this.character;
     }
 
     /**
@@ -81,7 +81,7 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public BufferedImage getImage() {
-        return image;
+        return this.image;
     }
 
     /**
@@ -128,6 +128,11 @@ public class TexturePiece {
      * @since   0.3.0
      */
     public int getGuiHeight() {
+
+        if (this.parent == null) {
+            return 0;
+        }
+
         return this.parent.height;
     }
 
@@ -153,7 +158,12 @@ public class TexturePiece {
      * @since   0.1.1
      */
     public int getImageHeight() {
-        return image.getHeight();
+
+        if (this.image == null) {
+            return 0;
+        }
+
+        return this.image.getHeight();
     }
 
     /**
@@ -163,11 +173,15 @@ public class TexturePiece {
      */
     public int getImageWidth() {
 
-        if (this.uses_shared_image) {
+        if (this.uses_shared_image && this.parent != null) {
             return this.parent.getImagePieceWidth();
         }
 
-        return image.getWidth();
+        if (this.image == null) {
+            return 0;
+        }
+
+        return this.image.getWidth();
     }
 
     /**

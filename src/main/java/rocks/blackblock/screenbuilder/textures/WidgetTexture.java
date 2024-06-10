@@ -68,6 +68,7 @@ public class WidgetTexture extends BaseTexture {
 
         forEachRowOffset((dummy, row, row_offset, jitter) -> {
             for (WidgetTexture texture : textures) {
+                texture.registerYOffset(dummy, 13 + row_offset + jitter);
                 texture.registerYOffset(dummy, 17 + row_offset + jitter);
             }
         });
@@ -89,6 +90,15 @@ public class WidgetTexture extends BaseTexture {
         for (int row = 0; row < 10; row++) {
             int offset = 18 * row;
 
+            if (row == 6) {
+                // Also register it without the later "+14" and "+4" offset,
+                // probably some "off by 1" error, because without this icons for the 6th row (0-indexed at row 5)
+                // get registered after initialization ...
+                for (int i = -1; i < 4; i++) {
+                    callback.call(dummy, row, offset, i);
+                }
+            }
+
             if (row >= 6) {
                 offset += 14;
             }
@@ -97,8 +107,8 @@ public class WidgetTexture extends BaseTexture {
                 offset += 4;
             }
 
-            // Let the texture have 4 different Y offsets
-            for (int i = 0; i < 4; i++) {
+            // Let the texture have 5 different Y offsets
+            for (int i = -1; i < 4; i++) {
                 callback.call(dummy, row, offset, i);
             }
         }
