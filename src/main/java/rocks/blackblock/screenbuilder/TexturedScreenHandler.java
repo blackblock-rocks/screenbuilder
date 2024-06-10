@@ -658,15 +658,13 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @param    player        The player that triggered the transfer
      */
     public boolean transferSlotToOtherSlots(Slot slot, int start_index, int end_index, @Nullable PlayerEntity player) {
-
         boolean moved_everything = false;
-        boolean moved_anything = false;
 
         // The stack in the slot might be wrapped, that's why we call it the "visual stack"
         ItemStack visual_stack = slot.getStack();
 
         // Use the visual stack as the source stack
-        ItemStack source_stack = visual_stack;
+        ItemStack source_stack = visual_stack.copy();
 
         // If the slot is a SlotBuilder instance, the stack might be wrapped!
         // Let's unwrap it
@@ -733,7 +731,6 @@ public class TexturedScreenHandler extends ScreenHandler {
 
                     target_slot.markDirty();
                     moved_everything = true;
-                    moved_anything = true;
                     break;
                 }
 
@@ -750,7 +747,6 @@ public class TexturedScreenHandler extends ScreenHandler {
                     }
 
                     target_slot.markDirty();
-                    moved_anything = true;
                 }
             }
 
@@ -759,6 +755,8 @@ public class TexturedScreenHandler extends ScreenHandler {
         }
 
         if (moved_everything) {
+            if (this.base_inventory != null)
+                this.base_inventory.onStackRemoved(slot.getIndex(), visual_stack);
             visual_stack.setCount(source_stack.getCount());
             this.triggerBaseInventoryChange();
             return true;
@@ -801,7 +799,6 @@ public class TexturedScreenHandler extends ScreenHandler {
 
                     target_slot.setStack(wrapped_source_stack.split(max_count));
                     target_slot.markDirty();
-                    moved_anything = true;
 
                     if (slot instanceof SlotBuilder build_slot) {
                         build_slot.onTransferOut(player, wrapped_source_stack, moved_amount, target_slot);
@@ -824,6 +821,9 @@ public class TexturedScreenHandler extends ScreenHandler {
 
             }
         }
+
+        if (moved_everything && this.base_inventory != null)
+            this.base_inventory.onStackRemoved(slot.getIndex(), visual_stack);
 
         // Sync the counts
         source_stack.setCount(wrapped_source_stack.getCount());
