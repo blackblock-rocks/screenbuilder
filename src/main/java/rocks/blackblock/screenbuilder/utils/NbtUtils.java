@@ -1,16 +1,23 @@
 package rocks.blackblock.screenbuilder.utils;
 
+import net.minecraft.SharedConstants;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.screenbuilder.interfaces.CompareForScenario;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NbtUtils {
 
@@ -32,13 +39,13 @@ public class NbtUtils {
     }
 
     /**
-     * Set the title of the given stack
+     * Set the title/custom name of the given stack
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
      */
     public static void setTitle(ItemStack stack, Text text) {
-        stack.setCustomName(text);
+        stack.set(DataComponentTypes.CUSTOM_NAME, text);
     }
 
     /**
@@ -48,16 +55,10 @@ public class NbtUtils {
      * @since    0.1.0
      */
     public static void appendLore(ItemStack stack, Text text) {
-        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
-        NbtList list = display.getList(ItemStack.LORE_KEY, 8);
+        var lore_component = stack.getOrDefault(DataComponentTypes.LORE, new LoreComponent(List.of()));
 
-        if (list == null) {
-            list = new NbtList();
-        }
-
-        list.add(NbtString.of(Text.Serialization.toJsonString(text)));
-
-        display.put(ItemStack.LORE_KEY, list);
+        List<Text> list = lore_component.lines();
+        list.add(text);
     }
 
     /**
@@ -67,14 +68,8 @@ public class NbtUtils {
      * @since    0.3.1
      */
     public static void replaceLore(ItemStack stack, List<MutableText> lines) {
-        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
-        NbtList list = new NbtList();
-
-        for (Text text : lines) {
-            list.add(NbtString.of(Text.Serialization.toJsonString(text)));
-        }
-
-        display.put(ItemStack.LORE_KEY, list);
+        List<Text> simplified_lines = new ArrayList<>(lines);
+        stack.set(DataComponentTypes.LORE, new LoreComponent(simplified_lines));
     }
 
     /**
@@ -84,12 +79,9 @@ public class NbtUtils {
      * @since    0.1.0
      */
     public static void replaceLore(ItemStack stack, Text text) {
-        NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
-        NbtList list = new NbtList();
-
-        list.add(NbtString.of(Text.Serialization.toJsonString(text)));
-
-        display.put(ItemStack.LORE_KEY, list);
+        List<Text> simplified_lines = new ArrayList<>(1);
+        simplified_lines.add(text);
+        stack.set(DataComponentTypes.LORE, new LoreComponent(simplified_lines));
     }
 
     /**
@@ -141,17 +133,116 @@ public class NbtUtils {
             right.setDamage(0);
         }
 
-        NbtCompound left_nbt = left.getNbt();
-        NbtCompound right_nbt = right.getNbt();
+        return Objects.equals(left.getComponents(), right.getComponents());
+    }
 
-        if (left_nbt == right_nbt) {
-            return true;
+    /**
+     * Can the 2 stacks be combined?
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.3
+     */
+    public static boolean canCombine(ItemStack left, ItemStack right) {
+        return ItemStack.areItemsAndComponentsEqual(left, right);
+    }
+
+    /**
+     * Return the json string representation of the given text
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.4.3
+     */
+    public static String serializeTextToJson(Text text) {
+        return Text.Serialization.toJsonString(text, getDynamicRegistry());
+    }
+
+    /**
+     * Get the old-style NBT compound
+     *
+     * @since    0.5.2
+     */
+    public static NbtCompound getCustomNbt(ItemStack stack) {
+        NbtComponent data = stack.get(DataComponentTypes.CUSTOM_DATA);
+
+        if (data == null) {
+            data = NbtComponent.of(new NbtCompound());
+            stack.set(DataComponentTypes.CUSTOM_DATA, data);
         }
 
-        if (left_nbt == null || right_nbt == null) {
+        return data.getNbt();
+    }
+
+    /**
+     * Get the old-style NBT compound
+     *
+     * @since    0.5.2
+     */
+    public static void setCustomNbt(ItemStack stack, NbtCompound nbt) {
+        NbtComponent data = NbtComponent.of(nbt);
+        stack.set(DataComponentTypes.CUSTOM_DATA, data);
+    }
+
+    /**
+     * Does the given stack have custom nbt?
+     *
+     * @since    0.5.2
+     */
+    public static boolean hasCustomNbt(ItemStack stack) {
+
+        NbtComponent data = stack.get(DataComponentTypes.CUSTOM_DATA);
+
+        if (data == null) {
             return false;
         }
 
-        return left.getNbt().equals(right.getNbt());
+        return !data.isEmpty();
+    }
+
+    /**
+     * Remove invalid characters from a packet name.
+     * Used to be a function in SharedConstants
+     *
+     * @since    0.5.2
+     */
+    public static String stripInvalidChars(String input) {
+        for (char c : SharedConstants.INVALID_CHARS_LEVEL_NAME) {
+            input = input.replace(c, '_');
+        }
+
+        return input;
+    }
+
+    /**
+     * Get a dynamic registry.
+     * Putting this here for now because I don't know
+     * how important it is to get the correct one in certain places
+     *
+     * @since    0.5.2
+     */
+    public static RegistryWrapper.WrapperLookup getDynamicRegistry() {
+        return DynamicRegistryManager.EMPTY;
+    }
+
+    /**
+     * Serialize an ItemStack into an NbtElement
+     *
+     * @since    0.5.2
+     */
+    public static NbtElement serializeStack(ItemStack stack) {
+
+        if (stack == null) {
+            return null;
+        }
+
+        return stack.encode(getDynamicRegistry());
+    }
+
+    /**
+     * Deserialize an NbtElement into an ItemStack
+     *
+     * @since    0.5.2
+     */
+    public static ItemStack deserializeToStack(NbtElement nbt) {
+        return ItemStack.fromNbt(getDynamicRegistry(), nbt).orElse(null);
     }
 }

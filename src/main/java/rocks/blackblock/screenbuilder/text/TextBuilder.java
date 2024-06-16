@@ -9,6 +9,7 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -673,8 +674,9 @@ public class TextBuilder {
         }
 
         if (BBSB.DEBUG) {
+            System.out.println("Not dumping GUI text because it became too difficult");
             System.out.println("Dumping GUI text to /tmp/mc_textbuilder.json");
-            String json_string = Text.Serialization.toJsonString(text);
+            String json_string = NbtUtils.serializeTextToJson(text);
 
             Path path = Paths.get("/tmp/mc_textbuilder.json");
             byte[] strToBytes = json_string.getBytes();
@@ -695,7 +697,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public String getJsonString() {
-        return Text.Serialization.toJsonString(this.build());
+        return NbtUtils.serializeTextToJson(this.build());
     }
 
     /**

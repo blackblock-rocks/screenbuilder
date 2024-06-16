@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -20,6 +21,7 @@ import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 
 import java.nio.file.Files;
@@ -64,10 +66,10 @@ public class ScreenbuilderCommands {
                                             }
 
                                             // Read in the json file in a string reader
-                                            MutableText text = Text.Serialization.fromJson(json_string);
+                                            MutableText text = Text.Serialization.fromJson(json_string, NbtUtils.getDynamicRegistry());
 
                                             BBSB.log("Using text: " + text);
-                                            BBSB.log(" -- json:", Text.Serialization.toJsonString(text));
+                                            BBSB.log(" -- json:", NbtUtils.serializeTextToJson(text));
 
                                             builder.setDisplayName(text);
                                             builder.setShowPlayerInventory(false);
@@ -82,7 +84,7 @@ public class ScreenbuilderCommands {
                     .then(literal("screen")
                             .then(CommandManager.argument("targets", EntityArgumentType.players())
 
-                                .then(CommandManager.argument("title", TextArgumentType.text())
+                                .then(CommandManager.argument("title", TextArgumentType.text(registryAccess))
                                         .executes((context -> {
                                             var source = context.getSource();
 

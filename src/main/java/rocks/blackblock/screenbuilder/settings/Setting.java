@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 import rocks.blackblock.screenbuilder.values.SettingValue;
 
 public abstract class Setting {
@@ -23,7 +24,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      *
      * @param    name
      */
@@ -36,7 +36,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public String getName() {
         return this.name;
@@ -47,7 +46,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      *
      * @param    title
      */
@@ -61,7 +59,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public String getTitle() {
 
@@ -77,7 +74,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      *
      * @param    item
      */
@@ -91,7 +87,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract SettingValue createValue();
 
@@ -100,7 +95,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public SettingValue createValue(NbtCompound nbt) {
         SettingValue value = this.createValue();
@@ -113,7 +107,6 @@ public abstract class Setting {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public ItemStack getStack() {
 
@@ -124,9 +117,9 @@ public abstract class Setting {
             title = this.name;
         }
 
-        result.setCustomName((Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
+        NbtUtils.setTitle(result, (Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
 
-        NbtCompound nbt = result.getOrCreateNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(result);
         nbt.putString("setting_name", this.name);
 
         return result;

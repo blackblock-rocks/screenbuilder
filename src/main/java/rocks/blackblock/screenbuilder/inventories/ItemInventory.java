@@ -5,6 +5,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class ItemInventory implements BaseInventory {
 
@@ -24,7 +25,7 @@ public class ItemInventory implements BaseInventory {
         this.stack = stack;
         this.size = size;
 
-        NbtCompound nbt = stack.getOrCreateNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
         NbtCompound item_inventory = nbt.getCompound("ItemInventory");
 
         if (item_inventory == null) {
@@ -32,10 +33,7 @@ public class ItemInventory implements BaseInventory {
             nbt.put("ItemInventory", item_inventory);
         }
 
-        this.setContentsFromNbt(item_inventory);
-
-        //this.contents = DefaultedList.ofSize(size, ItemStack.EMPTY);
-        //Inventories.readNbt(item_inventory, this.contents);
+        this.setContentsFromNbt(item_inventory, player.getRegistryManager());
     }
 
     @Override
@@ -76,14 +74,14 @@ public class ItemInventory implements BaseInventory {
      * @since    0.1.1
      */
     public void writeToItemStack() {
-        NbtCompound nbt = this.stack.getOrCreateNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(this.stack);
         NbtCompound item_inventory = nbt.getCompound("ItemInventory");
 
         if (item_inventory == null) {
             item_inventory = new NbtCompound();
         }
 
-        Inventories.writeNbt(item_inventory, this.contents);
+        Inventories.writeNbt(item_inventory, this.contents, this.player.getRegistryManager());
 
         nbt.put("ItemInventory", item_inventory);
     }

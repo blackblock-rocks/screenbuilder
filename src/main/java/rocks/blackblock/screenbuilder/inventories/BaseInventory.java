@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,9 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      * @since    0.1.0
      */
     default ItemStack getItemStack() {
+        throw new RuntimeException("Oops");
+    }
+    /*default ItemStack getItemStack() {
 
         BlockItem item = this.getDroppedItem();
 
@@ -75,7 +79,7 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
         }
 
         return stack;
-    }
+    }*/
 
     /**
      * Is this inventory empty?
@@ -221,9 +225,9 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
      */
-    default void setContentsFromNbt(NbtCompound nbt) {
+    default void setContentsFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
         DefaultedList<ItemStack> contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        Inventories.readNbt(nbt, contents);
+        Inventories.readNbt(nbt, contents, registries);
         this.setContents(contents);
     }
 
@@ -233,13 +237,13 @@ public interface BaseInventory extends Inventory, Iterable<ItemStack> {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
      */
-    default NbtCompound writeInventoryToNbt(NbtCompound nbt) {
+    default NbtCompound writeInventoryToNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
 
         if (this.getContents() == null) {
             return nbt;
         }
 
-        Inventories.writeNbt(nbt, this.getContents());
+        Inventories.writeNbt(nbt, this.getContents(), registries);
         return nbt;
     }
 

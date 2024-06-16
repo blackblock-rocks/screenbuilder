@@ -13,7 +13,6 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
-import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
@@ -190,7 +189,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         if (this.title != null) {
-            stack.setCustomName(this.title);
+            NbtUtils.setTitle(stack, this.title);
             this.markDirty();
         }
 
@@ -199,7 +198,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             this.markDirty();
         }
 
-        NbtCompound nbt = stack.getOrCreateNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
         nbt.putBoolean("polyvalent:hide_info", true);
     }
 

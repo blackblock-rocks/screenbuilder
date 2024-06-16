@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {
@@ -20,7 +21,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Inject(at = @At("HEAD"), method="onRenameItem", cancellable = true)
     public void onRenameItem(RenameItemC2SPacket packet, CallbackInfo ci) {
         if (this.player.currentScreenHandler instanceof TexturedScreenHandler handler) {
-            String string = SharedConstants.stripInvalidChars(packet.getName());
+            String string = NbtUtils.stripInvalidChars(packet.getName());
             handler.onRenameItem(string);
             ci.cancel();
         }

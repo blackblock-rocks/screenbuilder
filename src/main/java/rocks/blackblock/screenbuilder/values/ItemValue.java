@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -73,8 +74,8 @@ public class ItemValue extends Value<ItemStack> {
             return true;
         }
 
-        NbtCompound this_nbt = this_stack.getNbt();
-        NbtCompound other_nbt = other_stack.getNbt();
+        NbtCompound this_nbt = NbtUtils.getCustomNbt(this_stack);
+        NbtCompound other_nbt = NbtUtils.getCustomNbt(other_stack);
 
         if (this_nbt != null && this_nbt.isEmpty()) {
             this_nbt = null;
@@ -90,12 +91,6 @@ public class ItemValue extends Value<ItemStack> {
 
         this_nbt = this_nbt.copy();
         other_nbt = other_nbt.copy();
-
-        this_nbt.remove("Damage");
-        other_nbt.remove("Damage");
-
-        this_nbt.remove("display");
-        other_nbt.remove("display");
 
         return this_nbt.equals(other_nbt);
     }
@@ -138,7 +133,7 @@ public class ItemValue extends Value<ItemStack> {
     public void readFromNbt(NbtCompound nbt) {
 
         if (nbt.contains("stack")) {
-            ItemStack stack = ItemStack.fromNbt(nbt.getCompound("stack"));
+            ItemStack stack = NbtUtils.deserializeToStack(nbt.getCompound("stack"));
             this.setValue(stack);
         }
 
@@ -152,8 +147,7 @@ public class ItemValue extends Value<ItemStack> {
         ItemStack stack = this.getValue();
 
         if (stack != null) {
-            NbtCompound stack_nbt = new NbtCompound();
-            stack.writeNbt(stack_nbt);
+            NbtElement stack_nbt = NbtUtils.serializeStack(stack);
             nbt.put("stack", stack_nbt);
         }
 

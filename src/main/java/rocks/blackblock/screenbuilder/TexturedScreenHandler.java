@@ -556,7 +556,7 @@ public class TexturedScreenHandler extends ScreenHandler {
                                 screen_stack = wrapped_stack.copy();
                                 screen_stack.setCount(0);
                                 slot.setStack(screen_stack);
-                            } else if (!ItemStack.canCombine(wrapped_stack, screen_stack)) {
+                            } else if (!NbtUtils.canCombine(wrapped_stack, screen_stack)) {
                                 // If the items are not combinable (different types maybe? NBT tags?)
                                 // then continue to the next slot
                                 continue;
@@ -703,7 +703,7 @@ public class TexturedScreenHandler extends ScreenHandler {
                     wrapped_source_stack = source_stack;
                 }
 
-                if (target_stack.isEmpty() || !ItemStack.canCombine(wrapped_source_stack, target_stack)) {
+                if (target_stack.isEmpty() || !NbtUtils.canCombine(wrapped_source_stack, target_stack)) {
                     continue;
                 }
 
@@ -972,11 +972,11 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         this.renamed_value = new_name;
 
-        this.getSlot(0).getStack().setCustomName(Text.of(""));
+        NbtUtils.setTitle(this.getSlot(0).getStack(), Text.of(""));
 
         Slot output = this.getSlot(2);
         ItemStack output_stack = new ItemStack(GuiItem.get("true"));
-        output_stack.setCustomName(Text.of("Accept").copy().setStyle(Style.EMPTY.withItalic(false)));
+        NbtUtils.setTitle(output_stack, Text.of("Accept").copy().setStyle(Style.EMPTY.withItalic(false)));
         output.setStack(output_stack);
 
         NbtUtils.appendLore(output_stack, Text.of("\"").copy().append(new_name).append("\""));
@@ -989,7 +989,6 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void sendContentUpdates() {
 

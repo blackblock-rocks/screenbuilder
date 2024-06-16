@@ -67,7 +67,7 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
     public ItemStack createPlaceholderStack() {
         ItemStack result = new ItemStack(BBSB.GUI_TRANSPARENT);
 
-        result.setCustomName(new MiniText("Item placeholder"));
+        NbtUtils.setTitle(result, new MiniText("Item placeholder"));
 
         NbtUtils.appendLore(result, new MiniText("Put the type of item you want"));
         NbtUtils.appendLore(result, new MiniText("to sell in this slot."));

@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.settings;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ public class SettingsRegistry {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      *
      * @param    setting
      */
@@ -46,15 +46,14 @@ public class SettingsRegistry {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public Setting getSetting(ItemStack stack) {
 
-        if (stack == null || stack.isEmpty() || !stack.hasNbt()) {
+        if (stack == null || stack.isEmpty() || !NbtUtils.hasCustomNbt(stack)) {
             return null;
         }
 
-        NbtCompound nbt = stack.getNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
         String name = nbt.getString("setting_name");
 
         return this.getSetting(name);
@@ -65,7 +64,6 @@ public class SettingsRegistry {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public Setting getSetting(String name) {
         if (name == null) {
@@ -80,7 +78,6 @@ public class SettingsRegistry {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public ArrayList<ItemStack> getAllAsItemStacks() {
 

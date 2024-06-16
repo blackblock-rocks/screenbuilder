@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 
@@ -19,7 +20,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract Item getIcon();
 
@@ -28,7 +28,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract String getType();
 
@@ -37,7 +36,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public String getTitle() {
         String name = this.getClass().getSimpleName();
@@ -51,7 +49,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public ItemStack getStack() {
 
@@ -59,10 +56,10 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
         ItemStack stack = new ItemStack(this.getIcon());
 
         // Create the nbt data
-        NbtCompound nbt = stack.getOrCreateNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
 
         // Set the (default) title
-        stack.setCustomName(Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
+        NbtUtils.setTitle(stack, Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
 
         // Put the class type
         nbt.putString("bclass", "value");
@@ -71,7 +68,7 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
         nbt.putString("type", this.getType());
 
         // Put the nbt back
-        stack.setNbt(nbt);
+        NbtUtils.setCustomNbt(stack, nbt);
 
         // Write the current value to NBT
         this.writeToNbt(nbt);
@@ -96,7 +93,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract ItemStack getStack(ItemStack result);
 
@@ -139,7 +135,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     @Override
     public abstract Text getDisplayName();
@@ -149,7 +144,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract void readFromNbt(NbtCompound nbt);
 
@@ -158,7 +152,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract void writeToNbt(NbtCompound nbt);
 
@@ -167,7 +160,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract Boolean isTruthy();
 
@@ -176,7 +168,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public abstract Double getNumber();
 
@@ -185,7 +176,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public static ArrayList<ItemStack> getAllAsItemStacks() {
 
@@ -210,7 +200,6 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
-     * @version  0.1.1
      */
     public static Value getFromStack(ItemStack stack) {
 
@@ -218,7 +207,7 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
             return null;
         }
 
-        NbtCompound nbt = stack.getNbt();
+        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
 
         if (nbt == null) {
             return null;

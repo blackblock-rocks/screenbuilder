@@ -9,7 +9,6 @@ import io.github.theepicblock.polymc.api.resource.json.JGuiLight;
 import io.github.theepicblock.polymc.api.resource.json.JModel;
 import io.github.theepicblock.polymc.impl.misc.logging.SimpleLogger;
 import io.github.theepicblock.polymc.impl.resource.json.JModelImpl;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -39,6 +38,7 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.unit.Unit;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
@@ -925,7 +925,6 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void loadTextureItem() {
         if (this.texture_path != null) {
@@ -937,7 +936,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                 } else {
 
                     // Create a dummy item
-                    this.gui_item = new Item(new FabricItemSettings());
+                    this.gui_item = new Item(new Item.Settings());
 
                     this.gui_item_identifier = new Identifier(this.namespace, this.gui_item_name);
                     Registry.register(Registries.ITEM, this.gui_item_identifier, this.gui_item);
@@ -953,7 +952,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                 title = this.title;
             }
 
-            gui_stack.setCustomName(Text.literal(title).setStyle(Style.EMPTY.withItalic(false)));
+            NbtUtils.setTitle(gui_stack, Text.literal(title).setStyle(Style.EMPTY.withItalic(false)));
 
             this.setSlot(this.texture_slot_x, this.texture_slot_y, gui_stack);
         }

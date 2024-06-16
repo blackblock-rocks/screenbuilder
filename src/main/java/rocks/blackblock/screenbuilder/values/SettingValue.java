@@ -12,6 +12,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.settings.Setting;
+import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 
@@ -181,10 +182,11 @@ public class SettingValue extends Value {
         NbtCompound nbt;
 
         ItemStack number = new ItemStack(BBSB.GUI_NUMBER);
-        number.setCustomName(Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
-        nbt = number.getOrCreateNbt();
+        NbtUtils.setTitle(number, Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
+        nbt = NbtUtils.getCustomNbt(number);
         nbt.putString("type", "number");
-        number.setNbt(nbt);
+        NbtUtils.setCustomNbt(number, nbt);
+
         options.add(number);
 
         return options;
