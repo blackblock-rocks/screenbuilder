@@ -14,9 +14,9 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.ItemInput;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class ItemValue extends Value<ItemStack> {
 
@@ -74,8 +74,8 @@ public class ItemValue extends Value<ItemStack> {
             return true;
         }
 
-        NbtCompound this_nbt = NbtUtils.getCustomNbt(this_stack);
-        NbtCompound other_nbt = NbtUtils.getCustomNbt(other_stack);
+        NbtCompound this_nbt = BibItem.getCustomNbt(this_stack);
+        NbtCompound other_nbt = BibItem.getCustomNbt(other_stack);
 
         if (this_nbt != null && this_nbt.isEmpty()) {
             this_nbt = null;
@@ -119,7 +119,7 @@ public class ItemValue extends Value<ItemStack> {
             value = Text.literal("").append(stack.getName()).setStyle(Style.EMPTY.withColor(Formatting.RED));
         }
 
-        NbtUtils.appendLore(result, lore.append(value));
+        BibItem.appendLore(result, lore.append(value));
 
         return result;
     }
@@ -133,7 +133,7 @@ public class ItemValue extends Value<ItemStack> {
     public void readFromNbt(NbtCompound nbt) {
 
         if (nbt.contains("stack")) {
-            ItemStack stack = NbtUtils.deserializeToStack(nbt.getCompound("stack"));
+            ItemStack stack = BibItem.deserializeToStack(nbt.getCompound("stack"));
             this.setValue(stack);
         }
 
@@ -147,7 +147,7 @@ public class ItemValue extends Value<ItemStack> {
         ItemStack stack = this.getValue();
 
         if (stack != null) {
-            NbtElement stack_nbt = NbtUtils.serializeStack(stack);
+            NbtElement stack_nbt = BibItem.serializeStack(stack);
             nbt.put("stack", stack_nbt);
         }
 

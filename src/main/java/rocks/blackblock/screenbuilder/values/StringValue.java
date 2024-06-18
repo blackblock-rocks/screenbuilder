@@ -13,12 +13,12 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.inputs.BaseInput;
 import rocks.blackblock.screenbuilder.inputs.StringInput;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class StringValue extends Value<String> {
 
@@ -48,7 +48,7 @@ public class StringValue extends Value<String> {
             value = Text.literal(str).setStyle(Style.EMPTY.withColor(Formatting.GREEN));
         }
 
-        NbtUtils.appendLore(result, lore.append(value));
+        BibItem.appendLore(result, lore.append(value));
 
         return result;
     }

@@ -18,8 +18,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibInventory;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
-import rocks.blackblock.screenbuilder.inventories.BaseInventory;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.mixin.ScreenHandlerAccessor;
 import rocks.blackblock.screenbuilder.mixin.ServerPlayerEntityAccessor;
@@ -30,7 +31,6 @@ import rocks.blackblock.screenbuilder.slots.StaticSlot;
 import rocks.blackblock.screenbuilder.slots.WidgetSlot;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class TexturedScreenHandler extends ScreenHandler {
     private final ServerPlayerEntity server_player;
     private InventoryChangedListener listener = null;
 
-    public BaseInventory base_inventory = null;
+    public BibInventory.Base base_inventory = null;
     public SimpleInventory simple_inventory = null;
     public SlotActionType current_action_type = null;
     public Slot clicked_slot = null;
@@ -116,7 +116,7 @@ public class TexturedScreenHandler extends ScreenHandler {
 
             this.simple_inventory = simple_inventory;
             simple_inventory.addListener(this.listener);
-        } else if (inventory instanceof BaseInventory base_inventory) {
+        } else if (inventory instanceof BibInventory.Base base_inventory) {
             this.base_inventory = base_inventory;
 
             if (this.base_inventory.getListeners() != null) {
@@ -556,7 +556,7 @@ public class TexturedScreenHandler extends ScreenHandler {
                                 screen_stack = wrapped_stack.copy();
                                 screen_stack.setCount(0);
                                 slot.setStack(screen_stack);
-                            } else if (!NbtUtils.canCombine(wrapped_stack, screen_stack)) {
+                            } else if (!BibItem.canCombine(wrapped_stack, screen_stack)) {
                                 // If the items are not combinable (different types maybe? NBT tags?)
                                 // then continue to the next slot
                                 continue;
@@ -703,7 +703,7 @@ public class TexturedScreenHandler extends ScreenHandler {
                     wrapped_source_stack = source_stack;
                 }
 
-                if (target_stack.isEmpty() || !NbtUtils.canCombine(wrapped_source_stack, target_stack)) {
+                if (target_stack.isEmpty() || !BibItem.canCombine(wrapped_source_stack, target_stack)) {
                     continue;
                 }
 
@@ -972,14 +972,14 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         this.renamed_value = new_name;
 
-        NbtUtils.setTitle(this.getSlot(0).getStack(), Text.of(""));
+        BibItem.setCustomName(this.getSlot(0).getStack(), Text.of(""));
 
         Slot output = this.getSlot(2);
         ItemStack output_stack = new ItemStack(GuiItem.get("true"));
-        NbtUtils.setTitle(output_stack, Text.of("Accept").copy().setStyle(Style.EMPTY.withItalic(false)));
+        BibItem.setCustomName(output_stack, Text.of("Accept").copy().setStyle(Style.EMPTY.withItalic(false)));
         output.setStack(output_stack);
 
-        NbtUtils.appendLore(output_stack, Text.of("\"").copy().append(new_name).append("\""));
+        BibItem.appendLore(output_stack, Text.of("\"").copy().append(new_name).append("\""));
 
         this.sendContentUpdates();
     }

@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.values.SettingValue;
 
 public abstract class Setting {
@@ -117,9 +117,9 @@ public abstract class Setting {
             title = this.name;
         }
 
-        NbtUtils.setTitle(result, (Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
+        BibItem.setCustomName(result, (Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
 
-        NbtCompound nbt = NbtUtils.getCustomNbt(result);
+        NbtCompound nbt = BibItem.getCustomNbt(result);
         nbt.putString("setting_name", this.name);
 
         return result;

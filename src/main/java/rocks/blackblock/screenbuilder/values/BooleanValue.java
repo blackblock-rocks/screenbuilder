@@ -12,10 +12,10 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BooleanInput;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class BooleanValue extends Value<Boolean> {
 
@@ -55,7 +55,7 @@ public class BooleanValue extends Value<Boolean> {
             value = Text.literal("False").setStyle(Style.EMPTY.withColor(Formatting.RED));
         }
 
-        NbtUtils.appendLore(result, lore.append(value));
+        BibItem.appendLore(result, lore.append(value));
 
         return result;
     }

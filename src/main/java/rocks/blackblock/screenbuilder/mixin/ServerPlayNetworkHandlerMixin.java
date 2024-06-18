@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.mixin;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.network.packet.c2s.play.RenameItemC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -9,8 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {
@@ -21,7 +20,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Inject(at = @At("HEAD"), method="onRenameItem", cancellable = true)
     public void onRenameItem(RenameItemC2SPacket packet, CallbackInfo ci) {
         if (this.player.currentScreenHandler instanceof TexturedScreenHandler handler) {
-            String string = NbtUtils.stripInvalidChars(packet.getName());
+            String string = BibText.stripInvalidChars(packet.getName());
             handler.onRenameItem(string);
             ci.cancel();
         }

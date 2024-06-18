@@ -7,13 +7,13 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,16 +189,16 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         }
 
         if (this.title != null) {
-            NbtUtils.setTitle(stack, this.title);
+            BibItem.setCustomName(stack, this.title);
             this.markDirty();
         }
 
         if (this.lore != null) {
-            NbtUtils.replaceLore(stack, this.lore);
+            BibItem.replaceLore(stack, this.lore);
             this.markDirty();
         }
 
-        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getCustomNbt(stack);
         nbt.putBoolean("polyvalent:hide_info", true);
     }
 

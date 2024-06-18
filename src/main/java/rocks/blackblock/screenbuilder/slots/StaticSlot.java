@@ -3,7 +3,7 @@ package rocks.blackblock.screenbuilder.slots;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import rocks.blackblock.screenbuilder.inventories.DummyInventory;
+import rocks.blackblock.bib.util.BibInventory;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 public class StaticSlot extends BaseSlot {
@@ -12,7 +12,7 @@ public class StaticSlot extends BaseSlot {
     protected Boolean use_inventory_stack = null;
 
     // The dummy inventory
-    protected DummyInventory dummy_inventory = null;
+    protected BibInventory.Dummy dummy_inventory = null;
 
     /**
      * Create a new StaticSlot
@@ -22,10 +22,10 @@ public class StaticSlot extends BaseSlot {
      * @since   0.1.0
      */
     public StaticSlot(ItemStack stack) {
-        super(new DummyInventory(1), 0);
+        super(new BibInventory.Dummy(1), 0);
 
         // Immediately get the inventory, before it can change
-        this.dummy_inventory = (DummyInventory) this.getInventory();
+        this.dummy_inventory = (BibInventory.Dummy) this.getInventory();
 
         if (stack != null) {
             this.setDummyStack(stack);

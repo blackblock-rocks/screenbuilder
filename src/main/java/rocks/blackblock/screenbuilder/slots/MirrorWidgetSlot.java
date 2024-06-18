@@ -2,8 +2,8 @@ package rocks.blackblock.screenbuilder.slots;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class MirrorWidgetSlot extends ListenerWidgetSlot {
 
@@ -74,7 +74,7 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
         if (cursor_stack != null && !cursor_stack.isEmpty()) {
             ItemStack new_stack = cursor_stack.copy();
 
-            if (current_stack == null || current_stack.isEmpty() || !current_stack.isStackable() || !NbtUtils.areEqualIgnoreDamage(current_stack, new_stack)) {
+            if (current_stack == null || current_stack.isEmpty() || !current_stack.isStackable() || !BibItem.areEqualIgnoreDamage(current_stack, new_stack)) {
                 this.setStack(new_stack);
                 this.fireChangeEvent();
                 return;

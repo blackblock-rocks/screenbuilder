@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.ErrorAreaInfo;
@@ -38,7 +39,6 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.unit.Unit;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
@@ -952,7 +952,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                 title = this.title;
             }
 
-            NbtUtils.setTitle(gui_stack, Text.literal(title).setStyle(Style.EMPTY.withItalic(false)));
+            BibItem.setCustomName(gui_stack, Text.literal(title).setStyle(Style.EMPTY.withItalic(false)));
 
             this.setSlot(this.texture_slot_x, this.texture_slot_y, gui_stack);
         }

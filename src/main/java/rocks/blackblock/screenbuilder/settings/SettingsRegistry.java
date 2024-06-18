@@ -2,7 +2,7 @@ package rocks.blackblock.screenbuilder.settings;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
+import rocks.blackblock.bib.util.BibItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,11 +49,11 @@ public class SettingsRegistry {
      */
     public Setting getSetting(ItemStack stack) {
 
-        if (stack == null || stack.isEmpty() || !NbtUtils.hasCustomNbt(stack)) {
+        if (stack == null || stack.isEmpty() || !BibItem.hasCustomNbt(stack)) {
             return null;
         }
 
-        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getCustomNbt(stack);
         String name = nbt.getString("setting_name");
 
         return this.getSetting(name);

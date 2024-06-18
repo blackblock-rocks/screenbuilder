@@ -1,13 +1,13 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.item.ItemStack;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.MirrorWidgetSlot;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 public class MirrorWidget extends CombinedWidget<ItemStack> {
 
@@ -67,12 +67,12 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
     public ItemStack createPlaceholderStack() {
         ItemStack result = new ItemStack(BBSB.GUI_TRANSPARENT);
 
-        NbtUtils.setTitle(result, new MiniText("Item placeholder"));
+        BibItem.setCustomName(result, new MiniText("Item placeholder"));
 
-        NbtUtils.appendLore(result, new MiniText("Put the type of item you want"));
-        NbtUtils.appendLore(result, new MiniText("to sell in this slot."));
-        NbtUtils.appendLore(result, new MiniText(""));
-        NbtUtils.appendLore(result, new MiniText("It will be cloned, you will not lose it."));
+        BibItem.appendLore(result, new MiniText("Put the type of item you want"));
+        BibItem.appendLore(result, new MiniText("to sell in this slot."));
+        BibItem.appendLore(result, new MiniText(""));
+        BibItem.appendLore(result, new MiniText("It will be cloned, you will not lose it."));
 
         return result;
     }

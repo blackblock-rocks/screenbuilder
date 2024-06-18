@@ -6,7 +6,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
+import rocks.blackblock.bib.util.BibItem;
 
 import java.util.ArrayList;
 
@@ -56,10 +56,10 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
         ItemStack stack = new ItemStack(this.getIcon());
 
         // Create the nbt data
-        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getCustomNbt(stack);
 
         // Set the (default) title
-        NbtUtils.setTitle(stack, Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
+        BibItem.setCustomName(stack, Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
 
         // Put the class type
         nbt.putString("bclass", "value");
@@ -68,7 +68,7 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
         nbt.putString("type", this.getType());
 
         // Put the nbt back
-        NbtUtils.setCustomNbt(stack, nbt);
+        BibItem.setCustomNbt(stack, nbt);
 
         // Write the current value to NBT
         this.writeToNbt(nbt);
@@ -207,7 +207,7 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
             return null;
         }
 
-        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getCustomNbt(stack);
 
         if (nbt == null) {
             return null;

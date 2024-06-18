@@ -1,17 +1,15 @@
 package rocks.blackblock.screenbuilder.server;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
-
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BookletInput;
@@ -21,7 +19,6 @@ import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 
 import java.nio.file.Files;
@@ -66,10 +63,10 @@ public class ScreenbuilderCommands {
                                             }
 
                                             // Read in the json file in a string reader
-                                            MutableText text = Text.Serialization.fromJson(json_string, NbtUtils.getDynamicRegistry());
+                                            MutableText text = BibText.deserializeFromJson(json_string);
 
                                             BBSB.log("Using text: " + text);
-                                            BBSB.log(" -- json:", NbtUtils.serializeTextToJson(text));
+                                            BBSB.log(" -- json:", BibText.serializeToJson(text));
 
                                             builder.setDisplayName(text);
                                             builder.setShowPlayerInventory(false);

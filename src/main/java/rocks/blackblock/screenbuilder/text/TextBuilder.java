@@ -1,15 +1,18 @@
 package rocks.blackblock.screenbuilder.text;
 
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -676,7 +679,7 @@ public class TextBuilder {
         if (BBSB.DEBUG) {
             System.out.println("Not dumping GUI text because it became too difficult");
             System.out.println("Dumping GUI text to /tmp/mc_textbuilder.json");
-            String json_string = NbtUtils.serializeTextToJson(text);
+            String json_string = BibText.serializeToJson(text).toString();
 
             Path path = Paths.get("/tmp/mc_textbuilder.json");
             byte[] strToBytes = json_string.getBytes();
@@ -697,7 +700,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public String getJsonString() {
-        return NbtUtils.serializeTextToJson(this.build());
+        return BibText.serializeToJson(this.build()).toString();
     }
 
     /**

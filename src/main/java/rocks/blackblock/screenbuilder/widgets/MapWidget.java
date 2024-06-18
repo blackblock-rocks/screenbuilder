@@ -9,6 +9,7 @@ import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.chunker.chunk.Lump;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -20,7 +21,6 @@ import rocks.blackblock.screenbuilder.slots.ClickType;
 import rocks.blackblock.screenbuilder.slots.ListenerWidgetSlot;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 /**
  * Show a map tile
@@ -73,7 +73,7 @@ public class MapWidget extends TextureWidget {
 
                     if (slot != null) {
                         ItemStack stack = slot.getStack();
-                        NbtCompound nbt = NbtUtils.getCustomNbt(stack);
+                        NbtCompound nbt = BibItem.getCustomNbt(stack);
 
                         ChunkPos pos = lump.getPos();
                         nbt.putLong("lump_id", pos.toLong());
@@ -85,7 +85,7 @@ public class MapWidget extends TextureWidget {
                         title.append("x").setStyle(Style.EMPTY.withColor(Formatting.GRAY));
                         title.append("" + pos.z).setStyle(Style.EMPTY.withColor(Formatting.AQUA));
 
-                        NbtUtils.setTitle(stack, title);
+                        BibItem.setCustomName(stack, title);
                     }
                 }
             }

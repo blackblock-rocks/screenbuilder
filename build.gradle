@@ -21,6 +21,10 @@ repositories {
 	}
 
 	flatDir {
+		dirs '../blackblock-bib/build/libs/'
+	}
+
+	flatDir {
 		dirs '../chunker/build/libs/'
 	}
 
@@ -50,6 +54,7 @@ dependencies {
 	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
 
 	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
+	modImplementation include("rocks.blackblock:blackblock-bib:${project.blackblock_bib_version}")
 
 	modImplementation include('com.diogonunes:JColor:5.5.1')
 }

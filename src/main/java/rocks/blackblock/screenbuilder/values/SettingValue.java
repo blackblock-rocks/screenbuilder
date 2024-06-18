@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.values;
 
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -10,9 +9,9 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.settings.Setting;
-import rocks.blackblock.screenbuilder.utils.NbtUtils;
 
 import java.util.ArrayList;
 
@@ -182,10 +181,10 @@ public class SettingValue extends Value {
         NbtCompound nbt;
 
         ItemStack number = new ItemStack(BBSB.GUI_NUMBER);
-        NbtUtils.setTitle(number, Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
-        nbt = NbtUtils.getCustomNbt(number);
+        BibItem.setCustomName(number, Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
+        nbt = BibItem.getCustomNbt(number);
         nbt.putString("type", "number");
-        NbtUtils.setCustomNbt(number, nbt);
+        BibItem.setCustomNbt(number, nbt);
 
         options.add(number);
 
