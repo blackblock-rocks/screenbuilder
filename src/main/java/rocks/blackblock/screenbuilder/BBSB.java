@@ -163,7 +163,7 @@ public class BBSB implements ModInitializer {
      * @since    0.1.1
      */
     public static Identifier id(String name) {
-        return new Identifier(NAMESPACE, name);
+        return Identifier.of(NAMESPACE, name);
     }
 
     /**

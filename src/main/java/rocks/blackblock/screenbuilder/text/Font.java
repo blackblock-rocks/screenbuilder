@@ -4,7 +4,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class Font {
     public Font(String id, int height) {
         this.id = id;
         this.height = height;
-        this.identifier = new Identifier(id);
+        this.identifier = Identifier.of(id);
         this.font_style = Style.EMPTY.withFont(this.identifier);
     }
 

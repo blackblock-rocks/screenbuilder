@@ -360,7 +360,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
             return;
         }
 
-        Identifier identifier = new Identifier(this.namespace, "gui/" + this.name);
+        Identifier identifier = Identifier.of(this.namespace, "gui/" + this.name);
         this.useFontTexture(identifier, 0, 0);
     }
 
@@ -938,7 +938,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
                     // Create a dummy item
                     this.gui_item = new Item(new Item.Settings());
 
-                    this.gui_item_identifier = new Identifier(this.namespace, this.gui_item_name);
+                    this.gui_item_identifier = Identifier.of(this.namespace, this.gui_item_name);
                     Registry.register(Registries.ITEM, this.gui_item_identifier, this.gui_item);
 
                     gui_items.put(this.gui_item_name, this.gui_item);

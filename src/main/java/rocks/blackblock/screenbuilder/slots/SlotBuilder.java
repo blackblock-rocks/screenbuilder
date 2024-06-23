@@ -1005,6 +1005,10 @@ public class SlotBuilder extends Slot implements Cloneable {
             return stack;
         }
 
+        if (stack == null || stack == ItemStack.EMPTY || stack.getItem() == Items.AIR) {
+            return stack;
+        }
+
         return this.unwrap_stack.processStack(this.active_handler, this, stack);
     }
 

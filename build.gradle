@@ -1,14 +1,53 @@
 plugins {
 	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
+	id 'org.checkerframework' version '0.6.40'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+apply plugin: 'org.checkerframework'
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+/**
+ * Version setup
+ */
+def baseVersion = project.mod_version
+def baseGroup = project.maven_group
+def localPropertiesFile = file('local.properties')
+def localProperties = new Properties()
+
+if (localPropertiesFile.exists()) {
+	localPropertiesFile.withInputStream { stream ->
+		localProperties.load(stream)
+	}
+}
+
+def currentEnvironment = localProperties.getProperty("environment", "dev")
+def isDevelopment = currentEnvironment == "dev"
+def localRepoDir = null
+ext.versionModifier = null
+
+if (localProperties.hasProperty("localRepoDir")) {
+	localRepoDir = localProperties.getProperty("localRepoDir")
+} else if (project.hasProperty("localRepoDir")) {
+	localRepoDir = project.findProperty("localRepoDir")
+}
+
+if (isDevelopment) {
+	versionModifier = "-SNAPSHOT"
+}
+
+def constructVersion(baseVersion) {
+	def result = baseVersion + versionModifier
+	return result
+}
+
+version = constructVersion(baseVersion)
+group = baseGroup
+
+println("Info: currentEnvironment = $currentEnvironment")
+println("Info: isDevelopment = $isDevelopment")
+println("Info: localRepoDir = $localRepoDir")
+println("Info: versionModifier = $versionModifier")
+println("Info: version = " + version)
 
 repositories {
 
@@ -53,17 +92,18 @@ dependencies {
 
 	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
 
-	modImplementation include("rocks.blackblock:chunker:${project.chunker_version}")
-	modImplementation include("rocks.blackblock:blackblock-bib:${project.blackblock_bib_version}")
+	modImplementation include("rocks.blackblock:chunker:${constructVersion(project.chunker_version)}")
+	modImplementation include("rocks.blackblock:blackblock-bib:${constructVersion(project.blackblock_bib_version)}")
 
 	modImplementation include('com.diogonunes:JColor:5.5.1')
 }
 
+// Modify the contents of the "fabric.mod.json" file
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", baseVersion
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": baseVersion
 	}
 }
 
@@ -122,6 +162,18 @@ publishing {
 				}
 			} else {
 				mavenLocal()
+			}
+
+			if (isDevelopment) {
+
+				if (localRepoDir) {
+					maven {
+						name = 'local'
+						url = uri(localRepoDir)
+					}
+				} else {
+					mavenLocal()
+				}
 			}
 		}
 	}

@@ -8,6 +8,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.MathHelper;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.Font;
@@ -138,17 +140,17 @@ public abstract class BaseTexture {
      *
      * @since   0.3.1
      */
-    public BaseTexture getColoured(DyeColor colour) {
+    public BaseTexture getColoured(DyeColor color) {
 
-        if (colour == null) {
+        if (color == null) {
             return this;
         }
 
-        float[] colours = colour.getColorComponents();
+        int entity_color = color.getEntityColor();
 
-        int r = (int) (colours[0] * 255);
-        int g = (int) (colours[1] * 255);
-        int b = (int) (colours[2] * 255);
+        int r = MathHelper.floor(ColorHelper.Argb.getRed(entity_color));
+        int g = MathHelper.floor(ColorHelper.Argb.getGreen(entity_color));
+        int b = MathHelper.floor(ColorHelper.Argb.getBlue(entity_color));
 
         // Get a big RGB integer
         int rgb = (r << 16) | (g << 8) | b;
