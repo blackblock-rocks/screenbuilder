@@ -60,6 +60,9 @@ public class TexturedScreenHandler extends ScreenHandler {
     public SlotActionType current_action_type = null;
     public Slot clicked_slot = null;
 
+    // The factory that started this session
+    private NamedScreenHandlerFactory session_opener_factory = null;
+
     // The factory that created this handler
     private NamedScreenHandlerFactory origin_factory = null;
 
@@ -843,7 +846,6 @@ public class TexturedScreenHandler extends ScreenHandler {
     public void close() {
 
         if (this.server_player != null) {
-            BBSB.log("Should close this screen", this);
 
             // Make sure there is a screen handler open first
             if (this.server_player.currentScreenHandler != null) {
@@ -891,6 +893,12 @@ public class TexturedScreenHandler extends ScreenHandler {
         // Send the player their inventory again
         // (Especially needed when the GUI used the player's inventory)
         GuiUtils.sendPlayerInventory(player);
+
+        NamedScreenHandlerFactory session_start_factory = this.getSessionOpenerFactory();
+
+        if (session_start_factory instanceof BasescreenFactory bsf) {
+            bsf.onEndViewingSession();
+        }
     }
 
     /**
@@ -1038,14 +1046,50 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Set the factory that started the entire session
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.5.0
+     */
+    public void setSessionOpenerFactory(NamedScreenHandlerFactory factory) {
+        this.session_opener_factory = factory;
+    }
+
+    /**
+     * Get the factory that started the entire session
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.5.0
+     */
+    public NamedScreenHandlerFactory getSessionOpenerFactory() {
+
+        if (this.session_opener_factory != null) {
+            return this.session_opener_factory;
+        }
+
+        if (this.previous_factory != null) {
+            return this.previous_factory;
+        }
+
+        if (this.origin_factory != null) {
+            return this.origin_factory;
+        }
+
+        return null;
+    }
+
+    /**
      * Set the factory that created this handler
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setOriginFactory(NamedScreenHandlerFactory factory) {
         this.origin_factory = factory;
+
+        if (this.session_opener_factory == null && factory instanceof TexturedScreenHandler tsh) {
+            this.setSessionOpenerFactory(tsh.getSessionOpenerFactory());
+        }
     }
 
     /**
@@ -1053,10 +1097,13 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setPreviousFactory(NamedScreenHandlerFactory factory) {
         this.previous_factory = factory;
+
+        if (this.session_opener_factory == null && factory instanceof TexturedScreenHandler tsh) {
+            this.setSessionOpenerFactory(tsh.getSessionOpenerFactory());
+        }
     }
 
     /**
@@ -1093,6 +1140,17 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @since    0.1.0
      */
     public TexturedScreenHandler showScreen(NamedScreenHandlerFactory factory) {
+        return this.showScreen(factory, null);
+    }
+
+    /**
+     * Show another screen.
+     * Reuse the current syncid if possible.
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.1.0
+     */
+    public TexturedScreenHandler showScreen(NamedScreenHandlerFactory factory, NamedScreenHandlerFactory previous_factory) {
 
         if (factory == null) {
             return null;
@@ -1110,6 +1168,9 @@ public class TexturedScreenHandler extends ScreenHandler {
         // The new handler will go here
         ScreenHandler new_handler = null;
 
+        // Get the session opener
+        NamedScreenHandlerFactory session_opener = this.getSessionOpenerFactory();
+
         if (server_player.currentScreenHandler instanceof TexturedScreenHandler current_textured_handler) {
             // Get the sync id currently in use
             int current_sync_id = current_textured_handler.syncId;
@@ -1118,6 +1179,13 @@ public class TexturedScreenHandler extends ScreenHandler {
             new_handler = factory.createMenu(current_sync_id, server_player.getInventory(), server_player);
 
             if (new_handler instanceof TexturedScreenHandler new_textured_handler) {
+
+                new_textured_handler.setSessionOpenerFactory(session_opener);
+
+                if (previous_factory != null) {
+                    new_textured_handler.setPreviousFactory(previous_factory);
+                }
+
                 new_textured_handler.forceSendTo(server_player);
                 server_player.currentScreenHandler = new_handler;
 
@@ -1142,6 +1210,13 @@ public class TexturedScreenHandler extends ScreenHandler {
         }
 
         if (new_handler instanceof TexturedScreenHandler ts_handler) {
+
+            ts_handler.setSessionOpenerFactory(session_opener);
+
+            if (previous_factory != null) {
+                ts_handler.setPreviousFactory(previous_factory);
+            }
+
             return ts_handler;
         }
 
@@ -1160,14 +1235,13 @@ public class TexturedScreenHandler extends ScreenHandler {
             return false;
         }
 
-        TexturedScreenHandler handler = this.showScreen(factory);
+        TexturedScreenHandler handler = this.showScreen(factory, this.origin_factory);
 
         if (handler == null) {
             return false;
         }
 
         if (this.origin_factory != null) {
-            handler.setPreviousFactory(this.origin_factory);
             return true;
         }
 
@@ -1186,14 +1260,13 @@ public class TexturedScreenHandler extends ScreenHandler {
             return false;
         }
 
-        TexturedScreenHandler handler = this.showScreen(factory);
+        TexturedScreenHandler handler = this.showScreen(factory, this.previous_factory);
 
         if (handler == null) {
             return false;
         }
 
         if (this.previous_factory != null) {
-            handler.setPreviousFactory(this.previous_factory);
             return true;
         }
 
@@ -1346,6 +1419,14 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @since     0.1.1
      */
     public TextBuilder getTextBuilder() {
+
+        if (this.origin_factory instanceof BasescreenFactory base_factory) {
+            base_factory.offerOriginalSyncId(this.syncId);
+        }
+
+        if (this.previous_factory == null && this.origin_factory instanceof BasescreenFactory base_factory) {
+            base_factory.onStartViewingSession();
+        }
 
         // See if we already know the title
         Text title = this.current_title;

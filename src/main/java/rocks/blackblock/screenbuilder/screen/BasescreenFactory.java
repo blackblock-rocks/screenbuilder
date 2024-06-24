@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -22,6 +23,9 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
 
     // The default text
     protected String default_name = "Placeholder name";
+
+    // The Sync ID used
+    protected Integer original_sync_id = null;
 
     /**
      * Get the screen handler factory
@@ -85,6 +89,25 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Set the original sync id
+     * If it has already been set, this does nothing
+     *
+     * @author  Jelle De Loecker <jelle@elevenways.be>
+     * @since   0.5.0
+     */
+    @ApiStatus.Internal
+    public boolean offerOriginalSyncId(Integer sync_id) {
+
+        if (this.original_sync_id != null) {
+            return false;
+        }
+
+        this.original_sync_id = sync_id;
+
+        return true;
+    }
+
+    /**
      * Get the screenbuilder
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
@@ -92,6 +115,27 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
      * @version 0.1.0
      */
     public abstract ScreenBuilder getScreenBuilder();
+
+    /**
+     * Called when this is the first screen shown to the user
+     *
+     * @author  Jelle De Loecker <jelle@elevenways.be>
+     * @since   0.5.0
+     */
+    public void onStartViewingSession() {
+
+    }
+
+    /**
+     * Called when the last screen has closed.
+     * Another screen might have caused the closure.
+     *
+     * @author  Jelle De Loecker <jelle@elevenways.be>
+     * @since   0.5.0
+     */
+    public void onEndViewingSession() {
+
+    }
 
     /**
      * Create the actual handler
