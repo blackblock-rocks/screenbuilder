@@ -5,6 +5,8 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.BibMod;
 import rocks.blackblock.bib.util.BibInventory;
 import rocks.blackblock.bib.util.BibItem;
 
@@ -21,7 +23,7 @@ public class ItemInventory implements BibInventory.Base {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.1
      */
-    public ItemInventory(PlayerEntity player, ItemStack stack, int size) {
+    public ItemInventory(@Nullable PlayerEntity player, ItemStack stack, int size) {
         this.player = player;
         this.stack = stack;
         this.size = size;
@@ -34,7 +36,7 @@ public class ItemInventory implements BibInventory.Base {
             nbt.put("ItemInventory", item_inventory);
         }
 
-        this.setContentsFromNbt(item_inventory, player.getRegistryManager());
+        this.setContentsFromNbt(item_inventory, BibMod.getDynamicRegistry(player));
     }
 
     @Override
