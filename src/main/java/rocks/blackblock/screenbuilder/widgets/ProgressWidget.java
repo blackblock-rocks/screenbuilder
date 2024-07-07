@@ -1,18 +1,17 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.util.Identifier;
-import rocks.blackblock.screenbuilder.BBSB;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
-
-import javax.swing.plaf.basic.BasicButtonListener;
 
 /**
  * Show some kind of progress bar
  *
  * @since   0.1.1
  */
-public class ProgressWidget extends TextureWidget {
+public class ProgressWidget extends TextureWidget<Integer> {
 
     // The max value
     public final static int MAX_VALUE = 100;
@@ -46,7 +45,7 @@ public class ProgressWidget extends TextureWidget {
      * @since   0.1.1
      */
     @Override
-    public void addWithValue(TextBuilder builder, Object value) {
+    public void addWithValue(TextBuilder builder, Integer value) {
 
         if (value instanceof Integer int_value) {
             float percentage = this.calculatePercentageValue(int_value);
@@ -98,4 +97,14 @@ public class ProgressWidget extends TextureWidget {
         this.widget_texture.registerYOffset(this.y);
     }
 
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
+        super.appendToBibLogArg(arg);
+        arg.add("max_amount", this.max_amount);
+    }
 }

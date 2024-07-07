@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.util.Identifier;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 /**

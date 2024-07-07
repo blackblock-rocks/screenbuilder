@@ -1,6 +1,5 @@
 package rocks.blackblock.screenbuilder.inputs;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.TextColor;
 import rocks.blackblock.screenbuilder.BBSB;
@@ -10,6 +9,7 @@ import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.io.File;
 import java.io.IOException;
@@ -405,10 +405,10 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
      * @since   0.3.0
      */
     @Override
-    public Object getWidgetValue(String widget_id) {
+    public <T> T getWidgetValue(Widget<T> widget) {
 
-        if (widget_id.equals("pagination")) {
-            return this.page;
+        if (widget.getId().equals("pagination")) {
+            return (T) (Integer) this.page;
         }
 
         return null;
@@ -421,9 +421,9 @@ public class FileInput extends EmptyInput implements WidgetDataProvider {
      * @since   0.3.0
      */
     @Override
-    public void setWidgetValue(String widget_id, Object value) {
+    public <T> void setWidgetValue(Widget<T> widget, T value) {
 
-        if (widget_id.equals("pagination")) {
+        if (widget.getId().equals("pagination")) {
             this.page = (int) value;
         }
     }

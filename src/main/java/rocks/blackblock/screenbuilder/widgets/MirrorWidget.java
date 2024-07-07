@@ -1,7 +1,9 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.bib.util.BibItem;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -25,7 +27,7 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
             WidgetDataProvider provider = screen.getWidgetDataProvider();
 
             if (provider != null) {
-                provider.setWidgetValue(this.getId(), stack);
+                provider.setWidgetValue(this, stack);
             }
 
             if (this.on_change_item != null) {
@@ -91,5 +93,15 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
             int y = this.slot.getSlotYInPixels();
             BBSB.MIRROR_SLOT.addToBuilder(builder, x, y);
         }
+    }
+
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
+        arg.add("slot", this.slot);
     }
 }

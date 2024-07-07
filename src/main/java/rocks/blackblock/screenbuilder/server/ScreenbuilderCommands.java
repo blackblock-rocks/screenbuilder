@@ -20,6 +20,7 @@ import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -245,13 +246,13 @@ public class ScreenbuilderCommands {
         }
 
         @Override
-        public Object getWidgetValue(String widget_id) {
-            return values.get(widget_id);
+        public Object getWidgetValue(Widget widget) {
+            return values.get(widget.getId());
         }
 
         @Override
-        public void setWidgetValue(String widget_id, Object value) {
-            values.put(widget_id, value);
+        public void setWidgetValue(Widget widget, Object value) {
+            values.put(widget.getId(), value);
         }
 
         public void addFontString(int id, String string, Font font) {

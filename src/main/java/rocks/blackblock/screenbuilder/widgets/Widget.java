@@ -1,6 +1,8 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.BaseWidgetChangeEventListener;
@@ -10,7 +12,7 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 import java.util.UUID;
 
-public abstract class Widget<T> {
+public abstract class Widget<T> implements BibLog.Argable {
 
     // The name of this widget
     protected String id = null;
@@ -121,9 +123,9 @@ public abstract class Widget<T> {
 
             if (provider != null) {
 
-                Object value = provider.getWidgetValue(this.id);
+                T value = provider.getWidgetValue(this);
 
-                this.addWithValue(builder, (T) value);
+                this.addWithValue(builder, value);
 
                 if (this.added_listener != null) {
                     this.added_listener.onAdded(builder, null);
@@ -165,5 +167,35 @@ public abstract class Widget<T> {
      */
     public void register() {
 
+    }
+
+    /**
+     * Create a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public BibLog.Arg toBBLogArg() {
+        var result = BibLog.createArg(this);
+        result.add("id", this.id);
+        this.appendToBibLogArg(result);
+        return result;
+    }
+
+    /**
+     * Append to the BibLog.Arg instance
+     *
+     * @since 0.5.0
+     */
+    abstract protected void appendToBibLogArg(@NotNull BibLog.Arg arg);
+
+    /**
+     * Return a string representation of this widget
+     *
+     * @since   0.5.0
+     */
+    @Override
+    public String toString() {
+        return this.toBBLogArg().toString();
     }
 }

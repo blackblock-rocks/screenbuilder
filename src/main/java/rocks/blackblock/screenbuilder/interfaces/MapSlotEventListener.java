@@ -10,5 +10,5 @@ import rocks.blackblock.screenbuilder.slots.ListenerWidgetSlot;
 @FunctionalInterface
 public interface MapSlotEventListener {
     @Nullable
-    void onClick(TexturedScreenHandler screen, ListenerWidgetSlot slot, ClickType type, ItemStack stack, Lump lump);
+    void onClick(TexturedScreenHandler screen, ListenerWidgetSlot slot, ClickType type, ItemStack stack, @Nullable Lump lump);
 }

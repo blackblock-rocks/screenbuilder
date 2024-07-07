@@ -2,20 +2,23 @@ package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.util.BibItem;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.chunker.chunk.Lump;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.MapSlotEventListener;
 import rocks.blackblock.screenbuilder.interfaces.MapWidgetAddedListener;
+import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.slots.ClickType;
 import rocks.blackblock.screenbuilder.slots.ListenerWidgetSlot;
@@ -27,7 +30,8 @@ import rocks.blackblock.screenbuilder.text.TextBuilder;
  *
  * @since   0.1.1
  */
-public class MapWidget extends TextureWidget {
+@SuppressWarnings("unused")
+public class MapWidget extends TextureWidget<Lump> {
 
     /**
      * The optional slot index this might use to add a click listener to
@@ -45,6 +49,21 @@ public class MapWidget extends TextureWidget {
     protected MapWidgetAddedListener added_with_value_listener = null;
 
     /**
+     * The chunk X position
+     */
+    protected Integer chunk_x = null;
+
+    /**
+     * The chunk Z position
+     */
+    protected Integer chunk_z = null;
+
+    /**
+     * The chunk's world
+     */
+    protected World chunk_world = null;
+
+    /**
      * Create the widget
      *
      * @since 0.1.1
@@ -54,45 +73,105 @@ public class MapWidget extends TextureWidget {
     }
 
     /**
+     * Set the chunk X
+     *
+     * @since   0.5.0
+     */
+    public void setChunkX(Integer x) {
+        this.chunk_x = x;
+    }
+
+    /**
+     * Get the chunk X
+     *
+     * @since   0.5.0
+     */
+    @Nullable
+    public Integer getChunkX() {
+        return this.chunk_x;
+    }
+
+    /**
+     * Set the chunk Z
+     *
+     * @since   0.5.0
+     */
+    public void setChunkZ(Integer z) {
+        this.chunk_z = z;
+    }
+
+    /**
+     * Get the chunk Z
+     *
+     * @since   0.5.0
+     */
+    @Nullable
+    public Integer getChunkZ() {
+        return this.chunk_z;
+    }
+
+    /**
+     * Set the chunk's world
+     *
+     * @since   0.5.0
+     */
+    public void setChunkWorld(World world) {
+        this.chunk_world = world;
+    }
+
+    /**
+     * Get the chunk's world
+     *
+     * @since   0.5.0
+     */
+    @Nullable
+    public World getChunkWorld() {
+        return this.chunk_world;
+    }
+
+    /**
      * Listen for value updates
      *
      * @since   0.1.1
      */
     @Override
-    public void addWithValue(TextBuilder builder, Object value) {
-        if (value instanceof Lump lump) {
-            Slot slot = null;
+    public void addWithValue(TextBuilder builder, Lump lump) {
 
-            builder.printImage(lump.getImage(), this.x, this.y);
+        if (lump == null) {
+            return;
+        }
 
-            if (this.slot_index != null) {
-                TexturedScreenHandler screen = builder.getScreenHandler();
+        Slot slot = null;
 
-                if (screen != null) {
-                    slot = screen.getSlot(this.slot_index);
+        builder.printImage(lump.getImage(), this.x, this.y);
 
-                    if (slot != null) {
-                        ItemStack stack = slot.getStack();
-                        NbtCompound nbt = BibItem.getCustomNbt(stack);
+        if (this.slot_index != null) {
+            TexturedScreenHandler screen = builder.getScreenHandler();
 
-                        ChunkPos pos = lump.getPos();
-                        nbt.putLong("lump_id", pos.toLong());
+            if (screen != null) {
+                slot = screen.getSlot(this.slot_index);
 
-                        MiniText title = new MiniText("Chunk ");
-                        title.setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(false));
+                if (slot != null) {
+                    ItemStack stack = slot.getStack();
+                    NbtCompound nbt = BibItem.getCustomNbt(stack);
 
-                        title.append("" + pos.x).setStyle(Style.EMPTY.withColor(Formatting.AQUA));
-                        title.append("x").setStyle(Style.EMPTY.withColor(Formatting.GRAY));
-                        title.append("" + pos.z).setStyle(Style.EMPTY.withColor(Formatting.AQUA));
+                    ChunkPos pos = lump.getPos();
+                    nbt.putLong("lump_id", pos.toLong());
 
-                        BibItem.setCustomName(stack, title);
-                    }
+                    MiniText title = new MiniText("Chunk ");
+                    title.setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(false));
+
+                    title.append("" + pos.x).setStyle(Style.EMPTY.withColor(Formatting.AQUA));
+                    title.append("x").setStyle(Style.EMPTY.withColor(Formatting.GRAY));
+                    title.append("" + pos.z).setStyle(Style.EMPTY.withColor(Formatting.AQUA));
+
+                    BibItem.setCustomName(stack, title);
                 }
             }
+        }
 
-            if (this.added_with_value_listener != null) {
-                this.added_with_value_listener.onAdded(builder, lump, slot);
-            }
+        if (this.added_with_value_listener != null) {
+            this.added_with_value_listener.onAdded(builder, lump, slot);
         }
     }
 
@@ -169,6 +248,13 @@ public class MapWidget extends TextureWidget {
 
         ItemStack stack = slot.getStack();
         Lump lump = null;
+
+        var opener = screen.getSessionOpenerFactory();
+
+        if (opener instanceof WidgetDataProvider provider) {
+            BibLog.log("Getting value from", opener, "for", this);
+            lump = provider.getWidgetValue(this);
+        }
 
         Inventory inventory = screen.getActualInventory();
 

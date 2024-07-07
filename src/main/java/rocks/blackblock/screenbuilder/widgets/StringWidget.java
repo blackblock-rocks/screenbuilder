@@ -1,9 +1,12 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.text.TextColor;
-import rocks.blackblock.screenbuilder.BBSB;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
-import rocks.blackblock.screenbuilder.text.*;
+import rocks.blackblock.screenbuilder.text.Font;
+import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
+import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 public class StringWidget extends Widget {
 
@@ -119,5 +122,21 @@ public class StringWidget extends Widget {
 
         builder.setCursor(start_x);
         builder.print(this.text, font);
+    }
+
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
+        arg.add("text", this.text)
+                .add("color", this.color)
+                .add("font", this.font_collection)
+                .add("width", this.width)
+                .add("centered", this.centered)
+                .add("x", this.x)
+                .add("y", this.y);
     }
 }

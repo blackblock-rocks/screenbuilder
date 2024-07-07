@@ -2,7 +2,8 @@ package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -61,10 +62,10 @@ public class NumberPicker extends CombinedWidget<Integer> {
         WidgetDataProvider provider = handler.getWidgetDataProvider();
 
         if (provider != null) {
-            Object value = provider.getWidgetValue(this.id);
+            Integer value = provider.getWidgetValue(this);
 
-            if (value instanceof Integer) {
-                int int_value = (int) value;
+            if (value != null) {
+                int int_value = value;
                 int_value += amount;
                 amount = int_value;
             }
@@ -75,7 +76,7 @@ public class NumberPicker extends CombinedWidget<Integer> {
                 amount = this.max_value;
             }
 
-            provider.setWidgetValue(this.id, amount);
+            provider.setWidgetValue(this, amount);
 
             handler.refresh();
         }
@@ -121,5 +122,16 @@ public class NumberPicker extends CombinedWidget<Integer> {
             builder.setCursor(x);
             builder.print(value.toString(), font);
         }
+    }
+
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
+        arg.add("min_value", this.min_value)
+                .add("max_value", this.max_value);
     }
 }

@@ -1,6 +1,8 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
@@ -15,7 +17,7 @@ import java.nio.file.Path;
  * @since    0.1.1
  * @version  0.1.1
  */
-public abstract class TextureWidget extends Widget {
+public abstract class TextureWidget<T> extends Widget<T> {
 
     // The parent gui it will be used in
     protected GuiTexture parent_gui = null;
@@ -163,5 +165,20 @@ public abstract class TextureWidget extends Widget {
         super.addToTextBuilder(builder);
     }
 
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
 
+        if (this.widget_texture != null) {
+            arg.add("texture", this.widget_texture);
+        }
+
+        if (this.texture_identifier != null) {
+            arg.add("texture_identifier", this.texture_identifier);
+        }
+    }
 }

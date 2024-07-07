@@ -2,6 +2,8 @@ package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.TextColor;
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -72,10 +74,10 @@ public class PaginationWidget extends CombinedWidget<Integer> {
         WidgetDataProvider provider = handler.getWidgetDataProvider();
 
         if (provider != null) {
-            Object value = provider.getWidgetValue(this.id);
+            Integer value = provider.getWidgetValue(this);
 
-            if (value instanceof Integer) {
-                int int_value = (int) value;
+            if (value != null) {
+                int int_value = value;
                 int_value += amount;
                 amount = int_value;
             }
@@ -86,7 +88,7 @@ public class PaginationWidget extends CombinedWidget<Integer> {
                 amount = this.max_value;
             }
 
-            provider.setWidgetValue(this.id, amount);
+            provider.setWidgetValue(this, amount);
 
             if (this.on_change != null) {
                 this.on_change.onEvent(handler, this);
@@ -129,4 +131,14 @@ public class PaginationWidget extends CombinedWidget<Integer> {
         builder.print(str_value, this.previous_button.getYForVerticallyCenteredText());
     }
 
+    /**
+     * Append to a BibLog.Arg representation
+     *
+     * @since 0.5.0
+     */
+    @Override
+    public void appendToBibLogArg(@NotNull BibLog.Arg arg) {
+        arg.add("min_value", this.min_value)
+                .add("max_value", this.max_value);
+    }
 }

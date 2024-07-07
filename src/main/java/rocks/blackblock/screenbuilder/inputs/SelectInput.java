@@ -10,8 +10,8 @@ import rocks.blackblock.screenbuilder.interfaces.SelectEventWithValueListener;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
-import rocks.blackblock.screenbuilder.slots.ListenerWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,9 +187,9 @@ public class SelectInput<T> extends BaseInput implements WidgetDataProvider {
 
 
     @Override
-    public Object getWidgetValue(String widget_id) {
+    public Object getWidgetValue(Widget widget) {
 
-        if (widget_id.equals("pagination")) {
+        if (widget.getId().equals("pagination")) {
             return this.page;
         }
 
@@ -197,9 +197,9 @@ public class SelectInput<T> extends BaseInput implements WidgetDataProvider {
     }
 
     @Override
-    public void setWidgetValue(String widget_id, Object value) {
+    public void setWidgetValue(Widget widget, Object value) {
 
-        if (widget_id.equals("pagination")) {
+        if (widget.getId().equals("pagination")) {
             this.page = (int) value;
         }
     }
