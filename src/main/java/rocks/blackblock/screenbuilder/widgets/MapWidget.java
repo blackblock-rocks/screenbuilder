@@ -153,7 +153,7 @@ public class MapWidget extends TextureWidget<Lump> {
 
                 if (slot != null) {
                     ItemStack stack = slot.getStack();
-                    NbtCompound nbt = BibItem.getCustomNbt(stack);
+                    NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
 
                     ChunkPos pos = lump.getPos();
                     nbt.putLong("lump_id", pos.toLong());

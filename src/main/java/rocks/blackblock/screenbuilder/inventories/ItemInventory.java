@@ -28,7 +28,7 @@ public class ItemInventory implements BibInventory.Base {
         this.stack = stack;
         this.size = size;
 
-        NbtCompound nbt = BibItem.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
         NbtCompound item_inventory = nbt.getCompound("ItemInventory");
 
         if (item_inventory == null) {
@@ -77,7 +77,7 @@ public class ItemInventory implements BibInventory.Base {
      * @since    0.1.1
      */
     public void writeToItemStack() {
-        NbtCompound nbt = BibItem.getCustomNbt(this.stack);
+        NbtCompound nbt = BibItem.getOrCreateCustomNbt(this.stack);
         NbtCompound item_inventory = nbt.getCompound("ItemInventory");
 
         if (item_inventory == null) {

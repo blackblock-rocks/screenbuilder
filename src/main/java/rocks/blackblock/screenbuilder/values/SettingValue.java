@@ -182,7 +182,7 @@ public class SettingValue extends Value {
 
         ItemStack number = new ItemStack(BBSB.GUI_NUMBER);
         BibItem.setCustomName(number, Text.literal("Number").setStyle(Style.EMPTY.withItalic(false)));
-        nbt = BibItem.getCustomNbt(number);
+        nbt = BibItem.getOrCreateCustomNbt(number);
         nbt.putString("type", "number");
         BibItem.setCustomNbt(number, nbt);
 

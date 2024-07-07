@@ -119,7 +119,7 @@ public abstract class Setting {
 
         BibItem.setCustomName(result, (Text.literal(title)).setStyle(Style.EMPTY.withItalic(false)));
 
-        NbtCompound nbt = BibItem.getCustomNbt(result);
+        NbtCompound nbt = BibItem.getOrCreateCustomNbt(result);
         nbt.putString("setting_name", this.name);
 
         return result;

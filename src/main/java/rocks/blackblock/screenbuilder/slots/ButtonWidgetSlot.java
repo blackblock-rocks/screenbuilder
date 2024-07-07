@@ -198,7 +198,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
             this.markDirty();
         }
 
-        NbtCompound nbt = BibItem.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
         nbt.putBoolean("polyvalent:hide_info", true);
     }
 

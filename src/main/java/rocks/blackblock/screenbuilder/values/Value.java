@@ -56,7 +56,7 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
         ItemStack stack = new ItemStack(this.getIcon());
 
         // Create the nbt data
-        NbtCompound nbt = BibItem.getCustomNbt(stack);
+        NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
 
         // Set the (default) title
         BibItem.setCustomName(stack, Text.literal(this.getTitle()).setStyle(Style.EMPTY.withItalic(false)));
