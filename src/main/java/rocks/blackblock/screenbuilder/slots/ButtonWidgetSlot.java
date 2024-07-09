@@ -32,8 +32,8 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         LEFT_TAB_UNSELECTED
     }
 
-    private MutableText title = null;
-    private List<MutableText> lore = null;
+    private Text title = null;
+    private List<Text> lore = null;
     private BackgroundType background_type = null;
     private boolean show_background_image = true;
     private String button_text = null;
@@ -46,7 +46,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @since    0.1.0
      * @version  0.1.0
      */
-    public ButtonWidgetSlot setTitle(MutableText title) {
+    public ButtonWidgetSlot setTitle(Text title) {
         this.title = title;
         this.updateStack();
         return this;
@@ -58,7 +58,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
      */
-    public ButtonWidgetSlot setLore(MutableText lore) {
+    public ButtonWidgetSlot setLore(Text lore) {
 
         this.lore = new ArrayList<>();
         this.lore.add(lore);
@@ -73,7 +73,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.4.0
      */
-    public ButtonWidgetSlot setLore(List<MutableText> lore) {
+    public ButtonWidgetSlot setLore(List<? extends Text> lore) {
 
         this.lore = new ArrayList<>(lore);
 
@@ -87,7 +87,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.4.0
      */
-    public ButtonWidgetSlot addLore(List<MutableText> lore) {
+    public ButtonWidgetSlot addLore(List<? extends Text> lore) {
 
         if (this.lore == null) {
             this.lore = new ArrayList<>();
@@ -105,7 +105,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.4.0
      */
-    public ButtonWidgetSlot addLore(MutableText lore) {
+    public ButtonWidgetSlot addLore(Text lore) {
         this.appendLoreLine(lore);
         this.updateStack();
         return this;
@@ -165,7 +165,7 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.3.0
      */
-    private void appendLoreLine(MutableText line) {
+    private void appendLoreLine(Text line) {
 
         if (this.lore == null) {
             this.lore = new ArrayList<>();
