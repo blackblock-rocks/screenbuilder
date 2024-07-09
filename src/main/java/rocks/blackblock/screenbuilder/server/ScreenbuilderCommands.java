@@ -111,63 +111,63 @@ public class ScreenbuilderCommands {
         public TabTestInput(boolean horizontal) {
             this.horizontal = horizontal;
 
-            all_tabs.add(Tab.of("First", BBSB.PENCIL_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("First", BBSB.PENCIL_ICON, (sb, available_slots) -> {
                 BibLog.log("Adding first contents");
                 var button = sb.addButton(available_slots.get(0));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab one");
             }));
 
-            all_tabs.add(Tab.of("Second", BBSB.CHECK_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Second", BBSB.CHECK_ICON, (sb, available_slots) -> {
                 BibLog.log("Adding second contents");
                 var button = sb.addButton(available_slots.get(1));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab two");
             }));
 
-            all_tabs.add(Tab.of("Third", BBSB.CITY_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Third", BBSB.CITY_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(2));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab three");
             }));
 
-            all_tabs.add(Tab.of("Fourth", BBSB.ASTERISK_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Fourth", BBSB.ASTERISK_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(3));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab four");
             }));
 
-            all_tabs.add(Tab.of("Fifth", BBSB.CUBE_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Fifth", BBSB.CUBE_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(4));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab five");
             }));
 
-            all_tabs.add(Tab.of("Sixth", BBSB.CLOUD_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Sixth", BBSB.CLOUD_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(5));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab six");
             }));
 
-            all_tabs.add(Tab.of("Seventh", BBSB.DIAMOND_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Seventh", BBSB.DIAMOND_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(6));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab seven");
             }));
 
-            all_tabs.add(Tab.of("Eighth", BBSB.COG_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Eighth", BBSB.COG_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(7));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab eight");
             }));
 
-            all_tabs.add(Tab.of("Ninth", BBSB.FOLDER_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Ninth", BBSB.FOLDER_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(8));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab nine");
             }));
 
-            all_tabs.add(Tab.of("Tenth", BBSB.INGOT_ICON, (sb, horizontal_tabs, available_slots) -> {
+            all_tabs.add(Tab.of("Tenth", BBSB.INGOT_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(9));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab ten");

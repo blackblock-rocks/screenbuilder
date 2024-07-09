@@ -9,6 +9,7 @@ import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
+import rocks.blackblock.screenbuilder.screen.SlotManager;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
 
@@ -117,6 +118,8 @@ public interface TabbedInput {
         int max_tabs = horizontal ? 9 : 6;
         int visible_tabs = max_tabs - 1; // One less to accommodate the "next" button when needed
         var available_slots = horizontal ? HORIZONTAL_AVAILABLE_SLOTS : VERTICAL_AVAILABLE_SLOTS;
+        var slot_manager = new SlotManager(9, 6);
+        slot_manager.setAvailableSlots(available_slots);
 
         var tabs = this.getAllTabs();
         int tab_count = tabs.size();
@@ -191,7 +194,7 @@ public interface TabbedInput {
         }
 
         if (active_tab != null) {
-            active_tab.getTabDecorator().decorateScreenBuilder(sb, horizontal, available_slots);
+            active_tab.getTabDecorator().decorateScreenBuilder(sb, slot_manager);
         }
     }
 
@@ -311,6 +314,6 @@ public interface TabbedInput {
      * @since   0.5.0
      */
     interface Decorator {
-        void decorateScreenBuilder(ScreenBuilder sb, boolean horizontal_tabs, List<Integer> available_slots);
+        void decorateScreenBuilder(ScreenBuilder sb, SlotManager slot_manager);
     }
 }
