@@ -8,9 +8,13 @@ import rocks.blackblock.screenbuilder.interfaces.BaseInputChangeEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
+import rocks.blackblock.screenbuilder.textures.BaseTexture;
+import rocks.blackblock.screenbuilder.textures.IconTexture;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The base input class
@@ -19,6 +23,7 @@ import java.util.List;
  * @since   0.1.0
  * @version 0.1.3
  */
+@SuppressWarnings("unused")
 public abstract class BaseInput extends BasescreenFactory {
 
     // What should happen on a change?
@@ -45,9 +50,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Set what should happen when the user changes the value
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setChangeBehaviour(ChangeBehaviour behaviour) {
         this.change_behaviour = behaviour;
@@ -56,9 +59,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Get what should happen when the user changes the value
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ChangeBehaviour getChangeBehaviour() {
         return this.change_behaviour;
@@ -67,9 +68,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Show the accept button
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void showAcceptButton(Integer slot_index) {
         this.show_accept_button = slot_index;
@@ -78,9 +77,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Show the back button
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void showBackButton(Integer slot_index) {
         this.show_back_button = slot_index;
@@ -89,9 +86,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Set the accept listener
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setAcceptListener(BaseInputChangeEventListener on_accept_click) {
         this.on_accept_click = on_accept_click;
@@ -100,9 +95,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Set the back listener
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setBackListener(BaseInputChangeEventListener on_back_click) {
         this.on_back_click = on_back_click;
@@ -111,9 +104,7 @@ public abstract class BaseInput extends BasescreenFactory {
     /**
      * Get a basic ScreenBuilder
      *
-     * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public ScreenBuilder createBasicScreenBuilder(String name) {
 
@@ -211,6 +202,211 @@ public abstract class BaseInput extends BasescreenFactory {
         }
 
         this.error_messages.add(message);
+    }
+
+    /**
+     * Add a button that sets a string
+     *
+     * @since    0.5.0
+     */
+    public ButtonWidgetSlot addStringButton(ScreenBuilder sb, int slot_index, String title_prefix, IconTexture icon, GetStringValue getter, SetStringValue setter) {
+
+        if (icon == null) {
+            icon = BBSB.PENCIL_ICON;
+        }
+
+        String current_value = getter.getCurrentValue();
+
+        ButtonWidgetSlot string_button = sb.addButton(slot_index);
+        string_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+        string_button.setTitle(title_prefix + ": " + current_value);
+        string_button.addOverlay(icon);
+
+        string_button.addLeftClickListener((screen, slot) -> {
+            StringInput rename_input = new StringInput();
+
+            rename_input.setRenamedListener((screen_1, value) -> {
+                setter.setCurrentValue(value);
+                screen_1.pushScreen(this);
+            });
+
+            screen.pushScreen(rename_input);
+        });
+
+        return string_button;
+    }
+
+    /**
+     * Add a button that sets numeric values
+     *
+     * @since    0.5.0
+     */
+    public ButtonWidgetSlot addNumericButton(ScreenBuilder sb, int slot_index, String title_prefix, GetNumericValue getter, SetNumericValue setter) {
+
+        int current_value = getter.getCurrentValue();
+
+        // If the title prefix does not end with a colon, add one
+        if (!title_prefix.endsWith(": ")) {
+            title_prefix += ": ";
+        }
+
+        ButtonWidgetSlot numeric_button = sb.addButton(slot_index);
+        numeric_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+        numeric_button.setTitle(title_prefix + current_value);
+        numeric_button.setButtonText("" + current_value);
+
+        numeric_button.addLeftClickListener((screen, slot) -> {
+            int new_value = getter.getCurrentValue() + this.getChangeAmount(screen);
+            setter.setCurrentValue(new_value);
+            screen.replaceScreen(this);
+        });
+
+        numeric_button.addRightClickListener((screen, slot) -> {
+            int new_value = getter.getCurrentValue() - this.getChangeAmount(screen);
+            setter.setCurrentValue(new_value);
+            screen.replaceScreen(this);
+        });
+
+        return numeric_button;
+    }
+
+    /**
+     * Add a button that toggles between values
+     *
+     * @since    0.5.0
+     */
+    public ButtonWidgetSlot addToggleButton(ScreenBuilder sb, int slot_index, String title_prefix, ToggleOptions options) {
+
+        ToggleOption current_option = options.getCurrentOption();
+
+        ButtonWidgetSlot toggle_button = sb.addButton(slot_index);
+        toggle_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+        toggle_button.setTitle(title_prefix + current_option.title);
+        current_option.addToButton(toggle_button);
+
+        toggle_button.addLeftClickListener((screen, slot) -> {
+
+            ToggleOption current = options.getCurrentOption();
+            int new_value = current.value + 1;
+
+            if (options.getOption(new_value) == null) {
+                new_value = 0;
+            }
+
+            ToggleOption new_option = options.getOption(new_value);
+
+            options.setter.setCurrentValue(new_option.value);
+            screen.replaceScreen(this);
+        });
+
+        toggle_button.addRightClickListener((screen, slot) -> {
+            ToggleOption current = options.getCurrentOption();
+            int new_value = current.value - 1;
+
+            if (options.getOption(new_value) == null) {
+                new_value = options.options.size() - 1;
+            }
+
+            ToggleOption new_option = options.getOption(new_value);
+
+            options.setter.setCurrentValue(new_option.value);
+            screen.replaceScreen(this);
+        });
+
+        return toggle_button;
+    }
+
+    /**
+     * Get the preferred numerical change amount
+     *
+     * @since    0.5.0
+     */
+    protected int getChangeAmount(TexturedScreenHandler screen) {
+
+        int amount = 1;
+
+        if (screen.isPressingShift()) {
+            amount = 10;
+        }
+
+        return amount;
+    }
+
+    /**
+     * Represents a toggleable options
+     *
+     * @since    0.5.0
+     */
+    public static class ToggleOptions {
+        Map<Integer, ToggleOption> options = new HashMap<>();
+        GetNumericValue getter;
+        SetNumericValue setter;
+
+        public ToggleOption add(int value, String title, String lore) {
+            ToggleOption option = new ToggleOption(value, title, lore);
+            options.put(value, option);
+            return option;
+        }
+
+        public void setGetter(GetNumericValue getter) {
+            this.getter = getter;
+        }
+
+        public void setSetter(SetNumericValue setter) {
+            this.setter = setter;
+        }
+
+        public ToggleOption getCurrentOption() {
+            return options.get(getter.getCurrentValue());
+        }
+
+        public ToggleOption getOption(int value) {
+            return options.get(value);
+        }
+    }
+
+    /**
+     * Represents a toggleable option
+     *
+     * @since    0.5.0
+     */
+    public static class ToggleOption {
+        int value;
+        String title;
+        String lore;
+        List<BaseTexture> textures = new ArrayList<>();
+
+        public ToggleOption(int value, String title, String lore) {
+            this.value = value;
+            this.title = title;
+            this.lore = lore;
+        }
+
+        public void addOverlay(BaseTexture texture) {
+            textures.add(texture);
+        }
+
+        public void addToButton(ButtonWidgetSlot button) {
+            for (BaseTexture texture : textures) {
+                button.addOverlay(texture);
+            }
+        }
+    }
+
+    public interface GetNumericValue {
+        int getCurrentValue();
+    }
+
+    public interface SetNumericValue {
+        void setCurrentValue(int value);
+    }
+
+    public interface GetStringValue {
+        String getCurrentValue();
+    }
+
+    public interface SetStringValue {
+        void setCurrentValue(String value);
     }
 
     public enum ChangeBehaviour {
