@@ -2,19 +2,23 @@ package rocks.blackblock.screenbuilder.server;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import rocks.blackblock.bib.command.CommandCreator;
+import rocks.blackblock.bib.command.CommandLeaf;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.BookletInput;
+import rocks.blackblock.screenbuilder.inputs.EmptyInput;
 import rocks.blackblock.screenbuilder.inputs.FileInput;
+import rocks.blackblock.screenbuilder.inputs.TabbedInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
+import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.MiniText;
@@ -25,214 +29,378 @@ import rocks.blackblock.screenbuilder.widgets.Widget;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import static net.minecraft.server.command.CommandManager.literal;
 
 /**
  * Registers the BBSB commands.
  */
 public class ScreenbuilderCommands {
+
     public static void registerCommands() {
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(literal("bbsb").requires(source -> source.hasPermissionLevel(2))
-                    .then(literal("json")
-                            .then(CommandManager.argument("targets", EntityArgumentType.players())
-                                .then(CommandManager.argument("filename", StringArgumentType.string())
-                                    .executes(context -> {
-                                        var source = context.getSource();
+        CommandLeaf bbsb = CommandCreator.getPermissionRoot("bbsb", "blackblock.mod");
 
-                                        var target = EntityArgumentType.getPlayers(context, "targets");
+        addJsonTestCommand(bbsb);
+        addScreenTestCommand(bbsb);
+        addBookletTestCommand(bbsb);
+        addFontTestCommand(bbsb);
+        addDebugTestCommand(bbsb);
+        addFilesTestCommand(bbsb);
+    }
 
-                                        String path_to_json = StringArgumentType.getString(context, "filename");
+    private static void addFilesTestCommand(CommandLeaf bbsb) {
 
-                                        for (var entity : target) {
-                                            ScreenBuilder builder = new ScreenBuilder("test_json");
+        var files = bbsb.getChild("files");
 
-                                            // Open the json file
-                                            Path json_file_path = Paths.get(path_to_json);
+        files.onExecute(context -> {
+            var source = context.getSource();
 
-                                            String json_string;
+            FileInput input = new FileInput();
+            input.setStart(FabricLoader.getInstance().getGameDir());
+            input.setDisplayName(Text.literal("File Browser"));
+            input.allowDirectoryCration(true);
 
-                                            // Read the contents of the json_file_path
-                                            try {
-                                                json_string = Files.readString(json_file_path);
-                                            } catch (Exception e) {
-                                                json_string = "";
-                                            }
+            source.getPlayer().openHandledScreen(input);
 
-                                            // Read in the json file in a string reader
-                                            MutableText text = BibText.deserializeFromJson(json_string);
+            return Command.SINGLE_SUCCESS;
+        });
+    }
 
-                                            BBSB.log("Using text: " + text);
-                                            BBSB.log(" -- json:", BibText.serializeToJson(text));
+    private static void addDebugTestCommand(CommandLeaf bbsb) {
 
-                                            builder.setDisplayName(text);
-                                            builder.setShowPlayerInventory(false);
-                                            builder.setShowPlayerHotbar(false);
+        var debug = bbsb.getChild("debug");
 
-                                            entity.openHandledScreen(builder);
-                                        }
+        debug.onExecute(context -> {
+            var source = context.getSource();
+            BBSB.DEBUG = !BBSB.DEBUG;
+            source.sendFeedback(() -> Text.literal("BBSB debug mode is now " + BBSB.DEBUG), false);
 
-                                        return Command.SINGLE_SUCCESS;
-                                    })))
-                    )
-                    .then(literal("screen")
-                            .then(CommandManager.argument("targets", EntityArgumentType.players())
+            return Command.SINGLE_SUCCESS;
+        });
 
-                                .then(CommandManager.argument("title", TextArgumentType.text(registryAccess))
-                                        .executes((context -> {
-                                            var source = context.getSource();
+        var tab = debug.getChild("tab-test");
+        var horizontal = tab.getChild("horizontal");
 
-                                            var target = EntityArgumentType.getPlayers(context, "targets");
+        horizontal.onExecute(context -> {
+            TabTestInput empty = new TabTestInput(true);
+            context.getSource().getPlayer().openHandledScreen(empty);
 
-                                            var text = TextArgumentType.getTextArgument(context, "title");
+            return Command.SINGLE_SUCCESS;
+        });
 
-                                            for (var entity : target) {
-                                                try {
+        var vertical = tab.getChild("vertical");
 
-                                                    TestBuilder builder = new TestBuilder("test");
+        vertical.onExecute(context -> {
 
-                                                    builder.setDisplayName(text);
-                                                    builder.setShowPlayerInventory(false);
-                                                    builder.setShowPlayerHotbar(false);
+            TabTestInput empty = new TabTestInput(false);
+            context.getSource().getPlayer().openHandledScreen(empty);
 
-                                                    NumberPicker numberPicker = new NumberPicker();
-                                                    numberPicker.setId("picker");
-                                                    builder.addWidget(numberPicker);
+            return Command.SINGLE_SUCCESS;
+        });
+    }
 
-                                                    NumberPicker numberPicker_two = new NumberPicker();
-                                                    numberPicker_two.setId("picker_two");
-                                                    numberPicker_two.setSlotIndex(30);
-                                                    builder.addWidget(numberPicker_two);
+    private static class TabTestInput extends EmptyInput implements TabbedInput {
 
-                                                    entity.openHandledScreen(builder);
-                                                } catch (Exception e) {
-                                                    System.out.println("ERROR: " + e.getMessage());
-                                                    e.printStackTrace();
-                                                }
-                                            }
+        private Tab active = null;
+        private List<Tab> all_tabs = new ArrayList<>();
+        private boolean horizontal;
 
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                            )
+        public TabTestInput(boolean horizontal) {
+            this.horizontal = horizontal;
 
-                    )
-                    .then(literal("booklet")
-                            .then(CommandManager.argument("targets", EntityArgumentType.players())
-                                    .then(CommandManager.argument("content", StringArgumentType.greedyString())
-                                            .executes((context -> {
-                                                var source = context.getSource();
-                                                var target = EntityArgumentType.getPlayers(context, "targets");
+            all_tabs.add(Tab.of("First", BBSB.PENCIL_ICON, (sb, horizontal_tabs, available_slots) -> {
+                BibLog.log("Adding first contents");
+                var button = sb.addButton(available_slots.get(0));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab one");
+            }));
 
-                                                for (var entity : target) {
-                                                    try {
-                                                        BookletInput input = new BookletInput();
-                                                        input.printLine(StringArgumentType.getString(context, "content"));
-                                                        input.printLine("Extra 1");
-                                                        input.printLine("Extra 2");
-                                                        input.printLine("Extra 3");
-                                                        entity.openHandledScreen(input);
-                                                    } catch (Exception e) {
-                                                        System.out.println("ERROR: " + e.getMessage());
-                                                        e.printStackTrace();
-                                                    }
-                                                }
+            all_tabs.add(Tab.of("Second", BBSB.CHECK_ICON, (sb, horizontal_tabs, available_slots) -> {
+                BibLog.log("Adding second contents");
+                var button = sb.addButton(available_slots.get(1));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab two");
+            }));
 
-                                                return 1;
-                                            }))
-                                    )
-                            )
-                    )
-                    .then(literal("font")
-                            .then(CommandManager.argument("targets", EntityArgumentType.players())
+            all_tabs.add(Tab.of("Third", BBSB.CITY_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(2));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab three");
+            }));
 
-                                    .then(CommandManager.argument("name", StringArgumentType.greedyString())
-                                            .executes((context -> {
-                                                var source = context.getSource();
+            all_tabs.add(Tab.of("Fourth", BBSB.ASTERISK_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(3));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab four");
+            }));
 
-                                                var target = EntityArgumentType.getPlayers(context, "targets");
+            all_tabs.add(Tab.of("Fifth", BBSB.CUBE_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(4));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab five");
+            }));
 
-                                                String name = StringArgumentType.getString(context, "name");
+            all_tabs.add(Tab.of("Sixth", BBSB.CLOUD_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(5));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab six");
+            }));
 
-                                                for (var entity : target) {
-                                                    try {
+            all_tabs.add(Tab.of("Seventh", BBSB.DIAMOND_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(6));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab seven");
+            }));
 
-                                                        TestBuilder builder = new TestBuilder("test");
+            all_tabs.add(Tab.of("Eighth", BBSB.COG_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(7));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab eight");
+            }));
 
-                                                        builder.setDisplayName(new MiniText(name));
-                                                        builder.setShowPlayerInventory(false);
-                                                        builder.setShowPlayerHotbar(false);
+            all_tabs.add(Tab.of("Ninth", BBSB.FOLDER_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(8));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab nine");
+            }));
 
-                                                        LineHeightFontCollection font;
+            all_tabs.add(Tab.of("Tenth", BBSB.INGOT_ICON, (sb, horizontal_tabs, available_slots) -> {
+                var button = sb.addButton(available_slots.get(9));
+                button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
+                button.setTitle("Button on tab ten");
+            }));
+        }
 
-                                                        if (name.equalsIgnoreCase("lh09")) {
-                                                            font = Font.LH09;
-                                                        } else if (name.equalsIgnoreCase("lh04") || name.equalsIgnoreCase("lh01")) {
-                                                            font = Font.LH01;
-                                                        } else if (name.equalsIgnoreCase("lh11")) {
-                                                            font = Font.LH11;
-                                                        } else {
-                                                            font = Font.ABSOLUTE_DEFAULT_COLLECTION;
-                                                        }
+        @Override
+        public List<Tab> getAllTabs() {
+            return this.all_tabs;
+        }
 
-                                                        BBSB.log("Using font collection", font);
+        private int tab_scroll_index = 0;
 
-                                                        if (font == Font.ABSOLUTE_DEFAULT_COLLECTION) {
-                                                            for (int i = -15; i < 29; i++) {
-                                                                int y = i * 8;
-                                                                int line = font.convertYToLine(y);
+        @Override
+        public void setTabScrollIndex(Integer index) {
+            this.tab_scroll_index = index;
+        }
 
-                                                                builder.addFontString(i, "|^_^| Index " + i + " @ Y " + y + " (line " + line + ")", font.getFontForLine(line));
-                                                            }
-                                                        } else {
-                                                            for (int i = -10; i < 20; i++) {
-                                                                builder.addFontString(i, "|^_^| Line " + i, font.getFontForLine(i));
-                                                            }
-                                                        }
+        @Override
+        public Integer getTabScrollIndex() {
+            return this.tab_scroll_index;
+        }
+
+        @Override
+        public ScreenBuilder getScreenBuilder() {
+            ScreenBuilder sb = this.createBasicScreenBuilder("empty_screen");
+            this.printErrors(sb);
+            sb.setCloneSlots(false);
+            this.addTabsToScreenBuilder(sb, this.horizontal);
+            return sb;
+        }
+
+        @Override
+        public void setActiveTab(Tab tab) {
+            this.active = tab;
+        }
+
+        @Override
+        public Tab getActiveTab() {
+            return this.active;
+        }
+    }
+
+    private static void addFontTestCommand(CommandLeaf bbsb) {
+
+        var font_leaf = bbsb.getChild("font");
+        var targets_leaf = font_leaf.getChild("targets");
+        targets_leaf.setType(EntityArgumentType.players());
+
+        var name_leaf = targets_leaf.getChild("name");
+        name_leaf.setType(StringArgumentType.greedyString());
+
+        name_leaf.onExecute(context -> {
+            var source = context.getSource();
+
+            var target = EntityArgumentType.getPlayers(context, "targets");
+
+            String name = StringArgumentType.getString(context, "name");
+
+            for (var entity : target) {
+                try {
+
+                    TestBuilder builder = new TestBuilder("test");
+
+                    builder.setDisplayName(new MiniText(name));
+                    builder.setShowPlayerInventory(false);
+                    builder.setShowPlayerHotbar(false);
+
+                    LineHeightFontCollection font;
+
+                    if (name.equalsIgnoreCase("lh09")) {
+                        font = Font.LH09;
+                    } else if (name.equalsIgnoreCase("lh04") || name.equalsIgnoreCase("lh01")) {
+                        font = Font.LH01;
+                    } else if (name.equalsIgnoreCase("lh11")) {
+                        font = Font.LH11;
+                    } else {
+                        font = Font.ABSOLUTE_DEFAULT_COLLECTION;
+                    }
+
+                    BBSB.log("Using font collection", font);
+
+                    if (font == Font.ABSOLUTE_DEFAULT_COLLECTION) {
+                        for (int i = -15; i < 29; i++) {
+                            int y = i * 8;
+                            int line = font.convertYToLine(y);
+
+                            builder.addFontString(i, "|^_^| Index " + i + " @ Y " + y + " (line " + line + ")", font.getFontForLine(line));
+                        }
+                    } else {
+                        for (int i = -10; i < 20; i++) {
+                            builder.addFontString(i, "|^_^| Line " + i, font.getFontForLine(i));
+                        }
+                    }
 
 
-                                                        builder.addError("              Error line 1");
-                                                        builder.addError("              Error line 2");
+                    builder.addError("              Error line 1");
+                    builder.addError("              Error line 2");
 
-                                                        entity.openHandledScreen(builder);
-                                                    } catch (Exception e) {
-                                                        System.out.println("ERROR: " + e.getMessage());
-                                                        e.printStackTrace();
-                                                    }
-                                                }
+                    entity.openHandledScreen(builder);
+                } catch (Exception e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
 
-                                                return Command.SINGLE_SUCCESS;
-                                            }))
-                                    )
-                            )
-                    )
-                    .then(literal("debug")
-                        .executes((context -> {
-                            var source = context.getSource();
-                            BBSB.DEBUG = !BBSB.DEBUG;
-                            source.sendFeedback(() -> Text.literal("BBSB debug mode is now " + BBSB.DEBUG), false);
+            return Command.SINGLE_SUCCESS;
+        });
+    }
 
-                            return Command.SINGLE_SUCCESS;
-                        }))
-                    )
-                    .then(literal("files")
-                            .executes((context -> {
-                                var source = context.getSource();
+    private static void addBookletTestCommand(CommandLeaf bbsb) {
 
-                                FileInput input = new FileInput();
-                                input.setStart(FabricLoader.getInstance().getGameDir());
-                                input.setDisplayName(Text.literal("File Browser"));
-                                input.allowDirectoryCration(true);
+        var booklet_leaf = bbsb.getChild("booklet");
+        var targets_leaf = booklet_leaf.getChild("targets");
+        targets_leaf.setType(EntityArgumentType.players());
 
-                                source.getPlayer().openHandledScreen(input);
+        var content_leaf = targets_leaf.getChild("content");
+        content_leaf.setType(StringArgumentType.greedyString());
 
-                                return Command.SINGLE_SUCCESS;
-                            }))
-                    )
-            );
+        content_leaf.onExecute(context -> {
+            var source = context.getSource();
+            var target = EntityArgumentType.getPlayers(context, "targets");
+
+            for (var entity : target) {
+                try {
+                    BookletInput input = new BookletInput();
+                    input.printLine(StringArgumentType.getString(context, "content"));
+                    input.printLine("Extra 1");
+                    input.printLine("Extra 2");
+                    input.printLine("Extra 3");
+                    entity.openHandledScreen(input);
+                } catch (Exception e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
+            return 1;
+        });
+    }
+
+    private static void addScreenTestCommand(CommandLeaf bbsb) {
+
+        var screen_leaf = bbsb.getChild("screen");
+        var targets_leaf = screen_leaf.getChild("targets");
+        targets_leaf.setType(EntityArgumentType.players());
+
+        var title_leaf = targets_leaf.getChild("title");
+
+        // @TODO: Make TextArgumentType work (without registry access)
+        //title_leaf.setType(TextArgumentType.text());
+
+        title_leaf.onExecute(context -> {
+            var source = context.getSource();
+
+            var target = EntityArgumentType.getPlayers(context, "targets");
+
+            var text = TextArgumentType.getTextArgument(context, "title");
+
+            for (var entity : target) {
+                try {
+
+                    TestBuilder builder = new TestBuilder("test");
+
+                    builder.setDisplayName(text);
+                    builder.setShowPlayerInventory(false);
+                    builder.setShowPlayerHotbar(false);
+
+                    NumberPicker numberPicker = new NumberPicker();
+                    numberPicker.setId("picker");
+                    builder.addWidget(numberPicker);
+
+                    NumberPicker numberPicker_two = new NumberPicker();
+                    numberPicker_two.setId("picker_two");
+                    numberPicker_two.setSlotIndex(30);
+                    builder.addWidget(numberPicker_two);
+
+                    entity.openHandledScreen(builder);
+                } catch (Exception e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
+            return Command.SINGLE_SUCCESS;
+        });
+    }
+
+    private static void addJsonTestCommand(CommandLeaf bbsb) {
+
+        var json_leaf = bbsb.getChild("json");
+        var targets_leaf = json_leaf.getChild("targets");
+        targets_leaf.setType(EntityArgumentType.players());
+
+        var filename_leaf = targets_leaf.getChild("filename");
+        filename_leaf.setType(StringArgumentType.string());
+
+        filename_leaf.onExecute(context -> {
+            var source = context.getSource();
+
+            var target = EntityArgumentType.getPlayers(context, "targets");
+
+            String path_to_json = StringArgumentType.getString(context, "filename");
+
+            for (var entity : target) {
+                ScreenBuilder builder = new ScreenBuilder("test_json");
+
+                // Open the json file
+                Path json_file_path = Paths.get(path_to_json);
+
+                String json_string;
+
+                // Read the contents of the json_file_path
+                try {
+                    json_string = Files.readString(json_file_path);
+                } catch (Exception e) {
+                    json_string = "";
+                }
+
+                // Read in the json file in a string reader
+                MutableText text = BibText.deserializeFromJson(json_string);
+
+                BBSB.log("Using text: " + text);
+                BBSB.log(" -- json:", BibText.serializeToJson(text));
+
+                builder.setDisplayName(text);
+                builder.setShowPlayerInventory(false);
+                builder.setShowPlayerHotbar(false);
+
+                entity.openHandledScreen(builder);
+            }
+
+            return Command.SINGLE_SUCCESS;
         });
     }
 

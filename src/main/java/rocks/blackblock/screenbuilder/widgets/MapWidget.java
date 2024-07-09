@@ -11,7 +11,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.util.BibItem;
-import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.chunker.chunk.Lump;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -252,7 +251,6 @@ public class MapWidget extends TextureWidget<Lump> {
         var opener = screen.getSessionOpenerFactory();
 
         if (opener instanceof WidgetDataProvider provider) {
-            BibLog.log("Getting value from", opener, "for", this);
             lump = provider.getWidgetValue(this);
         }
 

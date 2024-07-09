@@ -10,6 +10,7 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.text.Font;
@@ -36,7 +37,7 @@ import java.util.List;
  * @since    0.1.1
  * @version  0.1.1
  */
-public abstract class BaseTexture {
+public abstract class BaseTexture implements BibLog.Argable {
 
     // All textures
     public static final Set<BaseTexture> TEXTURES = new HashSet<>();
@@ -802,6 +803,22 @@ public abstract class BaseTexture {
     }
 
     /**
+     * Return the Arg representation of this instance
+     *
+     * @since   0.5.0
+     */
+    @Override
+    public BibLog.Arg toBBLogArg() {
+        var result = BibLog.createArg(this);
+
+        result.add("texture_identifier", this.texture_identifier);
+        result.add("pieces", this.getPieceCount());
+        result.add("piece_width", this.getImagePieceWidth());
+
+        return result;
+    }
+
+    /**
      * Return the string representation of this instance
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
@@ -809,8 +826,7 @@ public abstract class BaseTexture {
      */
     @Override
     public String toString() {
-        String result = this.getClass().getSimpleName() + "{\"" + this.texture_identifier + "\", pieces=" + this.getPieceCount() + ", piecewidth=" + this.getImagePieceWidth() + "}";
-        return result;
+        return this.toBBLogArg().toString();
     }
 
 }
