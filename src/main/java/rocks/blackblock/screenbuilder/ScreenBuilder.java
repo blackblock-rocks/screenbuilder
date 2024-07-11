@@ -379,6 +379,15 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Get a widget by its ID
+     *
+     * @since    0.5.0
+     */
+    public Widget<?> getWidget(String id) {
+        return this.widgets.get(id);
+    }
+
+    /**
      * Add a widget to this screen
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>

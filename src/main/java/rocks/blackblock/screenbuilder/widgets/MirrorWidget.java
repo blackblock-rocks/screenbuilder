@@ -17,8 +17,9 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
     protected SelectEventListener on_change_item = null;
     protected boolean print_image = true;
 
-    public MirrorWidget() {
+    public MirrorWidget(String id) {
         super();
+        this.setId(id);
         this.slot = new MirrorWidgetSlot();
         this.setSlot(0, this.slot);
 
@@ -34,6 +35,10 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
                 this.on_change_item.onSelect(screen, stack);
             }
         });
+    }
+
+    public MirrorWidget() {
+        this(null);
     }
 
     /**

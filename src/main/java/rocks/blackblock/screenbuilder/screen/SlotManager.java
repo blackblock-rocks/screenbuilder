@@ -1,5 +1,8 @@
 package rocks.blackblock.screenbuilder.screen;
 
+import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.screenbuilder.ScreenBuilder;
+
 import java.util.*;
 
 /**
@@ -17,17 +20,33 @@ public class SlotManager implements Iterable<Integer> {
     protected boolean use_player_inventory = false;
     protected boolean use_toolbar = false;
 
+    private ScreenBuilder screen_builder = null;
     private int top_row_slot_count;
     private int top_col_slot_count;
     private int top_total_slot_count;
     private int bottom_count;
     private Set<Integer> used_slots;
 
+    public SlotManager(ScreenBuilder builder) {
+        this.setScreenBuilder(builder);
+        this.top_row_slot_count = 6;
+        this.top_col_slot_count = 9;
+    }
+
     public SlotManager(int top_row_slot_count, int top_col_slot_count) {
         this.top_row_slot_count = top_row_slot_count;
         this.top_col_slot_count = top_col_slot_count;
         this.top_total_slot_count = top_row_slot_count * top_col_slot_count;
         this.used_slots = new HashSet<>();
+    }
+
+    public void setScreenBuilder(ScreenBuilder builder) {
+        this.screen_builder = builder;
+
+        if (builder != null) {
+            this.use_player_inventory = !builder.getShowPlayerInventory();
+            this.use_toolbar = !builder.getShowPlayerHotbar();
+        }
     }
 
     public void setAvailableSlots(List<Integer> available_slots) {
@@ -59,6 +78,13 @@ public class SlotManager implements Iterable<Integer> {
      * Get the slot at the given relative index
      */
     public Integer get(int relative_index) {
+
+        var slots = this.getAvailableSlots();
+
+        if (relative_index < 0) {
+            relative_index = slots.size() + relative_index;
+        }
+
         return this.getAvailableSlots().get(relative_index);
     }
 
@@ -76,12 +102,40 @@ public class SlotManager implements Iterable<Integer> {
         this.used_slots.clear();
     }
 
+    /**
+     * Mark a slot as being used (without flushing to the ScreenBuilder)
+     */
     public void markSlotAsUsed(int slot) {
         this.used_slots.add(slot);
     }
 
+    /**
+     * See if the given slot index has already been used.
+     * Also checks the ScreenBuilder if it is available.
+     */
     public boolean isSlotUsed(int slot) {
+
+        if (this.screen_builder != null && this.screen_builder.isSlotUsed(slot)) {
+            return true;
+        }
+
         return this.used_slots.contains(slot);
+    }
+
+    /**
+     * Register all the used slots to the ScreenBuilder
+     */
+    public boolean commitToScreenBuilder() {
+
+        if (this.screen_builder == null) {
+            return false;
+        }
+
+        for (int index : this.used_slots) {
+            this.screen_builder.markSlotAsUsed(index);
+        }
+
+        return true;
     }
 
     public List<Integer> getAvailableSlots() {
@@ -89,7 +143,7 @@ public class SlotManager implements Iterable<Integer> {
 
         // Top section
         for (int i = 0; i < this.top_total_slot_count; i++) {
-            if (!this.used_slots.contains(i)) {
+            if (!this.isSlotUsed(i)) {
                 availableSlots.add(i);
             }
         }
@@ -100,7 +154,7 @@ public class SlotManager implements Iterable<Integer> {
 
             for (int i = 0; i < this.bottom_count; i++) {
                 int slot = playerInventoryStart + i;
-                if (!this.used_slots.contains(slot)) {
+                if (!this.isSlotUsed(slot)) {
                     availableSlots.add(slot);
                 }
             }
@@ -109,20 +163,20 @@ public class SlotManager implements Iterable<Integer> {
         return availableSlots;
     }
 
-    public List<List<Integer>> getAvailableRows() {
-        List<List<Integer>> availableRows = new ArrayList<>();
+    public List<Row> getAvailableRows() {
+        List<Row> availableRows = new ArrayList<>();
 
         // Top section
         for (int row = 0; row < top_row_slot_count; row++) {
             List<Integer> availableSlots = new ArrayList<>();
             for (int col = 0; col < top_col_slot_count; col++) {
                 int slot = row * top_col_slot_count + col;
-                if (!this.used_slots.contains(slot)) {
+                if (!this.isSlotUsed(slot)) {
                     availableSlots.add(slot);
                 }
             }
             if (!availableSlots.isEmpty()) {
-                availableRows.add(availableSlots);
+                availableRows.add(new Row(availableSlots));
             }
         }
 
@@ -134,12 +188,12 @@ public class SlotManager implements Iterable<Integer> {
                 List<Integer> availableSlots = new ArrayList<>();
                 for (int col = 0; col < PLAYER_INVENTORY_COLS; col++) {
                     int slot = playerInventoryStart + (row * PLAYER_INVENTORY_COLS) + col;
-                    if (!this.used_slots.contains(slot)) {
+                    if (!this.isSlotUsed(slot)) {
                         availableSlots.add(slot);
                     }
                 }
                 if (!availableSlots.isEmpty()) {
-                    availableRows.add(availableSlots);
+                    availableRows.add(new Row(availableSlots));
                 }
             }
         }
@@ -147,42 +201,42 @@ public class SlotManager implements Iterable<Integer> {
         return availableRows;
     }
 
-    public List<List<Integer>> getAvailableColumns() {
-        List<List<Integer>> availableColumns = new ArrayList<>();
+    public List<Column> getAvailableColumns() {
+        List<Column> availableColumns = new ArrayList<>();
 
         // Top section
         for (int col = 0; col < top_col_slot_count; col++) {
             List<Integer> availableSlots = new ArrayList<>();
             for (int row = 0; row < top_row_slot_count; row++) {
                 int slot = row * top_col_slot_count + col;
-                if (!this.used_slots.contains(slot)) {
+                if (!this.isSlotUsed(slot)) {
                     availableSlots.add(slot);
                 }
             }
             if (!availableSlots.isEmpty()) {
-                availableColumns.add(availableSlots);
+                availableColumns.add(new Column(availableSlots));
             }
         }
 
         return availableColumns;
     }
 
-    public List<Integer> reserveTopFreeRow() {
+    public Row reserveTopFreeRow() {
         return reserveFreeRow(true);
     }
 
-    public List<Integer> reserveBottomFreeRow() {
+    public Row reserveBottomFreeRow() {
         return reserveFreeRow(false);
     }
 
-    private List<Integer> reserveFreeRow(boolean fromTop) {
+    private Row reserveFreeRow(boolean fromTop) {
         int totalRows = top_row_slot_count + (use_player_inventory ? bottom_count / PLAYER_INVENTORY_COLS : 0);
         int startRow = fromTop ? 0 : totalRows - 1;
         int endRow = fromTop ? totalRows : -1;
         int step = fromTop ? 1 : -1;
 
         for (int row = startRow; row != endRow; row += step) {
-            List<Integer> availableSlotsInRow = getAvailableSlotsInRow(row);
+            Row availableSlotsInRow = getAvailableSlotsInRow(row);
             if (!availableSlotsInRow.isEmpty()) {
                 // Mark these slots as used
                 availableSlotsInRow.forEach(this::markSlotAsUsed);
@@ -193,7 +247,7 @@ public class SlotManager implements Iterable<Integer> {
         return null; // No free slots found in any row
     }
 
-    private List<Integer> getAvailableSlotsInRow(int row) {
+    private Row getAvailableSlotsInRow(int row) {
         List<Integer> availableSlotsInRow = new ArrayList<>();
         int startSlot = row < top_row_slot_count ? row * top_col_slot_count :
                 top_total_slot_count + (row - top_row_slot_count) * PLAYER_INVENTORY_COLS;
@@ -205,11 +259,70 @@ public class SlotManager implements Iterable<Integer> {
                 availableSlotsInRow.add(slot);
             }
         }
-        return availableSlotsInRow;
+
+        return new Row(availableSlotsInRow);
     }
 
     @Override
     public Iterator<Integer> iterator() {
         return this.getAvailableSlots().iterator();
+    }
+
+    /**
+     * Represent a list of slot indexes
+     *
+     * @since   0.5.0
+     */
+    public static class SlotIndexList implements Iterable<Integer> {
+        private final List<Integer> slots;
+
+        public SlotIndexList(List<Integer> slots) {
+            this.slots = slots;
+        }
+
+        public Integer get(int index) {
+
+            if (index < 0) {
+                index = this.slots.size() + index;
+            }
+
+            return this.slots.get(index);
+        }
+
+        public boolean isEmpty() {
+            return this.slots.isEmpty();
+        }
+
+        public int size() {
+            return this.slots.size();
+        }
+
+        @NotNull
+        @Override
+        public Iterator<Integer> iterator() {
+            return this.slots.iterator();
+        }
+    }
+
+    /**
+     * Represent a column of slot indexes
+     *
+     * @since   0.5.0
+     */
+    public static class Column extends SlotIndexList {
+        public Column(List<Integer> slots) {
+            super(slots);
+        }
+    }
+
+    /**
+     * Represent a row of slot indexes
+     *
+     * @since   0.5.0
+     */
+    public static class Row extends SlotIndexList {
+        public Row(List<Integer> slots) {
+            super(slots);
+        }
     }
 }

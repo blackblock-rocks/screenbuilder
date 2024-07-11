@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import rocks.blackblock.bib.command.CommandCreator;
@@ -13,16 +14,14 @@ import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
-import rocks.blackblock.screenbuilder.inputs.BookletInput;
-import rocks.blackblock.screenbuilder.inputs.EmptyInput;
-import rocks.blackblock.screenbuilder.inputs.FileInput;
-import rocks.blackblock.screenbuilder.inputs.TabbedInput;
+import rocks.blackblock.screenbuilder.inputs.*;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.LineHeightFontCollection;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.widgets.MirrorWidget;
 import rocks.blackblock.screenbuilder.widgets.NumberPicker;
 import rocks.blackblock.screenbuilder.widgets.Widget;
 
@@ -102,20 +101,46 @@ public class ScreenbuilderCommands {
         });
     }
 
-    private static class TabTestInput extends EmptyInput implements TabbedInput {
+    private static class TabTestInput extends EmptyInput implements TabbedInput, WidgetDataProvider {
 
         private Tab active = null;
         private List<Tab> all_tabs = new ArrayList<>();
         private boolean horizontal;
+        private PageableInput.Pager<String> string_pager = new PageableInput.Pager<>("string_pager");
+        private ItemStack mirror_stack = null;
+        private MirrorWidget mirror_widget = new MirrorWidget();
 
         public TabTestInput(boolean horizontal) {
             this.horizontal = horizontal;
+
+            this.mirror_widget.setId("mirror_widget");
+
+            List<String> values = new ArrayList<>(30);
+
+            for (int i = 0; i < 30; i++) {
+                values.add("Entry: " + i);
+            }
+
+            this.string_pager.setPageableItems(values);
+            this.string_pager.setScreenHandlerFactory(this);
 
             all_tabs.add(Tab.of("First", BBSB.PENCIL_ICON, (sb, available_slots) -> {
                 BibLog.log("Adding first contents");
                 var button = sb.addButton(available_slots.get(0));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab one");
+
+                var rows = available_slots.getAvailableRows();
+                var last_row = rows.get(rows.size() - 1);
+
+                this.string_pager.addPaginationWidget(sb, last_row.get(0));
+
+                this.string_pager.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+                    var entry_button = sb.addButton(available_slots.get(index_on_page));
+                    entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+                    entry_button.setTitle(item);
+                });
+
             }));
 
             all_tabs.add(Tab.of("Second", BBSB.CHECK_ICON, (sb, available_slots) -> {
@@ -123,6 +148,10 @@ public class ScreenbuilderCommands {
                 var button = sb.addButton(available_slots.get(1));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab two");
+
+                this.mirror_widget.setSlotIndex(available_slots.get(3));
+                sb.addWidget(this.mirror_widget);
+
             }));
 
             all_tabs.add(Tab.of("Third", BBSB.CITY_ICON, (sb, available_slots) -> {
@@ -172,6 +201,31 @@ public class ScreenbuilderCommands {
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab ten");
             }));
+        }
+
+        @Override
+        public <T> T getWidgetValue(Widget<T> widget) {
+
+            if (widget.getId().equals("string_pager")) {
+                return (T) (Integer) this.string_pager.getPage();
+            }
+
+            if (widget == this.mirror_widget) {
+                return (T) this.mirror_stack;
+            }
+
+            return null;
+        }
+
+        @Override
+        public <T> void setWidgetValue(Widget<T> widget, T value) {
+            if (widget.getId().equals("string_pager")) {
+                this.string_pager.setPage((int) value);
+            }
+
+            if (widget == this.mirror_widget) {
+                this.mirror_stack = (ItemStack) value;
+            }
         }
 
         @Override

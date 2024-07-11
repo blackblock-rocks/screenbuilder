@@ -207,4 +207,73 @@ public interface PageableInput<T> {
     interface PageableItemAdder<T> {
         void add(T item, int index_on_page, int amount_on_this_page);
     }
+
+    /**
+     * A simple implementation
+     *
+     * @since   0.5.0
+     */
+    class Pager<T> implements PageableInput<T> {
+
+        private List<T> items = null;
+        private int current_page = 1;
+        private int max_items_per_page = 5;
+        private NamedScreenHandlerFactory factory = null;
+        private String widget_id;
+
+        public Pager(String widget_id) {
+            this.widget_id = widget_id;
+        }
+
+        @Override
+        public String getPaginationWidgetId() {
+            return this.widget_id;
+        }
+
+        public void setPaginationWidgetId(String id) {
+            this.widget_id = id;
+        }
+
+        @Override
+        public void setPageValue(int page) {
+            this.current_page = page;
+        }
+
+        @Override
+        public int getPageValue() {
+            return this.current_page;
+        }
+
+        public void setPageableItems(List<T> items) {
+            this.items = items;
+        }
+
+        @Override
+        public @NotNull List<T> getPageableItems() {
+
+            if (items == null) {
+                return List.of();
+            }
+
+            return this.items;
+        }
+
+        @Override
+        public int getMaxItemsPerPage() {
+            return this.max_items_per_page;
+        }
+
+        public void setMaxItemsPerPage(int max) {
+            this.max_items_per_page = max;
+        }
+
+        public void setScreenHandlerFactory(NamedScreenHandlerFactory factory) {
+            this.factory = factory;
+        }
+
+        @Override
+        public NamedScreenHandlerFactory getScreenHandlerFactory() {
+            return this.factory;
+        }
+    }
 }
