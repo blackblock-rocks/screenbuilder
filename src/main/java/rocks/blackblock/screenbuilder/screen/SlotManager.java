@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.screen;
 
 import org.jetbrains.annotations.NotNull;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 
 import java.util.*;
@@ -21,25 +22,31 @@ public class SlotManager implements Iterable<Integer> {
     protected boolean use_toolbar = false;
 
     private ScreenBuilder screen_builder = null;
-    private int top_row_slot_count;
-    private int top_col_slot_count;
+    private int top_column_count;
+    private int top_row_count;
     private int top_total_slot_count;
-    private int bottom_count;
+    private int bottom_row_count;
+    private int bottom_slot_count;
     private Set<Integer> used_slots;
 
     public SlotManager(ScreenBuilder builder) {
         this.setScreenBuilder(builder);
-        this.top_row_slot_count = 6;
-        this.top_col_slot_count = 9;
+        this.top_column_count = 6;
+        this.top_row_count = 9;
     }
 
-    public SlotManager(int top_row_slot_count, int top_col_slot_count) {
-        this.top_row_slot_count = top_row_slot_count;
-        this.top_col_slot_count = top_col_slot_count;
-        this.top_total_slot_count = top_row_slot_count * top_col_slot_count;
+    public SlotManager(int top_column_count, int top_row_count) {
+        this.top_column_count = top_column_count;
+        this.top_row_count = top_row_count;
+        this.top_total_slot_count = top_column_count * top_row_count;
         this.used_slots = new HashSet<>();
     }
 
+    /**
+     * Set the screenbuilder being used
+     *
+     * @since   0.5.0
+     */
     public void setScreenBuilder(ScreenBuilder builder) {
         this.screen_builder = builder;
 
@@ -49,6 +56,41 @@ public class SlotManager implements Iterable<Integer> {
         }
     }
 
+    /**
+     * Get all the available slot indexes we can use
+     *
+     * @since   0.5.0
+     */
+    public List<Integer> getAvailableSlots() {
+        List<Integer> availableSlots = new ArrayList<>();
+
+        // Top section
+        for (int i = 0; i < this.top_total_slot_count; i++) {
+            if (!this.isSlotUsed(i)) {
+                availableSlots.add(i);
+            }
+        }
+
+        if (this.use_player_inventory) {
+            // Player inventory and hotbar
+            int playerInventoryStart = this.top_total_slot_count;
+
+            for (int i = 0; i < this.bottom_slot_count; i++) {
+                int slot = playerInventoryStart + i;
+                if (!this.isSlotUsed(slot)) {
+                    availableSlots.add(slot);
+                }
+            }
+        }
+
+        return availableSlots;
+    }
+
+    /**
+     * Override the available slots we can use
+     *
+     * @since   0.5.0
+     */
     public void setAvailableSlots(List<Integer> available_slots) {
         this.used_slots.clear();
 
@@ -59,18 +101,26 @@ public class SlotManager implements Iterable<Integer> {
         }
     }
 
+    /**
+     * Allow the bottom slots (player inventory & hotbar) to be used
+     *
+     * @since   0.5.0
+     */
     public void setAllowBottomSlots(boolean use_player_inventory, boolean use_toolbar) {
         this.use_player_inventory = use_player_inventory;
         this.use_toolbar = use_toolbar;
 
         if (this.use_player_inventory) {
             if (this.use_toolbar) {
-                this.bottom_count = (PLAYER_INVENTORY_ROWS + PLAYER_HOTBAR_ROWS) * PLAYER_INVENTORY_COLS;
+                this.bottom_row_count = PLAYER_INVENTORY_ROWS + PLAYER_HOTBAR_ROWS;
             } else {
-                this.bottom_count = PLAYER_INVENTORY_ROWS * PLAYER_INVENTORY_COLS;
+                this.bottom_row_count = PLAYER_INVENTORY_ROWS;
             }
+
+            this.bottom_slot_count = this.bottom_row_count * PLAYER_INVENTORY_COLS;
         } else {
-            this.bottom_count = 0;
+            this.bottom_row_count = 0;
+            this.bottom_slot_count = 0;
         }
     }
 
@@ -138,64 +188,33 @@ public class SlotManager implements Iterable<Integer> {
         return true;
     }
 
-    public List<Integer> getAvailableSlots() {
-        List<Integer> availableSlots = new ArrayList<>();
-
-        // Top section
-        for (int i = 0; i < this.top_total_slot_count; i++) {
-            if (!this.isSlotUsed(i)) {
-                availableSlots.add(i);
-            }
-        }
-
-        if (this.use_player_inventory) {
-            // Player inventory and hotbar
-            int playerInventoryStart = this.top_total_slot_count;
-
-            for (int i = 0; i < this.bottom_count; i++) {
-                int slot = playerInventoryStart + i;
-                if (!this.isSlotUsed(slot)) {
-                    availableSlots.add(slot);
-                }
-            }
-        }
-
-        return availableSlots;
-    }
-
     public List<Row> getAvailableRows() {
         List<Row> availableRows = new ArrayList<>();
 
         // Top section
-        for (int row = 0; row < top_row_slot_count; row++) {
-            List<Integer> availableSlots = new ArrayList<>();
-            for (int col = 0; col < top_col_slot_count; col++) {
-                int slot = row * top_col_slot_count + col;
-                if (!this.isSlotUsed(slot)) {
-                    availableSlots.add(slot);
-                }
-            }
-            if (!availableSlots.isEmpty()) {
-                availableRows.add(new Row(availableSlots));
+        for (int row_index = 0; row_index < top_row_count; row_index++) {
+            Row row = this.getAvailableSlotsInRow(row_index);
+
+            if (!row.isEmpty()) {
+                availableRows.add(row);
             }
         }
 
         if (this.use_player_inventory) {
-            // Player inventory and hotbar
-            int playerInventoryStart = this.top_total_slot_count;
 
-            for (int row = 0; row < this.bottom_count / PLAYER_INVENTORY_COLS; row++) {
-                List<Integer> availableSlots = new ArrayList<>();
-                for (int col = 0; col < PLAYER_INVENTORY_COLS; col++) {
-                    int slot = playerInventoryStart + (row * PLAYER_INVENTORY_COLS) + col;
-                    if (!this.isSlotUsed(slot)) {
-                        availableSlots.add(slot);
-                    }
-                }
-                if (!availableSlots.isEmpty()) {
-                    availableRows.add(new Row(availableSlots));
+            for (int row_index = 0 + this.top_row_count; row_index < this.top_row_count + this.bottom_row_count; row_index++) {
+                Row row = this.getAvailableSlotsInRow(row_index);
+
+                if (!row.isEmpty()) {
+                    availableRows.add(row);
                 }
             }
+        }
+
+        BibLog.log("Available rows:");
+
+        for (var row : availableRows) {
+            BibLog.log("  »", row);
         }
 
         return availableRows;
@@ -205,10 +224,10 @@ public class SlotManager implements Iterable<Integer> {
         List<Column> availableColumns = new ArrayList<>();
 
         // Top section
-        for (int col = 0; col < top_col_slot_count; col++) {
+        for (int col = 0; col < top_row_count; col++) {
             List<Integer> availableSlots = new ArrayList<>();
-            for (int row = 0; row < top_row_slot_count; row++) {
-                int slot = row * top_col_slot_count + col;
+            for (int row = 0; row < top_column_count; row++) {
+                int slot = row * top_row_count + col;
                 if (!this.isSlotUsed(slot)) {
                     availableSlots.add(slot);
                 }
@@ -229,13 +248,13 @@ public class SlotManager implements Iterable<Integer> {
         return reserveFreeRow(false);
     }
 
-    private Row reserveFreeRow(boolean fromTop) {
-        int totalRows = top_row_slot_count + (use_player_inventory ? bottom_count / PLAYER_INVENTORY_COLS : 0);
-        int startRow = fromTop ? 0 : totalRows - 1;
-        int endRow = fromTop ? totalRows : -1;
-        int step = fromTop ? 1 : -1;
+    private Row reserveFreeRow(boolean from_top) {
+        int total_rows = top_row_count + this.bottom_row_count;
+        int start_row = from_top ? 0 : total_rows - 1;
+        int end_row = from_top ? total_rows : -1;
+        int step = from_top ? 1 : -1;
 
-        for (int row = startRow; row != endRow; row += step) {
+        for (int row = start_row; row != end_row; row += step) {
             Row availableSlotsInRow = getAvailableSlotsInRow(row);
             if (!availableSlotsInRow.isEmpty()) {
                 // Mark these slots as used
@@ -249,13 +268,19 @@ public class SlotManager implements Iterable<Integer> {
 
     private Row getAvailableSlotsInRow(int row) {
         List<Integer> availableSlotsInRow = new ArrayList<>();
-        int startSlot = row < top_row_slot_count ? row * top_col_slot_count :
-                top_total_slot_count + (row - top_row_slot_count) * PLAYER_INVENTORY_COLS;
-        int endSlot = row < top_row_slot_count ? startSlot + top_col_slot_count :
-                startSlot + PLAYER_INVENTORY_COLS;
+        int col_count;
 
-        for (int slot = startSlot; slot < endSlot; slot++) {
-            if (!isSlotUsed(slot)) {
+        if (row <= this.top_row_count) {
+            col_count = this.top_column_count;
+        } else {
+            col_count = PLAYER_INVENTORY_COLS;
+        }
+
+        int start = row * col_count;
+        int end = start + col_count;
+
+        for (int slot = start; slot < end; slot++) {
+            if (!this.isSlotUsed(slot)) {
                 availableSlotsInRow.add(slot);
             }
         }
@@ -273,7 +298,7 @@ public class SlotManager implements Iterable<Integer> {
      *
      * @since   0.5.0
      */
-    public static class SlotIndexList implements Iterable<Integer> {
+    public static class SlotIndexList implements Iterable<Integer>, BibLog.Argable {
         private final List<Integer> slots;
 
         public SlotIndexList(List<Integer> slots) {
@@ -301,6 +326,25 @@ public class SlotManager implements Iterable<Integer> {
         @Override
         public Iterator<Integer> iterator() {
             return this.slots.iterator();
+        }
+
+        /**
+         * Get the Arg representation for this instance
+         */
+        @Override
+        public BibLog.Arg toBBLogArg() {
+            var result = BibLog.createArg(this);
+
+            for (int i = 0; i < this.size(); i++) {
+                result.add("" + i, this.get(i));
+            }
+
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return this.toBBLogArg().toString();
         }
     }
 
