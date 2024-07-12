@@ -27,6 +27,9 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
     // The Sync ID used
     protected Integer original_sync_id = null;
 
+    // The last generated handler
+    private TexturedScreenHandler last_handler = null;
+
     /**
      * Get the screen handler factory
      * (This is the same as this class)
@@ -138,6 +141,34 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
     }
 
     /**
+     * Get the last generated screen handler
+     *
+     * @since   0.5.0
+     */
+    @Nullable
+    public TexturedScreenHandler getLastScreenHandler() {
+        return this.last_handler;
+    }
+
+    /**
+     * Rerender this screen for the last player that opened it
+     *
+     * @since   0.5.0
+     */
+    public boolean rerender() {
+
+        TexturedScreenHandler handler = this.last_handler;
+
+        if (handler == null) {
+            return false;
+        }
+
+        handler.rerender();
+
+        return true;
+    }
+
+    /**
      * Create the actual handler
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
@@ -163,6 +194,8 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
         }
 
         handler.setOriginFactory(this);
+        this.last_handler = handler;
+
         return handler;
     }
 }

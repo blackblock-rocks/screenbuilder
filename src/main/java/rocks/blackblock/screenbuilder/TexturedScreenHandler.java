@@ -1274,8 +1274,24 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
-     * Refresh the screen by re-opening it
-     * (This is an example implementation, this can actually be used to update the screen)
+     * Rerender the screen if possible
+     *
+     * @since   0.5.0
+     */
+    public void rerender() {
+
+        var factory = this.getOriginFactory();
+
+        if (factory != null) {
+            this.replaceScreen(factory);
+        } else {
+            this.refresh();
+        }
+    }
+
+    /**
+     * Refresh the current rendered screen.
+     * This does not trigger a re-render of the factory.
      *
      * @since   0.1.1
      */
