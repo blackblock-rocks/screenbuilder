@@ -8,9 +8,12 @@ import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import rocks.blackblock.bib.bv.value.BvLootTableSet;
 import rocks.blackblock.bib.command.CommandCreator;
 import rocks.blackblock.bib.command.CommandLeaf;
 import rocks.blackblock.bib.util.BibLog;
+import rocks.blackblock.bib.util.BibLoot;
 import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -101,6 +104,9 @@ public class ScreenbuilderCommands {
         });
     }
 
+    /**
+     * A test input that uses tabs
+     */
     private static class TabTestInput extends EmptyInput implements TabbedInput, WidgetDataProvider {
 
         private Tab active = null;
@@ -109,7 +115,11 @@ public class ScreenbuilderCommands {
         private PageableInput.Pager<String> string_pager = new PageableInput.Pager<>("string_pager");
         private ItemStack mirror_stack = null;
         private MirrorWidget mirror_widget = new MirrorWidget();
+        private TaxonomyInput.Pager<BvLootTableSet> loot_pager = new TaxonomyInput.Pager<>("loot_pager", BibLoot.LOOT_TABLES);
 
+        /**
+         * Initialize the instance
+         */
         public TabTestInput(boolean horizontal) {
             this.horizontal = horizontal;
 
@@ -123,8 +133,9 @@ public class ScreenbuilderCommands {
 
             this.string_pager.setPageableItems(values);
             this.string_pager.setScreenHandlerFactory(this);
+            this.loot_pager.setScreenHandlerFactory(this);
 
-            all_tabs.add(Tab.of("First", BBSB.PENCIL_ICON, (sb, available_slots) -> {
+            all_tabs.add(Tab.of("First (String pager)", BBSB.PENCIL_ICON, (sb, available_slots) -> {
                 BibLog.log("Adding first contents");
                 var button = sb.addButton(available_slots.get(0));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
@@ -143,7 +154,7 @@ public class ScreenbuilderCommands {
 
             }));
 
-            all_tabs.add(Tab.of("Second", BBSB.CHECK_ICON, (sb, available_slots) -> {
+            all_tabs.add(Tab.of("Second (Mirror Widget)", BBSB.CHECK_ICON, (sb, available_slots) -> {
                 BibLog.log("Adding second contents");
                 var button = sb.addButton(available_slots.get(1));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
@@ -154,10 +165,42 @@ public class ScreenbuilderCommands {
 
             }));
 
-            all_tabs.add(Tab.of("Third", BBSB.CITY_ICON, (sb, available_slots) -> {
+            all_tabs.add(Tab.of("Third (Tags)", BBSB.CITY_ICON, (sb, available_slots) -> {
                 var button = sb.addButton(available_slots.get(2));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab three");
+
+                var bottom_row = available_slots.reserveBottomFreeRow();
+
+                this.loot_pager.addPaginationWidget(sb, bottom_row.get(0));
+                this.loot_pager.setMaxItemsPerPage(available_slots.countAvailableSlots());
+
+                this.loot_pager.forEachTagOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+                    int slot_index = available_slots.get(index_on_page);
+
+                    var entry_button = sb.addButton(slot_index);
+                    entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+                    entry_button.setBackgroundColour(Formatting.AQUA);
+                    entry_button.setStack(item.getItemIcon());
+                    entry_button.setTitle("TAG: " + item.getDisplayTitle());
+
+                    entry_button.addLeftClickListener((screen, slot) -> {
+                        this.loot_pager.addActiveTag(item);
+                        this.rerender();
+                    });
+                });
+
+                this.loot_pager.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+
+                    int slot_index = available_slots.get(index_on_page);
+
+                    var entry_button = sb.addButton(slot_index);
+                    entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+                    entry_button.setStack(item.getItemIcon());
+                    entry_button.setTitle("Entry: " + item.getDisplayTitle());
+
+                    entry_button.setLore(item.getLore());
+                });
             }));
 
             all_tabs.add(Tab.of("Fourth", BBSB.ASTERISK_ICON, (sb, available_slots) -> {
@@ -214,6 +257,10 @@ public class ScreenbuilderCommands {
                 return (T) this.mirror_stack;
             }
 
+            if (widget.getId().equals(this.loot_pager.getPaginationWidgetId())) {
+                return (T) (Integer) this.loot_pager.getPage();
+            }
+
             return null;
         }
 
@@ -225,6 +272,10 @@ public class ScreenbuilderCommands {
 
             if (widget == this.mirror_widget) {
                 this.mirror_stack = (ItemStack) value;
+            }
+
+            if (widget.getId().equals(this.loot_pager.getPaginationWidgetId())) {
+                this.loot_pager.setPage((int) value);
             }
         }
 
