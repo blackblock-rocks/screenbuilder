@@ -8,7 +8,6 @@ import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import rocks.blackblock.bib.bv.value.BvLootTableSet;
 import rocks.blackblock.bib.command.CommandCreator;
 import rocks.blackblock.bib.command.CommandLeaf;
@@ -170,37 +169,7 @@ public class ScreenbuilderCommands {
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab three");
 
-                var bottom_row = available_slots.reserveBottomFreeRow();
-
-                this.loot_pager.addPaginationWidget(sb, bottom_row.get(0));
-                this.loot_pager.setMaxItemsPerPage(available_slots.countAvailableSlots());
-
-                this.loot_pager.forEachTagOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
-                    int slot_index = available_slots.get(index_on_page);
-
-                    var entry_button = sb.addButton(slot_index);
-                    entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
-                    entry_button.setBackgroundColour(Formatting.AQUA);
-                    entry_button.setStack(item.getItemIcon());
-                    entry_button.setTitle("TAG: " + item.getDisplayTitle());
-
-                    entry_button.addLeftClickListener((screen, slot) -> {
-                        this.loot_pager.addActiveTag(item);
-                        this.rerender();
-                    });
-                });
-
-                this.loot_pager.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
-
-                    int slot_index = available_slots.get(index_on_page);
-
-                    var entry_button = sb.addButton(slot_index);
-                    entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
-                    entry_button.setStack(item.getItemIcon());
-                    entry_button.setTitle("Entry: " + item.getDisplayTitle());
-
-                    entry_button.setLore(item.getLore());
-                });
+                this.loot_pager.decorateScreenBuilder(sb, available_slots, this);
             }));
 
             all_tabs.add(Tab.of("Fourth", BBSB.ASTERISK_ICON, (sb, available_slots) -> {

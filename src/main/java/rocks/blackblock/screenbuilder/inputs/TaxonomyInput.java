@@ -1,12 +1,16 @@
 package rocks.blackblock.screenbuilder.inputs;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.bv.value.BvElement;
 import rocks.blackblock.bib.bv.value.BvList;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
+import rocks.blackblock.screenbuilder.screen.SlotManager;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
 
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * Select BvElements based on a tag tree
@@ -263,10 +268,15 @@ public interface TaxonomyInput<T extends BvElement> extends PageableInput<T> {
         private int max_items_per_page = 8;
         private int page = 1;
         private String widget_id;
+        private BiConsumer<TexturedScreenHandler, T> on_selection = null;
 
         public Pager(String widget_id, BvList<T> root_list) {
             this.widget_id = widget_id;
             this.setRootList(root_list);
+        }
+
+        public void setSelectionHandler(BiConsumer<TexturedScreenHandler, T> on_selection) {
+            this.on_selection = on_selection;
         }
 
         @Override
@@ -385,6 +395,74 @@ public interface TaxonomyInput<T extends BvElement> extends PageableInput<T> {
         @Override
         public NamedScreenHandlerFactory getScreenHandlerFactory() {
             return this.factory;
+        }
+
+        /**
+         * Populate the given ScreenBuilder
+         *
+         * @since 0.5.0
+         */
+        public void decorateScreenBuilder(ScreenBuilder sb, SlotManager available_slots, BasescreenFactory factory) {
+
+            // We'll put the pagination and the "up" button on the bottom row
+            var bottom_row = available_slots.reserveBottomFreeRow();
+            this.addPaginationWidget(sb, bottom_row.get(0));
+
+            // The remaining amount of slots is what can be shown on the page
+            this.setMaxItemsPerPage(available_slots.countAvailableSlots());
+
+            // Iterate over all the current selectable tags and add them
+            this.forEachTagOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+                int slot_index = available_slots.get(index_on_page);
+
+                var entry_button = sb.addButton(slot_index);
+
+                // Use a medium-type button background
+                entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+
+                // Show tags on an aque button
+                entry_button.setBackgroundColour(Formatting.AQUA);
+
+                // Decorate the button some more
+                var item_icon = item.getItemIcon();
+
+                if (item_icon == null) {
+                    entry_button.addOverlay(BBSB.FOLDER_ICON);
+                } else {
+                    entry_button.setStack(item.getItemIcon());
+                }
+
+                entry_button.setTitle(item.getDisplayTitle());
+                entry_button.setLore(item.getDisplayDescription());
+
+                entry_button.addLeftClickListener((screen, slot) -> {
+                    this.addActiveTag(item);
+
+                    if (factory != null) {
+                        factory.rerender();
+                    }
+                });
+            });
+
+            // Now iterate over the actual items to show on this page
+            this.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+
+                int slot_index = available_slots.get(index_on_page);
+
+                var entry_button = sb.addButton(slot_index);
+                entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+
+                // Decorate the button some more
+                entry_button.setStack(item.getItemIcon());
+                entry_button.setTitle(item.getDisplayTitle());
+                entry_button.setLore(item.getDisplayDescription());
+
+                entry_button.addLeftClickListener((screen, slot) -> {
+                    if (this.on_selection != null) {
+                        this.on_selection.accept(screen, item);
+                    }
+                });
+            });
         }
     }
 }
