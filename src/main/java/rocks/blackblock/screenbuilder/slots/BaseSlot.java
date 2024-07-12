@@ -5,7 +5,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 import rocks.blackblock.screenbuilder.screen.ScreenInfo;
@@ -222,15 +221,18 @@ public abstract class BaseSlot extends Slot {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public void setStack(Item item) {
-        this.setStack(new ItemStack(item));
+
+        if (item == null) {
+            this.setStack(ItemStack.EMPTY);
+        } else {
+            this.setStack(new ItemStack(item));
+        }
 
         if (this.active_handler != null) {
             this.active_handler.sendContentUpdates();
         }
-
     }
 
     /**
