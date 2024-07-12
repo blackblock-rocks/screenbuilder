@@ -1,6 +1,8 @@
 package rocks.blackblock.screenbuilder.slots;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -75,7 +77,11 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      */
     public ButtonWidgetSlot setLore(List<? extends Text> lore) {
 
-        this.lore = new ArrayList<>(lore);
+        if (lore == null) {
+            this.lore = null;
+        } else {
+            this.lore = new ArrayList<>(lore);
+        }
 
         this.updateStack();
         return this;
@@ -109,6 +115,35 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         this.appendLoreLine(lore);
         this.updateStack();
         return this;
+    }
+
+    /**
+     * Use the given item as the stack
+     *
+     * @since    0.5.0
+     */
+    public void setStack(Item item) {
+
+        if (item == null || item == Items.AIR) {
+            item = BBSB.GUI_TRANSPARENT;
+        }
+
+        super.setStack(item);
+    }
+
+    /**
+     * Use the given item stack as the stack
+     *
+     * @since    0.5.0
+     */
+    public void setStack(ItemStack stack) {
+
+        if (stack == null || stack.isEmpty()) {
+            stack = new ItemStack(BBSB.GUI_TRANSPARENT);
+        }
+
+        super.setStack(stack);
+        this.updateStack();
     }
 
     /**
