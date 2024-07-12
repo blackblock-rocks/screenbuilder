@@ -102,13 +102,41 @@ public interface PageableInput<T> {
     NamedScreenHandlerFactory getScreenHandlerFactory();
 
     /**
+     * Get the amount of reserved slots (of the current page)
+     *
+     * @since   0.5.0
+     */
+    default int getReservedSlotsForPage(int page) {
+        return 0;
+    }
+
+    /**
+     * Get the amount of reserved slots for all the pages
+     *
+     * @since   0.5.0
+     */
+    default int getReservedSlotsForAllPages() {
+
+        int result = 0;
+        int page = 1;
+        int reserved = 0;
+
+        while ((reserved = this.getReservedSlotsForPage(page)) > 0) {
+            result += reserved;
+            page++;
+        }
+
+        return result;
+    }
+
+    /**
      * Get the amount of pages
      *
      * @since   0.3.1
      */
     default int getPageCount() {
         int items_per_page = this.getMaxItemsPerPage();
-        int size = this.getPageableItems().size();
+        int size = this.getPageableItems().size() + this.getReservedSlotsForAllPages();
 
         if (size == 0) {
             return 1;
@@ -125,8 +153,30 @@ public interface PageableInput<T> {
     default List<T> getPageableItemsForPage(int page) {
         List<T> pageable_items = this.getPageableItems();
         int items_per_page = this.getMaxItemsPerPage();
-        int start = (page - 1) * items_per_page;
-        int end = Math.min(start + items_per_page, pageable_items.size());
+
+        // Calculate reserved slots up to the given page
+        int total_reserved_slots = 0;
+        int reserved_slots_before = 0;
+        int reserved_on_this_page = 0;
+        for (int i = 1; i <= page; i++) {
+            int reserved_on_page = this.getReservedSlotsForPage(i);
+
+            if (i < page) {
+                reserved_on_page += reserved_on_page;
+            } else if (i == page) {
+                reserved_on_this_page = reserved_on_page;
+            }
+
+            total_reserved_slots += reserved_on_page;
+        }
+
+        // Adjust start and end indices considering reserved slots
+        int start = Math.max(0, (page - 1) * items_per_page - reserved_slots_before);
+        int end = Math.min(start + items_per_page - reserved_on_this_page, pageable_items.size());
+
+        if (start >= end) {
+            return List.of();
+        }
 
         return pageable_items.subList(start, end);
     }
@@ -137,12 +187,15 @@ public interface PageableInput<T> {
      * @since   0.3.1
      */
     default void forEachItemsOnCurrentPage(PageableItemAdder<T> adder) {
-        List<T> items = this.getPageableItemsForPage(this.getPage());
+
+        int page = this.getPage();
+        List<T> items = this.getPageableItemsForPage(page);
 
         int items_on_this_page = items.size();
+        int reserved_slots_on_this_page = this.getReservedSlotsForPage(page);
 
         for (int i = 0; i < items_on_this_page; i++) {
-            adder.add(items.get(i), i, items_on_this_page);
+            adder.add(items.get(i), i + reserved_slots_on_this_page, items_on_this_page);
         }
     }
 
