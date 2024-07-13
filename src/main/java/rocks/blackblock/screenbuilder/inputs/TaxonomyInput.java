@@ -435,7 +435,7 @@ public interface TaxonomyInput<T extends BvElement> extends PageableInput<T> {
                 entry_button.setTitle(item.getDisplayTitle());
                 entry_button.setLore(item.getDisplayDescription());
 
-                entry_button.addLeftClickListener((screen, slot) -> {
+                entry_button.addAllClicksListener((screen, slot) -> {
                     this.addActiveTag(item);
 
                     if (factory != null) {
@@ -457,7 +457,7 @@ public interface TaxonomyInput<T extends BvElement> extends PageableInput<T> {
                 entry_button.setTitle(item.getDisplayTitle());
                 entry_button.setLore(item.getDisplayDescription());
 
-                entry_button.addLeftClickListener((screen, slot) -> {
+                entry_button.addAllClicksListener((screen, slot) -> {
                     if (this.on_selection != null) {
                         this.on_selection.accept(screen, item);
                     }

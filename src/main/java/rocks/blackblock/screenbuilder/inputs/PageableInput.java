@@ -3,10 +3,17 @@ package rocks.blackblock.screenbuilder.inputs;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.bv.value.BvElement;
+import rocks.blackblock.bib.interfaces.HasItemIcon;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
+import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.screen.BasescreenFactory;
+import rocks.blackblock.screenbuilder.screen.SlotManager;
+import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Make something pageable.
@@ -16,6 +23,48 @@ import java.util.List;
  * @since   0.3.1
  */
 public interface PageableInput<T> {
+
+    /**
+     * Decorate a screenbuilder with default settings
+     *
+     * @since   0.5.0
+     */
+    static <T> void decorateScreenBuilder(PageableInput<T> input, ScreenBuilder sb, SlotManager available_slots, BasescreenFactory factory) {
+
+        // We'll put the pagination and the "up" button on the bottom row
+        var bottom_row = available_slots.reserveBottomFreeRow();
+        input.addPaginationWidget(sb, bottom_row.get(0));
+
+        // The remaining amount of slots is what can be shown on the page
+        input.setMaxItemsPerPage(available_slots.countAvailableSlots());
+
+        // Now iterate over the actual items to show on this page
+        input.forEachItemsOnCurrentPage((item, index_on_page, amount_on_this_page) -> {
+
+            int slot_index = available_slots.get(index_on_page);
+
+            var entry_button = sb.addButton(slot_index);
+            entry_button.setBackgroundType(ButtonWidgetSlot.BackgroundType.MEDIUM);
+
+            if (item instanceof BvElement<?,?> element) {
+                // Decorate the button some more
+                entry_button.setStack(element.getItemIcon());
+                entry_button.setTitle(element.getDisplayTitle());
+                entry_button.setLore(element.getDisplayDescription());
+            } else {
+
+                if (item instanceof HasItemIcon with_icon) {
+                    entry_button.setStack(with_icon.getItemIcon());
+                }
+
+                entry_button.setTitle(item.toString());
+            }
+
+            entry_button.addAllClicksListener((screen, slot) -> {
+                input.onClickedItem(screen, item);
+            });
+        });
+    }
 
     /**
      * Get the pagination widget id
@@ -92,6 +141,24 @@ public interface PageableInput<T> {
      * @since   0.3.1
      */
     int getMaxItemsPerPage();
+
+    /**
+     * Set the maximum amount of items per page
+     *
+     * @since   0.5.0
+     */
+    default void setMaxItemsPerPage(int amount) {
+        throw new UnsupportedOperationException("This input doesn't support setting the max items per page");
+    }
+
+    /**
+     * Do something when something has been clicked
+     *
+     * @since   0.5.0
+     */
+    default void onClickedItem(TexturedScreenHandler handler, T element) {
+
+    }
 
     /**
      * Get the factory that creates this screen
@@ -273,6 +340,7 @@ public interface PageableInput<T> {
         private int max_items_per_page = 5;
         private NamedScreenHandlerFactory factory = null;
         private String widget_id;
+        private BiConsumer<TexturedScreenHandler, T> on_selection = null;
 
         public Pager(String widget_id) {
             this.widget_id = widget_id;
@@ -316,6 +384,7 @@ public interface PageableInput<T> {
             return this.max_items_per_page;
         }
 
+        @Override
         public void setMaxItemsPerPage(int max) {
             this.max_items_per_page = max;
         }
@@ -327,6 +396,21 @@ public interface PageableInput<T> {
         @Override
         public NamedScreenHandlerFactory getScreenHandlerFactory() {
             return this.factory;
+        }
+
+        @Override
+        public void onClickedItem(TexturedScreenHandler handler, T element) {
+            if (this.on_selection != null) {
+                this.on_selection.accept(handler, element);
+            }
+        }
+
+        public void setSelectionHandler(BiConsumer<TexturedScreenHandler, T> on_selection) {
+            this.on_selection = on_selection;
+        }
+
+        public void decorateScreenBuilder(ScreenBuilder sb, SlotManager available_slots, BasescreenFactory factory) {
+            PageableInput.decorateScreenBuilder(this, sb, available_slots, factory);
         }
     }
 }
