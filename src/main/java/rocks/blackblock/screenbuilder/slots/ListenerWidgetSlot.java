@@ -4,7 +4,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
-import rocks.blackblock.screenbuilder.text.TextBuilder;
 
 public class ListenerWidgetSlot extends WidgetSlot {
 
@@ -31,6 +30,18 @@ public class ListenerWidgetSlot extends WidgetSlot {
      */
     public ListenerWidgetSlot(Inventory inventory, Integer index) {
         super(inventory, index);
+    }
+
+    /**
+     * Add a listener for all clicks
+     *
+     * @since 0.5.0
+     */
+    public ListenerWidgetSlot addAllClicksListener(SlotEventListener listener) {
+        this.on_left_click = listener;
+        this.on_right_click = listener;
+        this.on_middle_click = listener;
+        return this;
     }
 
     /**
