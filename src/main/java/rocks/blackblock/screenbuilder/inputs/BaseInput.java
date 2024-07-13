@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * The base input class
@@ -205,6 +206,23 @@ public abstract class BaseInput extends BasescreenFactory {
     }
 
     /**
+     * Set a value.
+     * If an error is thrown, show the error.
+     *
+     * @since    0.5.0
+     */
+    protected <T> boolean applyValueSet(TexturedScreenHandler handler, Consumer<T> setter, T value) {
+        try {
+            setter.accept(value);
+            return true;
+        } catch (Throwable e) {
+            this.addError(e.getMessage());
+            handler.replaceScreen(this);
+            return false;
+        }
+    }
+
+    /**
      * Add a button that sets a string
      *
      * @since    0.5.0
@@ -226,8 +244,9 @@ public abstract class BaseInput extends BasescreenFactory {
             StringInput rename_input = new StringInput();
 
             rename_input.setRenamedListener((screen_1, value) -> {
-                setter.setCurrentValue(value);
-                screen_1.pushScreen(this);
+                if (this.applyValueSet(screen_1, setter::setCurrentValue, value)) {
+                    screen_1.replaceScreen(this);
+                }
             });
 
             screen.pushScreen(rename_input);
@@ -257,14 +276,18 @@ public abstract class BaseInput extends BasescreenFactory {
 
         numeric_button.addLeftClickListener((screen, slot) -> {
             int new_value = getter.getCurrentValue() + this.getChangeAmount(screen);
-            setter.setCurrentValue(new_value);
-            screen.replaceScreen(this);
+
+            if (this.applyValueSet(screen, setter::setCurrentValue, new_value)) {
+                screen.replaceScreen(this);
+            }
         });
 
         numeric_button.addRightClickListener((screen, slot) -> {
             int new_value = getter.getCurrentValue() - this.getChangeAmount(screen);
-            setter.setCurrentValue(new_value);
-            screen.replaceScreen(this);
+
+            if (this.applyValueSet(screen, setter::setCurrentValue, new_value)) {
+                screen.replaceScreen(this);
+            }
         });
 
         return numeric_button;
@@ -295,8 +318,9 @@ public abstract class BaseInput extends BasescreenFactory {
 
             ToggleOption new_option = options.getOption(new_value);
 
-            options.setter.setCurrentValue(new_option.value);
-            screen.replaceScreen(this);
+            if (this.applyValueSet(screen, options.setter::setCurrentValue, new_option.value)) {
+                screen.replaceScreen(this);
+            }
         });
 
         toggle_button.addRightClickListener((screen, slot) -> {
@@ -309,8 +333,9 @@ public abstract class BaseInput extends BasescreenFactory {
 
             ToggleOption new_option = options.getOption(new_value);
 
-            options.setter.setCurrentValue(new_option.value);
-            screen.replaceScreen(this);
+            if (this.applyValueSet(screen, options.setter::setCurrentValue, new_option.value)) {
+                screen.replaceScreen(this);
+            }
         });
 
         return toggle_button;
