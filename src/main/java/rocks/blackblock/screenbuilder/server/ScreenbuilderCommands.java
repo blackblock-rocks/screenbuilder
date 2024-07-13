@@ -138,7 +138,6 @@ public class ScreenbuilderCommands {
                 BibLog.log("Adding first contents");
                 var button = sb.addButton(available_slots.get(0));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
-                button.setTitle("Button on tab one");
 
                 var rows = available_slots.getAvailableRows();
                 var last_row = rows.get(rows.size() - 1);
@@ -158,6 +157,8 @@ public class ScreenbuilderCommands {
                 var button = sb.addButton(available_slots.get(1));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab two");
+                button.setLabel("Label on the left");
+                button.setPrintLabelRight(false);
 
                 this.mirror_widget.setSlotIndex(available_slots.get(3));
                 sb.addWidget(this.mirror_widget);
@@ -176,6 +177,8 @@ public class ScreenbuilderCommands {
                 var button = sb.addButton(available_slots.get(3));
                 button.setBackgroundType(ButtonWidgetSlot.BackgroundType.SMALL);
                 button.setTitle("Button on tab four");
+                button.setLabel("Label on the right");
+
             }));
 
             all_tabs.add(Tab.of("Fifth", BBSB.CUBE_ICON, (sb, available_slots) -> {

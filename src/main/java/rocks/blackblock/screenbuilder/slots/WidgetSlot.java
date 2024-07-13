@@ -5,7 +5,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.TextColor;
+import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
+import rocks.blackblock.screenbuilder.text.TextGroup;
 import rocks.blackblock.screenbuilder.textures.TexturePlacement;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
@@ -17,6 +20,10 @@ public abstract class WidgetSlot extends StaticSlot {
 
     private TexturePlacement background_texture = null;
     private List<TexturePlacement> foreground_textures = null;
+    protected String label = null;
+    protected boolean print_label_right = true;
+    protected TextColor label_color = null;
+    protected int min_label_width = 0;
 
     /**
      * WidgetSlot constructor
@@ -162,6 +169,42 @@ public abstract class WidgetSlot extends StaticSlot {
     }
 
     /**
+     * Set the label to print next to the widget
+     *
+     * @since    0.5.0
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * Should the label be print on the right?
+     *
+     * @since    0.5.0
+     */
+    public void setPrintLabelRight(boolean value) {
+        this.print_label_right = value;
+    }
+
+    /**
+     * Set the label color
+     *
+     * @since    0.5.0
+     */
+    public void setLabelColor(TextColor color) {
+        this.label_color = color;
+    }
+
+    /**
+     * Set the minimum width of the label
+     *
+     * @since    0.5.0
+     */
+    public void setMinimumLabelWidth(int width) {
+        this.min_label_width = width;
+    }
+
+    /**
      * This slot was used in the given TextBuilder
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -183,6 +226,38 @@ public abstract class WidgetSlot extends StaticSlot {
             for (TexturePlacement placement : this.foreground_textures) {
                 placement.texture.addToBuilder(builder, placement.x + slot_x, placement.y + slot_y);
             }
+        }
+
+        if (this.label != null) {
+            int vertical_centered_y = this.getYForVerticallyCenteredText();
+            Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(vertical_centered_y);
+
+            // Get the width of the text to place on the button
+            int text_width = font.getWidth(this.label);
+
+            if (text_width < this.min_label_width) {
+                text_width = this.min_label_width;
+            }
+
+            // Calculate where to place the text
+            int x = this.getSlotXInPixels();
+
+            if (this.print_label_right) {
+                x += 19;
+            } else {
+                x -= text_width + 5;
+            }
+
+            builder.setCursor(x);
+            TextGroup group = builder.createNewGroup();
+
+            if (this.label_color == null) {
+                group.setColor(TextColor.fromRgb(0x3f3f3f));
+            } else {
+                group.setColor(this.label_color);
+            }
+
+            builder.print(this.label, font);
         }
 
         super.addToTextBuilder(builder);
