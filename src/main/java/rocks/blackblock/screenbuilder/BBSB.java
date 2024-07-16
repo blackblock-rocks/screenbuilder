@@ -149,6 +149,7 @@ public class BBSB implements ModInitializer {
     public static final IconTexture PERSON_ICON = new IconTexture(id("gui/icons/person"), 2);
     public static final IconTexture VILLAGER_ICON = new IconTexture(id("gui/icons/villager"), 2);
     public static final IconTexture TOPHAT_ICON = new IconTexture(id("gui/icons/tophat"));
+    public static final IconTexture PBRUSH_ICON = new IconTexture(id("gui/icons/pbrush"), 2);
 
     public static final WidgetTexture SLOT_FRAME = new WidgetTexture(id("gui/slot_frame"));
 
@@ -332,7 +333,8 @@ public class BBSB implements ModInitializer {
                 STEVE_ICON,
                 PERSON_ICON,
                 VILLAGER_ICON,
-                TOPHAT_ICON
+                TOPHAT_ICON,
+                PBRUSH_ICON
         };
 
         WidgetTexture.registerForAllSlots(icons);
