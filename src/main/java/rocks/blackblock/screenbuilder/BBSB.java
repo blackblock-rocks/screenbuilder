@@ -83,6 +83,7 @@ public class BBSB implements ModInitializer {
     public static final WidgetTexture PAGER = new WidgetTexture(id("gui/pager"));
     public static final GuiTexture EMPTY_54 = new GuiTexture(id("gui/generic_54_empty"), 0, 0);
     public static final GuiTexture TOP_FOUR = new GuiTexture(id("gui/generic_54_top_4"), 0, 0);
+    public static final GuiTexture BOTTOM_FIVE = new GuiTexture(id("gui/generic_54_bottom_5"), 0, 0);
     public static final GuiTexture BOOK_V2 = new GuiTexture(id("gui/book_big_v02"), 17, 106);
     public static final GuiTexture BOOK_V3 = new GuiTexture(id("gui/book_big_v03"), 40, 106);
     public static final GuiTexture BOOK_V4 = new GuiTexture(id("gui/book_big_v04"), 104, 106);
@@ -265,6 +266,7 @@ public class BBSB implements ModInitializer {
 
         EMPTY_54.registerYOffset(0);
         TOP_FOUR.registerYOffset(0);
+        BOTTOM_FIVE.registerYOffset(0);
         BOOK_V2.registerYOffset(0);
         BOOK_V3.registerYOffset(0);
         BOOK_V4.registerYOffset(0);
