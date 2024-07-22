@@ -6,6 +6,7 @@ import net.minecraft.util.StringIdentifiable;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.util.BibLog;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
@@ -164,6 +165,12 @@ public interface TabbedInput {
                 tab_button.addOverlay(icon);
             }
 
+            var lore_list = tab.getTabDescription();
+
+            if (lore_list != null) {
+                tab_button.setLore(lore_list);
+            }
+
             SlotEventListener listener = (screen, slot) -> {
                 this.setActiveTab(tab);
                 screen.replaceScreen(screen.getOriginFactory());
@@ -244,6 +251,31 @@ public interface TabbedInput {
         }
 
         /**
+         * Set the tab description (lore)
+         *
+         * @since   0.5.0
+         */
+        default void setTabDescription(BibText.Lore lore) {
+            this.setTabDescription(lore.getLines());
+        }
+
+        /**
+         * Set the tab description (lore)
+         *
+         * @since   0.5.0
+         */
+        default void setTabDescription(String description) {
+            this.setTabDescription(BibText.createLore(description));
+        }
+
+        /**
+         * Set the tab description (lore)
+         *
+         * @since   0.5.0
+         */
+        void setTabDescription(List<Text> description);
+
+        /**
          * Get the tab description (lore)
          *
          * @since   0.5.0
@@ -262,6 +294,7 @@ public interface TabbedInput {
         private final Decorator decorator;
         private String name;
         private IconTexture icon = null;
+        private List<Text> description = null;
 
         public TabImpl(Decorator decorator) {
             this.decorator = decorator;
@@ -289,6 +322,16 @@ public interface TabbedInput {
 
         public String asString() {
             return this.name;
+        }
+
+        @Override
+        public void setTabDescription(List<Text> description) {
+            this.description = description;
+        }
+
+        @Override
+        public List<Text> getTabDescription() {
+            return this.description;
         }
 
         @Override

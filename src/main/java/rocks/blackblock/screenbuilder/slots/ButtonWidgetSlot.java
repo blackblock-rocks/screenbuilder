@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import rocks.blackblock.bib.util.BibItem;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
@@ -88,6 +89,14 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
     }
 
     /**
+     * Set the lore of this button
+     * @since    0.5.0
+     */
+    public ButtonWidgetSlot setLore(BibText.Lore lore) {
+        return this.setLore(lore.getLines());
+    }
+
+    /**
      * Add to the lore
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -115,6 +124,14 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
         this.appendLoreLine(lore);
         this.updateStack();
         return this;
+    }
+
+    /**
+     * Add to the lore
+     * @since    0.5.0
+     */
+    public ButtonWidgetSlot addLore(BibText.Lore lore) {
+        return this.addLore(lore.getLines());
     }
 
     /**
