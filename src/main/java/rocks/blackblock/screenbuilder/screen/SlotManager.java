@@ -211,12 +211,6 @@ public class SlotManager implements Iterable<Integer> {
             }
         }
 
-        BibLog.log("Available rows:");
-
-        for (var row : availableRows) {
-            BibLog.log("  »", row);
-        }
-
         return availableRows;
     }
 
