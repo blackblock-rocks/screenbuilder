@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.slots;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import rocks.blackblock.bib.monitor.GlitchGuru;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 
@@ -88,9 +89,7 @@ public class ListenerWidgetSlot extends WidgetSlot {
      * @since   0.1.0
      */
     public void onLeftClick() {
-        if (this.on_left_click != null) {
-            this.on_left_click.onEvent(this.active_handler, this);
-        }
+        this.doEventHandler(this.on_left_click);
     }
 
     /**
@@ -101,11 +100,7 @@ public class ListenerWidgetSlot extends WidgetSlot {
      * @since   0.1.0
      */
     public void onRightClick() {
-
-        if (this.on_right_click != null) {
-            this.on_right_click.onEvent(this.active_handler, this);
-        }
-
+        this.doEventHandler(this.on_right_click);
     }
 
     /**
@@ -116,11 +111,24 @@ public class ListenerWidgetSlot extends WidgetSlot {
      * @since   0.1.0
      */
     public void onMiddleClick() {
+        this.doEventHandler(this.on_middle_click);
+    }
 
-        if (this.on_middle_click != null) {
-            this.on_middle_click.onEvent(this.active_handler, this);
+    /**
+     * Safely call an event handler
+     * @since 0.5.0
+     */
+    private void doEventHandler(SlotEventListener listener) {
+
+        if (listener == null) {
+            return;
         }
 
+        try {
+            listener.onEvent(this.active_handler, this);
+        } catch (Throwable e) {
+            GlitchGuru.registerThrowable(e);
+        }
     }
 
     /**
