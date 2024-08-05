@@ -57,6 +57,7 @@ public class TexturedScreenHandler extends ScreenHandler {
 
     public BibInventory.Base base_inventory = null;
     public SimpleInventory simple_inventory = null;
+    public BibInventory.Proxy proxy_inventory = null;
     public SlotActionType current_action_type = null;
     public Slot clicked_slot = null;
 
@@ -113,6 +114,10 @@ public class TexturedScreenHandler extends ScreenHandler {
         this.builder = builder;
 
         this.setSlots();
+
+        if (inventory instanceof BibInventory.Proxy proxy_inventory) {
+            this.proxy_inventory = proxy_inventory;
+        }
 
         if (inventory instanceof SimpleInventory simple_inventory) {
             this.listener = this::onContentChanged;
@@ -629,6 +634,12 @@ public class TexturedScreenHandler extends ScreenHandler {
     public void triggerBaseInventoryChange() {
         if (this.base_inventory != null) {
             this.base_inventory.contentsChanged();
+        } else if (this.proxy_inventory != null) {
+            var proxied_inventory = this.proxy_inventory.getProxiedInventory();
+
+            if (proxied_inventory instanceof BibInventory.Base base_inventory) {
+                base_inventory.contentsChanged();
+            }
         }
     }
 
