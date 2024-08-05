@@ -157,6 +157,8 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
 
         if (stack == null || stack.isEmpty()) {
             stack = new ItemStack(BBSB.GUI_TRANSPARENT);
+        } else {
+            stack = stack.copy();
         }
 
         super.setStack(stack);
