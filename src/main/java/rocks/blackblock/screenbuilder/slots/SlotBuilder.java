@@ -627,12 +627,14 @@ public class SlotBuilder extends Slot implements Cloneable {
      */
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
 
+        int last_event_id = this.active_handler.getNextEventId();
+
         if (this.is_output) {
             this.active_handler.onTakeOutput(player, stack, this);
         }
 
         super.onTakeItem(player, stack);
-        this.active_handler.onContentChanged();
+        this.active_handler.doAndRegisterOnContentChangedCall(last_event_id);
     }
 
     /**
@@ -650,11 +652,13 @@ public class SlotBuilder extends Slot implements Cloneable {
      */
     public void onTransferOut(PlayerEntity player, ItemStack source_stack, int amount_moved, Slot target_slot) {
 
+        int last_event_id = this.active_handler.getNextEventId();
+
         if (this.is_output) {
             this.active_handler.onTransferOutput(player, this, source_stack, amount_moved, target_slot);
         }
 
-        this.active_handler.onContentChanged();
+        this.active_handler.doAndRegisterOnContentChangedCall(last_event_id);
     }
 
     /**

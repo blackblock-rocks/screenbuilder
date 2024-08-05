@@ -76,6 +76,9 @@ public class TexturedScreenHandler extends ScreenHandler {
     // The current title
     private Text current_title = null;
 
+    // The next event id
+    private int next_event_id = 0;
+
     /**
      * Constructed without an attached inventory
      *
@@ -186,6 +189,14 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public void setCurrentTitle(Text title) {
         this.current_title = title;
+    }
+
+    /**
+     * Get the last event id
+     * @since    0.5.0
+     */
+    public int getNextEventId() {
+        return this.next_event_id;
     }
 
     /**
@@ -633,12 +644,12 @@ public class TexturedScreenHandler extends ScreenHandler {
      */
     public void triggerBaseInventoryChange() {
         if (this.base_inventory != null) {
-            this.base_inventory.contentsChanged();
+            this.base_inventory.fireContentChangedEvents();
         } else if (this.proxy_inventory != null) {
             var proxied_inventory = this.proxy_inventory.getProxiedInventory();
 
             if (proxied_inventory instanceof BibInventory.Base base_inventory) {
-                base_inventory.contentsChanged();
+                base_inventory.fireContentChangedEvents();
             }
         }
     }
@@ -953,6 +964,16 @@ public class TexturedScreenHandler extends ScreenHandler {
     }
 
     /**
+     * Do the on content changed event if the last event id is the same as the current one
+     * @since    0.5.0
+     */
+    public void doAndRegisterOnContentChangedCall(int wanted_event_id) {
+        if (this.next_event_id == wanted_event_id) {
+            this.onContentChanged();
+        }
+    }
+
+    /**
      * The attached inventory has informed us of changes to its content.
      * Inventories don't have to do this,
      * you'll probably have to implement a call to this method yourself.
@@ -964,6 +985,7 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @param    inventory      The inventory that changes
      */
     public void onContentChanged(Inventory inventory) {
+        this.next_event_id++;
         super.sendContentUpdates();
         this.builder.screenHasChanged(this);
     }
@@ -976,6 +998,7 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @version  0.1.0
      */
     public void onContentChanged() {
+        this.next_event_id++;
         super.sendContentUpdates();
         this.builder.screenHasChanged(this);
     }

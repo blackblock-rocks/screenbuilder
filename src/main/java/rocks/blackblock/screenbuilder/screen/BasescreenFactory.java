@@ -9,7 +9,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
 
@@ -173,21 +172,49 @@ public abstract class BasescreenFactory implements NamedScreenHandlerFactory {
      *
      * @author  Jelle De Loecker   <jelle@elevenways.be>
      * @since   0.1.0
-     * @version 0.1.0
      */
     @Nullable
     @Override
     public TexturedScreenHandler createMenu(int sync_id, PlayerInventory player_inventory, PlayerEntity player) {
 
-        TexturedScreenHandler handler;
         ScreenBuilder sb = this.getScreenBuilder();
 
         if (sb == null) {
-            BBSB.LOGGER.error("No ScreenBuilder found for {}", this.getClass().getName());
             return null;
         }
 
+        Inventory main_inventory = null;
+
         if (this instanceof Inventory inventory) {
+            main_inventory = inventory;
+        }
+
+       return this.createMenu(sync_id, player_inventory, player, main_inventory, sb);
+    }
+
+    /**
+     * Create the actual handler with the given inventory
+     * @since   0.5.0
+     */
+    @Nullable
+    public TexturedScreenHandler createMenu(int sync_id, PlayerInventory player_inventory, PlayerEntity player, Inventory inventory) {
+        return this.createMenu(sync_id, player_inventory, player, inventory, this.getScreenBuilder());
+    }
+
+    /**
+     * Create the actual handler with the given inventory
+     * @since   0.5.0
+     */
+    @Nullable
+    public TexturedScreenHandler createMenu(int sync_id, PlayerInventory player_inventory, PlayerEntity player, Inventory inventory, ScreenBuilder sb) {
+
+        if (sb == null) {
+            return null;
+        }
+
+        TexturedScreenHandler handler;
+
+        if (inventory != null) {
             handler = sb.createScreenHandler(sync_id, player_inventory, inventory);
         } else {
             handler = sb.createScreenHandler(sync_id, player_inventory);
