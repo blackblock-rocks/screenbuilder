@@ -79,6 +79,9 @@ public class TexturedScreenHandler extends ScreenHandler {
     // The next event id
     private int next_event_id = 0;
 
+    // The handler we've been replaced with
+    private TexturedScreenHandler replaced_with = null;
+
     /**
      * Constructed without an attached inventory
      *
@@ -330,6 +333,15 @@ public class TexturedScreenHandler extends ScreenHandler {
      * @version  0.1.0
      */
     public void setCursorStack(ItemStack stack) {
+
+        // If this handler was replaced with another one,
+        // forward the cursor stack to the new handler
+        // (This is needed when a rerender happens during a change event)
+        if (this.replaced_with != null) {
+            this.replaced_with.setCursorStack(stack);
+            return;
+        }
+
         super.setCursorStack(stack);
     }
 
@@ -1205,7 +1217,7 @@ public class TexturedScreenHandler extends ScreenHandler {
         // Get the session opener
         NamedScreenHandlerFactory session_opener = this.getSessionOpenerFactory();
 
-        if (server_player.currentScreenHandler instanceof TexturedScreenHandler current_textured_handler) {
+        if (current_handler instanceof TexturedScreenHandler current_textured_handler) {
             // Get the sync id currently in use
             int current_sync_id = current_textured_handler.syncId;
 
@@ -1224,6 +1236,7 @@ public class TexturedScreenHandler extends ScreenHandler {
                 server_player.currentScreenHandler = new_handler;
 
                 new_textured_handler.setCursorStack(current_handler.getCursorStack());
+                current_textured_handler.replaced_with = new_textured_handler;
 
                 ((ServerPlayerEntityAccessor) server_player).invokeOnScreenHandlerOpened(new_handler);
             }
