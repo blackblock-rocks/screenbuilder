@@ -172,6 +172,11 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @since    0.1.0
      */
     public ButtonWidgetSlot setTitle(String title) {
+
+        if (title == null) {
+            title = "";
+        }
+
         return this.setTitle(Text.literal(title).setStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
     }
 
@@ -183,6 +188,10 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @since    0.1.0
      */
     public ButtonWidgetSlot setLore(String lore) {
+
+        if (lore == null) {
+            lore = "";
+        }
 
         this.lore = new ArrayList<>();
 
@@ -209,6 +218,11 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @since    0.3.0
      */
     private void appendLoreLine(String line) {
+
+        if (line == null) {
+            line = "";
+        }
+
         MutableText text_line = Text.literal(line).setStyle(Style.EMPTY.withItalic(false));
         this.appendLoreLine(text_line);
     }
@@ -220,6 +234,10 @@ public class ButtonWidgetSlot extends ListenerWidgetSlot {
      * @since    0.3.0
      */
     private void appendLoreLine(Text line) {
+
+        if (line == null) {
+            return;
+        }
 
         if (this.lore == null) {
             this.lore = new ArrayList<>();
