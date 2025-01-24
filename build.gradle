@@ -1,7 +1,7 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
-	id 'org.checkerframework' version '0.6.40'
+	id 'org.checkerframework' version '0.6.48'
 }
 
 apply plugin: 'org.checkerframework'
