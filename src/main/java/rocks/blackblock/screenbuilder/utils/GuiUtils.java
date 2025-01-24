@@ -5,9 +5,10 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -87,11 +88,13 @@ public class GuiUtils {
     public static GuiItem createGuiItem(String name) {
 
         Identifier identifier = BBSB.id(name);
-        GuiItem item = Registry.register(Registries.ITEM, identifier, new GuiItem());
+        var key = RegistryKey.of(RegistryKeys.ITEM, identifier);
+
+        Item item = Items.register(key, GuiItem::new, new Item.Settings().maxCount(1));
 
         setGuiItem(name, item);
 
-        return item;
+        return (GuiItem) item;
     }
 
     public static void setGuiItem(String name, Item item) {

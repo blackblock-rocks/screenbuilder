@@ -4,8 +4,9 @@ import net.minecraft.item.Item;
 import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 public class GuiItem extends Item {
-    public GuiItem() {
-        super(new Item.Settings().maxCount(1));
+
+    public GuiItem(Settings settings) {
+        super(settings);
     }
 
     public static Item get(String name) {
