@@ -149,9 +149,9 @@ public abstract class BaseTexture implements BibLog.Argable {
 
         int entity_color = color.getEntityColor();
 
-        int r = MathHelper.floor(ColorHelper.Argb.getRed(entity_color));
-        int g = MathHelper.floor(ColorHelper.Argb.getGreen(entity_color));
-        int b = MathHelper.floor(ColorHelper.Argb.getBlue(entity_color));
+        int r = MathHelper.floor(ColorHelper.getRed(entity_color));
+        int g = MathHelper.floor(ColorHelper.getGreen(entity_color));
+        int b = MathHelper.floor(ColorHelper.getBlue(entity_color));
 
         // Get a big RGB integer
         int rgb = (r << 16) | (g << 8) | b;
