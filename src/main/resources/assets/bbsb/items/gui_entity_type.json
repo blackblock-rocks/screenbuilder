@@ -1,0 +1,6 @@
+{
+    "model": {
+        "type": "minecraft:model",
+        "model": "bbsb:item/gui_entity_type"
+    }
+}
