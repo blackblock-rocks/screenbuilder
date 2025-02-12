@@ -205,6 +205,20 @@ public abstract class BaseTexture implements BibLog.Argable {
     }
 
     /**
+     * Get the original width of the texture
+     */
+    public int getOriginalWidth() {
+        return this.original_width;
+    }
+
+    /**
+     * Get the original height of the texture
+     */
+    public int getOriginalHeight() {
+        return this.original_height;
+    }
+
+    /**
      * Get the texture pieces of a specific Y offset
      * (Will also call the `calculate` method the first time)
      *
