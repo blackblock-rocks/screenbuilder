@@ -231,6 +231,53 @@ public class ScreenInfo {
     }
 
     /**
+     * Get the slot index at the given coordinates
+     */
+    public int getSlotIndex(int x, int y) {
+        int slot_width = 18;
+        int slot_height = 18;
+        int slots_per_row = this.getSlotsPerRow();
+
+        int own_slot_count = this.getOwnSlotCount();
+        int slot_row_x = this.getSlotRowX();
+        int slot_row_y = this.getSlotRowY();
+
+        // Check main screen slots
+        for (int slot_index = 0; slot_index < own_slot_count; slot_index++) {
+            int slot_x = slot_row_x + ((slot_index % slots_per_row) * slot_width);
+            int slot_y = slot_row_y + ((slot_index / slots_per_row) * slot_height);
+
+            if (x >= slot_x && x < slot_x + slot_width && y >= slot_y && y < slot_y + slot_height) {
+                return slot_index;
+            }
+        }
+
+        // Check player inventory slots
+        for (int slot_index = 0; slot_index < 27; slot_index++) {
+            int adjusted_slot_index = own_slot_count + slot_index;
+            int slot_x = slot_row_x + ((slot_index % 9) * slot_width); // Player inventory is always 9 slots per row
+            int slot_y = slot_row_y + 14 + ((slot_index / 9) * slot_height); // Player inventory starts 14px below
+
+            if (x >= slot_x && x < slot_x + slot_width && y >= slot_y && y < slot_y + slot_height) {
+                return adjusted_slot_index;
+            }
+        }
+
+        // Check player hotbar slots
+        for (int slot_index = 0; slot_index < 9; slot_index++) {
+            int adjusted_slot_index = own_slot_count + 27 + slot_index;
+            int slot_x = slot_row_x + ((slot_index % 9) * slot_width); // Hotbar is always 9 slots per row
+            int slot_y = slot_row_y + 14 + 4 + ((slot_index / 9) * slot_height); // Hotbar starts 4px below inventory
+
+            if (x >= slot_x && x < slot_x + slot_width && y >= slot_y && y < slot_y + slot_height) {
+                return adjusted_slot_index;
+            }
+        }
+
+        return -1; // No slot found at the given coordinates
+    }
+
+    /**
      * Register info for a vanilla screen.
      * Assumes there are 9 slots per row.
      *
