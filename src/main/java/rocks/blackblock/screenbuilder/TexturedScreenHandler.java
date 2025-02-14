@@ -1307,6 +1307,23 @@ public class TexturedScreenHandler extends ScreenHandler {
             return false;
         }
 
+        // Make sure there is a valid player instance
+        if (!(this.getPlayer() instanceof ServerPlayerEntity player)) {
+            return false;
+        }
+
+        // If there is no handler, the player probably closed it somehow
+        // and we shouldn't refresh.
+        if (player.currentScreenHandler == null) {
+            return false;
+        }
+
+        // If the handler's syncid does not match, a new screen has opened.
+        // We should not refresh because that would send a broken screen.
+        if (player.currentScreenHandler.syncId != this.syncId) {
+            return false;
+        }
+
         TexturedScreenHandler handler = this.showScreen(factory, this.previous_factory);
 
         if (handler == null) {
