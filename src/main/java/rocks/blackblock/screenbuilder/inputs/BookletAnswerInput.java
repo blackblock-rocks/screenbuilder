@@ -3,11 +3,13 @@ package rocks.blackblock.screenbuilder.inputs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
+import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
+import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.slots.ButtonWidgetSlot;
-import rocks.blackblock.screenbuilder.text.Font;
 import rocks.blackblock.screenbuilder.widgets.TextWidget;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,66 @@ import java.util.List;
  * @version 0.1.3
  */
 @SuppressWarnings("unused")
-public class BookletAnswerInput extends BookletInput {
+public class BookletAnswerInput extends BookletInput implements PageableInput<BookletAnswerInput.Answer>, WidgetDataProvider {
 
     protected List<Answer> answers = new ArrayList<>();
+
+    // The current page we're on. Starts at 1.
+    private int page = 1;
+
+    /**
+     * Set the current page value
+     */
+    @Override
+    public void setPageValue(int page) {
+        this.page = page;
+    }
+
+    /**
+     * Get the current page value
+     */
+    @Override
+    public int getPageValue() {
+        return this.page;
+    }
+
+    /**
+     * Get the pageable items
+     */
+    @Override
+    @NotNull
+    public List<BookletAnswerInput.Answer> getPageableItems() {
+        return this.answers;
+    }
+
+    /**
+     * Get the maximum allowed answers on a single page
+     */
+    public int getMaxAllowedAnswersPerPageWithoutPaging() {
+        return 6;
+    }
+
+    /**
+     * Get the max allowed items per page when paging is enabled
+     */
+    public int getMaxAllowedAnswersPerPageWithPaging() {
+        return 5;
+    }
+
+    /**
+     * Get the maximum amount of items per page
+     */
+    @Override
+    public int getMaxItemsPerPage() {
+
+        int max_without_paging = this.getMaxAllowedAnswersPerPageWithoutPaging();
+
+        if (this.getPageableItems().size() > max_without_paging) {
+            return this.getMaxAllowedAnswersPerPageWithPaging();
+        }
+
+        return max_without_paging;
+    }
 
     /**
      * Clear everything
@@ -56,8 +115,7 @@ public class BookletAnswerInput extends BookletInput {
      */
     public Answer addAnswer(String text) {
         Answer answer = new Answer(text);
-        this.answers.add(answer);
-        return answer;
+        return this.addAnswer(answer);
     }
 
     /**
@@ -73,13 +131,11 @@ public class BookletAnswerInput extends BookletInput {
     }
 
     /**
-     * Get the answers to show
-     *
-     * @author  Jelle De Loecker   <jelle@elevenways.be>
-     * @since   0.1.3
+     * Add an answer instance
      */
-    public List<Answer> getAnswersToShow() {
-        return this.answers;
+    protected Answer addAnswer(Answer answer) {
+        this.answers.add(answer);
+        return answer;
     }
 
     /**
@@ -107,18 +163,11 @@ public class BookletAnswerInput extends BookletInput {
         int answer_index = -1;
 
         // Iterate over all the answers and add them
-        for (Answer answer : this.getAnswersToShow()) {
-            answer_index++;
-
+        this.forEachItemsOnCurrentPage((answer, index_on_page, amount_on_this_page) -> {
             Integer slot_index = answer.getSlotIndex();
 
             if (slot_index == null) {
-                slot_index = answer_index * 9;
-            }
-
-            // Only allow 6 answers for now
-            if (answer_index > 6) {
-                break;
+                slot_index = index_on_page * 9;
             }
 
             ButtonWidgetSlot button = new ButtonWidgetSlot();
@@ -154,9 +203,35 @@ public class BookletAnswerInput extends BookletInput {
 
                 sb.addWidget(tw);
             }
+        });
+
+        if (this.isPagingRequired()) {
+            this.addPaginationWidget(sb, 50, true);
         }
 
         return sb;
+    }
+
+    @Override
+    public <T> T getWidgetValue(Widget<T> widget) {
+
+        var id = this.getPaginationWidgetId();
+
+        if (widget.getId().equals(id)) {
+            return (T) (Integer) this.getPage();
+        }
+
+        return null;
+    }
+
+    @Override
+    public <T> void setWidgetValue(Widget<T> widget, T value) {
+
+        var id = this.getPaginationWidgetId();
+
+        if (widget.getId().equals(id)) {
+            this.setPage((int) value);
+        }
     }
 
     /**
@@ -173,6 +248,9 @@ public class BookletAnswerInput extends BookletInput {
 
         // The listener to call when the answer is chosen
         protected AnswerListener listener = null;
+
+        // The original item stack
+        protected ItemStack safe_stack = null;
 
         // The optional ItemStack to display
         protected ItemStack item_stack = null;
@@ -309,6 +387,7 @@ public class BookletAnswerInput extends BookletInput {
          * @return  A reference to the ItemStack copy used in this answer
          */
         public ItemStack setItemStack(ItemStack item_stack) {
+            this.safe_stack = item_stack.copy();
             this.item_stack = item_stack.copy();
 
             return this.item_stack;
@@ -346,11 +425,11 @@ public class BookletAnswerInput extends BookletInput {
 
                 if (this.text == null) {
 
-                    if (this.item_stack != null) {
-                        String item_name = this.item_stack.getName().getString();
+                    if (this.safe_stack != null) {
+                        String item_name = this.safe_stack.getName().getString();
 
                         if (item_name == null || item_name.isEmpty()) {
-                            item_name = this.item_stack.getItem().getTranslationKey();
+                            item_name = this.safe_stack.getItem().getTranslationKey();
                         }
 
                         return "Choose \"" + item_name + "\"";

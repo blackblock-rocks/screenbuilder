@@ -213,6 +213,15 @@ public interface PageableInput<T> {
     }
 
     /**
+     * Do we currently require paging?
+     */
+    default boolean isPagingRequired() {
+        List<T> pageable_items = this.getPageableItems();
+        int items_per_page = this.getMaxItemsPerPage();
+        return pageable_items.size() > items_per_page;
+    }
+
+    /**
      * Get a sublist of the options for the given page
      *
      * @since   0.3.1

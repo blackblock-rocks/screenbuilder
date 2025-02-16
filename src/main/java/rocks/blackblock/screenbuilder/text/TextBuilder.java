@@ -508,7 +508,9 @@ public class TextBuilder {
      */
     public TextBuilder print(String text, int y) {
 
-        Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(y);
+        int vanilla_y = this.translateY(y);
+
+        Font font = Font.ABSOLUTE_DEFAULT_COLLECTION.getClosestFont(vanilla_y);
 
         if (font == null) {
             font = Font.DEFAULT;
