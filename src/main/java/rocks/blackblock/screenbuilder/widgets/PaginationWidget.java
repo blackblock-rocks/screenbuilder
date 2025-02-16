@@ -127,8 +127,10 @@ public class PaginationWidget extends CombinedWidget<Integer> {
             text_x += left / 2;
         }
 
+        int text_y = this.previous_button.getYForVerticallyCenteredText();
+
         builder.setCursor(text_x);
-        builder.print(str_value, this.previous_button.getYForVerticallyCenteredText());
+        builder.print(str_value, text_y);
     }
 
     /**

@@ -1393,11 +1393,20 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @param    slot_index   The index of the slot
      */
     public ScreenInfo.Coordinates getSlotCoordinates(int slot_index) {
-        ScreenInfo.Coordinates original_slot_coordinates = this.getScreenInfo().getSlotCoordinates(slot_index);
+        ScreenInfo.Coordinates original_slot_coordinates = this.getSlotCoordinatesInVanillaGui(slot_index);
 
         int new_y = this.getGuiY(original_slot_coordinates.y);
         int new_x = this.getGuiX(original_slot_coordinates.x);
 
         return new ScreenInfo.Coordinates(new_x, new_y);
+    }
+
+    /**
+     * Get the coordinates of a slot in the current vanilla GUI
+     *
+     * @param    slot_index   The index of the slot
+     */
+    public ScreenInfo.Coordinates getSlotCoordinatesInVanillaGui(int slot_index) {
+        return this.getScreenInfo().getSlotCoordinates(slot_index);
     }
 }
