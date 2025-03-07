@@ -8,6 +8,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
@@ -36,11 +37,17 @@ public class SlotBuilder extends Slot implements Cloneable {
     // Items that are allowed in this slot
     public ArrayList<Item> allowed_items = null;
 
+    // Item tags that are allowed in this slot
+    public ArrayList<TagKey<Item>> allowed_item_tags = null;
+
     // Item classes that are allowed in this slot
     public ArrayList<Class<?>> allowed_item_classes = null;
 
     // Items that are forbidden in this slot
     public ArrayList<Item> forbidden_items = null;
+
+    // Item tags that are forbidden in this slot
+    public ArrayList<TagKey<Item>> forbidden_item_tags = null;
 
     // Item classes that are forbidden in this slot
     public ArrayList<Class<?>> forbidden_item_classes = null;
@@ -158,6 +165,25 @@ public class SlotBuilder extends Slot implements Cloneable {
     }
 
     /**
+     * Add an item tag that should be forbidden
+     *
+     * @author  Jade Godwin         <icanhasabanana@gmail.com>
+     * @since   0.6.0
+     *
+     * @param    itemTag   The item tag  to add to the blacklist
+     */
+    public SlotBuilder deny(TagKey<Item> itemTag) {
+
+        if (this.forbidden_item_tags == null) {
+            this.forbidden_item_tags = new ArrayList<>();
+        }
+
+        this.forbidden_item_tags.add(itemTag);
+        this.has_forbidden_items = true;
+        return this;
+    }
+
+    /**
      * Add an item class that should be forbidden
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
@@ -193,6 +219,25 @@ public class SlotBuilder extends Slot implements Cloneable {
         }
 
         this.allowed_items.add(item);
+        this.has_allowed_items = true;
+        return this;
+    }
+
+    /**
+     * Add an item tag that should be allowed
+     *
+     * @author  Jade Godwin         <icanhasabanana@gmail.com>
+     * @since   0.6.0
+     *
+     * @param    itemTag   The item tag  to add to the whitelist
+     */
+    public SlotBuilder allow(TagKey<Item> itemTag) {
+
+        if (this.allowed_item_tags == null) {
+            this.allowed_item_tags = new ArrayList<>();
+        }
+
+        this.allowed_item_tags.add(itemTag);
         this.has_allowed_items = true;
         return this;
     }
@@ -466,12 +511,14 @@ public class SlotBuilder extends Slot implements Cloneable {
 
         if (this.has_allowed_items) {
             slot.allowed_items = this.allowed_items;
+            slot.allowed_item_tags = this.allowed_item_tags;
             slot.allowed_item_classes = this.allowed_item_classes;
             slot.has_allowed_items = true;
         }
 
         if (this.has_forbidden_items) {
             slot.forbidden_items = this.forbidden_items;
+            slot.forbidden_item_tags = this.forbidden_item_tags;
             slot.forbidden_item_classes = this.forbidden_item_classes;
             slot.has_forbidden_items = true;
         }
@@ -510,30 +557,19 @@ public class SlotBuilder extends Slot implements Cloneable {
         Item item = stack.getItem();
 
         // Allow empty slots by default
-        if (item == Items.AIR) {
-            return true;
-        }
+        if (item == Items.AIR) return true;
 
         if (!this.checkStackInputAccess(stack)) {
             return false;
         }
 
         // Check the blacklists first, they get precedence
-        if (this.has_forbidden_items) {
-            if (this.isBlacklisted(item)) {
-                return false;
-            }
-        }
+        if (this.has_forbidden_items && this.isBlacklisted(stack)) return false;
 
         // Check the whitelist last
-        if (this.has_allowed_items) {
-            if (this.isWhitelisted(item)) {
-                return true;
-            }
+        if (this.has_allowed_items) return this.isWhitelisted(stack);
 
-            return false;
-        }
-
+        // Default return
         return true;
     }
 
@@ -545,10 +581,10 @@ public class SlotBuilder extends Slot implements Cloneable {
      * @since    0.1.0
      * @version  0.1.0
      *
-     * @param    item        The item to test
+     * @param    itemStack    The item stack to test
      */
-    public boolean isWhitelisted(Item item) {
-        return this.isOnList(item, this.allowed_items, this.allowed_item_classes);
+    public boolean isWhitelisted(ItemStack itemStack) {
+        return this.isOnList(itemStack, this.allowed_items, this.allowed_item_tags, this.allowed_item_classes);
     }
 
     /**
@@ -559,10 +595,10 @@ public class SlotBuilder extends Slot implements Cloneable {
      * @since    0.1.0
      * @version  0.1.0
      *
-     * @param    item        The item to test
+     * @param    itemStack   The item stack to test
      */
-    public boolean isBlacklisted(Item item) {
-        return this.isOnList(item, this.forbidden_items, this.forbidden_item_classes);
+    public boolean isBlacklisted(ItemStack itemStack) {
+        return this.isOnList(itemStack, this.forbidden_items, this.forbidden_item_tags, this.forbidden_item_classes);
     }
 
     /**
@@ -572,18 +608,25 @@ public class SlotBuilder extends Slot implements Cloneable {
      * @since    0.1.0
      * @version  0.1.0
      *
-     * @param    item        The item to test
+     * @param    itemStack   The item stack to test
      * @param    item_list   A list of items to test against
+     * @param    tag_list    A list of item tags to test against
      * @param    class_list  A list of classes to test against
      */
-    public boolean isOnList(Item item, @Nullable List<Item> item_list, @Nullable List<Class<?>> class_list) {
+    public boolean isOnList(ItemStack itemStack, @Nullable List<Item> item_list, @Nullable List<TagKey<Item>> tag_list, @Nullable List<Class<?>> class_list) {
+        // Check tag list first.
+        if (tag_list != null) {
+            for (TagKey<Item> tag : tag_list)
+                if (itemStack.isIn(tag)) return true;
+        }
 
+        // Then check item list and class list.
+        Item item = itemStack.getItem();
         if (item_list != null) {
             if (item_list.contains(item)) {
                 return true;
             }
         }
-
         if (class_list != null) {
             for (Class<?> entry_class : class_list) {
                 if (entry_class.isInstance(item)) {
