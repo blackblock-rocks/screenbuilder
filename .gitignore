@@ -34,3 +34,6 @@ run/
 
 # Local gradle properties
 local.properties
+
+# AI
+.serena/

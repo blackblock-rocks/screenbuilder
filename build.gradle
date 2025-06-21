@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'fabric-loom' version '1.10.+'
 	id 'maven-publish'
 	id 'org.checkerframework' version '0.6.48'
 }
