@@ -90,7 +90,7 @@ public class BooleanValue extends Value<Boolean> {
      */
     @Override
     public void readFromNbt(NbtCompound nbt) {
-        Boolean value = nbt.getBoolean("value");
+        Boolean value = nbt.getBoolean("value").orElse(false);
         this.setValue(value);
     }
 

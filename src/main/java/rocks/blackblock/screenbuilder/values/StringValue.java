@@ -70,7 +70,7 @@ public class StringValue extends Value<String> {
 
     @Override
     public void readFromNbt(NbtCompound nbt) {
-        String value = nbt.getString("value");
+        String value = nbt.getString("value").orElse("");
         this.setValue(value);
     }
 

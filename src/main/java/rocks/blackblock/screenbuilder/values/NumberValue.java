@@ -92,7 +92,7 @@ public class NumberValue extends Value<Double> {
      */
     @Override
     public void readFromNbt(NbtCompound nbt) {
-        Double value = nbt.getDouble("value");
+        Double value = nbt.getDouble("value").orElse(0.0);
         this.setValue(value);
     }
 

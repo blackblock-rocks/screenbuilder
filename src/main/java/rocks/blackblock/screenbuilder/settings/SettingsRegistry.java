@@ -54,7 +54,7 @@ public class SettingsRegistry {
         }
 
         NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
-        String name = nbt.getString("setting_name");
+        String name = nbt.getString("setting_name").orElse(null);
 
         return this.getSetting(name);
     }

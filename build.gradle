@@ -50,6 +50,7 @@ println("Info: versionModifier = $versionModifier")
 println("Info: version = " + version)
 
 repositories {
+	mavenCentral()
 
 	// Only during development
 	flatDir {
@@ -57,10 +58,6 @@ repositories {
 	}
 	flatDir {
 		dirs '../PolyMc/build/libs/'
-	}
-
-	flatDir {
-		dirs '../blackblock-bib/build/libs/'
 	}
 
 	flatDir {
@@ -76,7 +73,13 @@ repositories {
 		}
 	}
 
-	maven { url 'https://maven.blackblock.rocks/releases' }
+	//maven { url 'https://maven.blackblock.rocks/releases' }
+
+	if (isDevelopment && localRepoDir) {
+		maven {
+			url localRepoDir
+		}
+	}
 }
 
 dependencies {

@@ -213,13 +213,13 @@ public abstract class Value<ContainedType> implements NamedScreenHandlerFactory 
             return null;
         }
 
-        String class_name = nbt.getString("bclass");
+        String class_name = nbt.getString("bclass").orElse("");
 
         if (!class_name.equals("value")) {
             return null;
         }
 
-        String type = nbt.getString("type");
+        String type = nbt.getString("type").orElse("");
 
         Value result = null;
 

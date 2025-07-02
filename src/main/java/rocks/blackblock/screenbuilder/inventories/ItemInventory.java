@@ -1,13 +1,13 @@
 package rocks.blackblock.screenbuilder.inventories;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.BibMod;
+import rocks.blackblock.bib.util.BibData;
 import rocks.blackblock.bib.util.BibInventory;
 import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.TexturedScreenHandler;
@@ -65,7 +65,7 @@ public class ItemInventory implements BibInventory.Base {
         this.size = size;
 
         NbtCompound nbt = BibItem.getOrCreateCustomNbt(stack);
-        NbtCompound item_inventory = nbt.getCompound("ItemInventory");
+        NbtCompound item_inventory = BibData.getCompound(nbt, "ItemInventory");
 
         if (item_inventory == null) {
             item_inventory = new NbtCompound();
@@ -189,13 +189,13 @@ public class ItemInventory implements BibInventory.Base {
     public void writeToItemStack() {
 
         NbtCompound nbt = BibItem.getOrCreateCustomNbt(this.stack);
-        NbtCompound item_inventory = nbt.getCompound("ItemInventory");
+        NbtCompound item_inventory = BibData.getCompound(nbt, "ItemInventory");
 
         if (item_inventory == null) {
             item_inventory = new NbtCompound();
         }
 
-        Inventories.writeNbt(item_inventory, this.contents, this.player.getRegistryManager());
+        BibInventory.writeNbt(item_inventory, this.contents, this.player.getRegistryManager());
 
         nbt.put("ItemInventory", item_inventory);
     }

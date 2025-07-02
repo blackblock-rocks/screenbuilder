@@ -104,15 +104,15 @@ public class ItemInput extends BaseInput {
         }
 
         if (data.contains("damage")) {
-            this.check_damage = data.getBoolean("damage");
+            this.check_damage = data.getBoolean("damage").orElse(false);
         }
 
         if (data.contains("name")) {
-            this.check_name = data.getBoolean("name");
+            this.check_name = data.getBoolean("name").orElse(false);
         }
 
         if (data.contains("nbt")) {
-            this.check_nbt = data.getBoolean("nbt");
+            this.check_nbt = data.getBoolean("nbt").orElse(false);
         }
     }
 

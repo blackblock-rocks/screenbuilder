@@ -14,6 +14,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.util.BibData;
 import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.ItemInput;
@@ -132,13 +133,13 @@ public class ItemValue extends Value<ItemStack> {
     @Override
     public void readFromNbt(NbtCompound nbt) {
 
-        if (nbt.contains("stack")) {
-            ItemStack stack = BibItem.deserializeToStack(nbt.getCompound("stack"));
-            this.setValue(stack);
+        if (BibData.contains(nbt, "stack", NbtCompound.TYPE)) {
+            NbtCompound stack_nbt = BibData.getPropertyOfType(nbt, "stack", NbtCompound.TYPE);
+            this.setValue(BibItem.deserializeToStack(stack_nbt));
         }
 
         if (nbt.contains("boolean_data")) {
-            this.setBooleanData(nbt.getCompound("boolean_data"));
+            this.setBooleanData(nbt.getCompound("boolean_data").orElse(null));
         }
     }
 
@@ -209,15 +210,15 @@ public class ItemValue extends Value<ItemStack> {
         }
 
         if (data.contains("damage")) {
-            this.check_damage = data.getBoolean("damage");
+            this.check_damage = data.getBoolean("damage").orElse(false);
         }
 
         if (data.contains("name")) {
-            this.check_name = data.getBoolean("name");
+            this.check_name = data.getBoolean("name").orElse(false);
         }
 
         if (data.contains("nbt")) {
-            this.check_nbt = data.getBoolean("nbt");
+            this.check_nbt = data.getBoolean("nbt").orElse(false);
         }
     }
 
