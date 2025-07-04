@@ -1246,6 +1246,9 @@ public class TexturedScreenHandler extends ScreenHandler {
             OptionalInt result = server_player.openHandledScreen(factory);
 
             if (result.isEmpty()) {
+                BBSB.log("Failed to open screen for player '" + server_player.getName().getString() + 
+                         "' with factory: " + factory.getClass().getName() + 
+                         ". This may indicate the screen was not properly registered or the player cannot open screens at this time.");
                 return null;
             }
 
@@ -1253,6 +1256,8 @@ public class TexturedScreenHandler extends ScreenHandler {
         }
 
         if (new_handler == null) {
+            BBSB.log("Screen handler is null after opening for player '" + server_player.getName().getString() + 
+                     "'. This is unexpected and may indicate a serious issue with screen registration.");
             return null;
         }
 
@@ -1279,12 +1284,15 @@ public class TexturedScreenHandler extends ScreenHandler {
     public boolean pushScreen(NamedScreenHandlerFactory factory) {
 
         if (factory == null) {
+            BBSB.log("Cannot push screen: factory is null");
             return false;
         }
 
         TexturedScreenHandler handler = this.showScreen(factory, this.origin_factory);
 
         if (handler == null) {
+            BBSB.log("Failed to push screen with factory: " + factory.getClass().getName() + 
+                     ". The showScreen method returned null.");
             return false;
         }
 
@@ -1304,29 +1312,36 @@ public class TexturedScreenHandler extends ScreenHandler {
     public boolean replaceScreen(NamedScreenHandlerFactory factory) {
 
         if (factory == null) {
+            BBSB.log("Cannot replace screen: factory is null");
             return false;
         }
 
         // Make sure there is a valid player instance
         if (!(this.getPlayer() instanceof ServerPlayerEntity player)) {
+            BBSB.log("Cannot replace screen: player is not a ServerPlayerEntity");
             return false;
         }
 
         // If there is no handler, the player probably closed it somehow
         // and we shouldn't refresh.
         if (player.currentScreenHandler == null) {
+            BBSB.log("Cannot replace screen: player's current screen handler is null (screen was likely closed)");
             return false;
         }
 
         // If the handler's syncid does not match, a new screen has opened.
         // We should not refresh because that would send a broken screen.
         if (player.currentScreenHandler.syncId != this.syncId) {
+            BBSB.log("Cannot replace screen: sync ID mismatch (expected " + this.syncId + 
+                     ", got " + player.currentScreenHandler.syncId + "). Another screen is now open.");
             return false;
         }
 
         TexturedScreenHandler handler = this.showScreen(factory, this.previous_factory);
 
         if (handler == null) {
+            BBSB.log("Failed to replace screen with factory: " + factory.getClass().getName() + 
+                     ". The showScreen method returned null.");
             return false;
         }
 

@@ -1,10 +1,11 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Unit;
+
 import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.chunker.chunk.Lump;
@@ -201,7 +202,8 @@ public class ProgressWidget extends TextureWidget<Integer> {
 
             ButtonWidgetSlot slot = builder.addButton(slot_index);
             ItemStack empty = new ItemStack(BBSB.GUI_TRANSPARENT);
-            empty.set(DataComponentTypes.HIDE_TOOLTIP, Unit.INSTANCE);
+            // Hide tooltip using the new TooltipDisplayComponent API in 1.21.6
+            empty.set(DataComponentTypes.TOOLTIP_DISPLAY, new TooltipDisplayComponent(true, new java.util.LinkedHashSet<>()));
             slot.setStack(empty);
 
             int current_slot_nr = slot_index - start_slot_index;

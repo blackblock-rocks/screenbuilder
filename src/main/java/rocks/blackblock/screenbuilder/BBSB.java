@@ -15,6 +15,7 @@ import rocks.blackblock.screenbuilder.textures.BaseTexture;
 import rocks.blackblock.screenbuilder.textures.GuiTexture;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
 import rocks.blackblock.screenbuilder.textures.WidgetTexture;
+import rocks.blackblock.screenbuilder.utils.GuiUtils;
 
 import static com.diogonunes.jcolor.Attribute.*;
 
@@ -267,6 +268,7 @@ public class BBSB implements ModInitializer {
     @Override
     public void onInitialize() {
         ScreenbuilderCommands.registerCommands();
+        GuiUtils.registerGuiItems();
 
         EMPTY_54.registerYOffset(0);
         TOP_FOUR.registerYOffset(0);

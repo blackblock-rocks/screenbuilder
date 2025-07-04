@@ -35,6 +35,11 @@ public class StringInput extends BaseInput {
      */
     @Override
     public ScreenBuilder getScreenBuilder() {
+        if (GUI == null) {
+            throw new IllegalStateException("StringInput GUI not initialized! " +
+                "Ensure GuiUtils.registerGuiItems() is called during mod initialization. " +
+                "This is typically done in your mod's onInitialize() method.");
+        }
         return GUI;
     }
 
