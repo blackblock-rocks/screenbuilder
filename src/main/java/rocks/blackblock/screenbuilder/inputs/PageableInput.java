@@ -312,7 +312,13 @@ public interface PageableInput<T> {
                 return;
             }
 
-            texturedScreenHandler.replaceScreen(this.getScreenHandlerFactory());
+            NamedScreenHandlerFactory factory = this.getScreenHandlerFactory();
+
+            if (factory == null) {
+                factory = texturedScreenHandler.getOriginFactory();
+            }
+
+            texturedScreenHandler.replaceScreen(factory);
         });
 
         // The PaginationWidget is 4 slots wide, so mark those as used
