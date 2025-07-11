@@ -1,9 +1,11 @@
 package rocks.blackblock.screenbuilder.widgets;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.bib.util.BibLog;
+import rocks.blackblock.bib.util.BibText;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -11,11 +13,16 @@ import rocks.blackblock.screenbuilder.slots.MirrorWidgetSlot;
 import rocks.blackblock.screenbuilder.text.MiniText;
 import rocks.blackblock.screenbuilder.text.TextBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MirrorWidget extends CombinedWidget<ItemStack> {
 
     private MirrorWidgetSlot slot = null;
     protected SelectEventListener on_change_item = null;
     protected boolean print_image = true;
+    protected Text title = null;
+    protected List<Text> lore = null;
 
     public MirrorWidget(String id) {
         super();
@@ -39,6 +46,43 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
 
     public MirrorWidget() {
         this(null);
+    }
+
+    /**
+     * Set the title of this button
+     * @since    0.7.1
+     */
+    public MirrorWidget setTitle(Text title) {
+        this.title = title;
+        return this;
+    }
+
+    /**
+     * Set the lore of this button
+     * @since    0.7.1
+     */
+    public MirrorWidget setLore(Text lore) {
+        this.lore = new ArrayList<>();
+        this.lore.add(lore);
+        return this;
+    }
+
+    /**
+     * Set the lore of this button
+     * @since    0.7.1
+     */
+    public MirrorWidget setLore(BibText.Lore lore) {
+        this.lore = lore.getLines();
+        return this;
+    }
+
+    /**
+     * Set the lore of this button
+     * @since    0.7.1
+     */
+    public MirrorWidget setLore(List<Text> lore) {
+        this.lore = lore;
+        return this;
     }
 
     /**
@@ -74,12 +118,18 @@ public class MirrorWidget extends CombinedWidget<ItemStack> {
     public ItemStack createPlaceholderStack() {
         ItemStack result = new ItemStack(BBSB.GUI_TRANSPARENT);
 
-        BibItem.setCustomName(result, new MiniText("Item placeholder"));
+        if (this.title != null) {
+            BibItem.setCustomName(result, this.title);
+        } else {
+            BibItem.setCustomName(result, new MiniText("Item placeholder"));
+        }
 
-        BibItem.appendLore(result, new MiniText("Put the type of item you want"));
-        BibItem.appendLore(result, new MiniText("to sell in this slot."));
-        BibItem.appendLore(result, new MiniText(""));
-        BibItem.appendLore(result, new MiniText("It will be cloned, you will not lose it."));
+        if (this.lore != null) {
+            BibItem.replaceLore(result, this.lore);
+        } else {
+            BibItem.appendLore(result, new MiniText("The item you place here will be cloned"));
+            BibItem.appendLore(result, new MiniText("You will not lose it"));
+        }
 
         return result;
     }

@@ -2,12 +2,19 @@ package rocks.blackblock.screenbuilder.slots;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.interfaces.SelectEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MirrorWidgetSlot extends ListenerWidgetSlot {
 
     protected SelectEventListener on_change_item = null;
+
+    private Text title = null;
+    private List<Text> lore = null;
 
     /**
      * ListenerWidgetSlot constructor
@@ -27,6 +34,25 @@ public class MirrorWidgetSlot extends ListenerWidgetSlot {
      */
     public MirrorWidgetSlot(Inventory inventory, Integer index) {
         super(inventory, index);
+    }
+
+    /**
+     * Set the title of this button
+     * @since    0.7.1
+     */
+    public MirrorWidgetSlot setTitle(Text title) {
+        this.title = title;
+        return this;
+    }
+
+    /**
+     * Set the lore of this button
+     * @since    0.7.1
+     */
+    public MirrorWidgetSlot setLore(Text lore) {
+        this.lore = new ArrayList<>();
+        this.lore.add(lore);
+        return this;
     }
 
     /**
