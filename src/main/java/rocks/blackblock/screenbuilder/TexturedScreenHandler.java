@@ -1337,11 +1337,46 @@ public class TexturedScreenHandler extends ScreenHandler {
             return false;
         }
 
+        return this.actuallyReplaceScreen(factory);
+    }
+
+    /**
+     * Replace this screen with another screen, keeping the history
+     * Does not check if another screen is already open
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.7.1
+     */
+    public boolean forceReplaceScreen(NamedScreenHandlerFactory factory) {
+
+        if (factory == null) {
+            BBSB.log("Cannot replace screen: factory is null");
+            return false;
+        }
+
+        // Make sure there is a valid player instance
+        if (!(this.getPlayer() instanceof ServerPlayerEntity player)) {
+            BBSB.log("Cannot replace screen: player is not a ServerPlayerEntity");
+            return false;
+        }
+
+        return this.actuallyReplaceScreen(factory);
+    }
+
+    /**
+     * Replace this screen with another screen, keeping the history
+     * Does not check if another screen is already open
+     *
+     * @author   Jelle De Loecker   <jelle@elevenways.be>
+     * @since    0.7.1
+     */
+    protected boolean actuallyReplaceScreen(NamedScreenHandlerFactory factory) {
+
         TexturedScreenHandler handler = this.showScreen(factory, this.previous_factory);
 
         if (handler == null) {
-            BBSB.log("Failed to replace screen with factory: " + factory.getClass().getName() + 
-                     ". The showScreen method returned null.");
+            BBSB.log("Failed to replace screen with factory: " + factory.getClass().getName() +
+                    ". The showScreen method returned null.");
             return false;
         }
 

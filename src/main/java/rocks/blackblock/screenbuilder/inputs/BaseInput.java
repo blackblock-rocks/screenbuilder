@@ -245,7 +245,7 @@ public abstract class BaseInput extends BasescreenFactory {
 
             rename_input.setRenamedListener((screen_1, value) -> {
                 if (this.applyValueSet(screen_1, setter::setCurrentValue, value)) {
-                    screen_1.replaceScreen(this);
+                    screen_1.forceReplaceScreen(this);
                 }
             });
 
