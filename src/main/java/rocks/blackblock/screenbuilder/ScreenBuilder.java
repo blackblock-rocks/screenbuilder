@@ -62,7 +62,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     public static ArrayList<ScreenBuilder> screen_builders = new ArrayList<>();
 
     // The name of this gui
-    private String name;
+    private final String name;
 
     // The optional name of this gui
     private String title;
@@ -161,6 +161,16 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
     public ScreenBuilder(String name, ScreenHandlerType<?> screen_type) {
         this.name = name;
         this.setType(screen_type);
+    }
+
+    /**
+     * Get the name of the builder
+     *
+     * @author   Jelle De Loecker <jelle@elevenways.be>
+     * @since    0.7.1
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**

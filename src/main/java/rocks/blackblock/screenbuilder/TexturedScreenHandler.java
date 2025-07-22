@@ -18,6 +18,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import rocks.blackblock.bib.BibMod;
+import rocks.blackblock.bib.monitor.GlitchGuru;
 import rocks.blackblock.bib.util.BibInventory;
 import rocks.blackblock.bib.util.BibItem;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
@@ -1582,6 +1584,15 @@ public class TexturedScreenHandler extends ScreenHandler {
         this.builder.addToTextBuilder(text_builder);
 
         text_builder.setTitle(title);
+
+        try {
+            String name = this.builder.getName();
+            if (name != null && !name.isEmpty() && this.getPlayer() instanceof ServerPlayerEntity serverPlayer) {
+                BibMod.GUI_CRITERION.trigger(serverPlayer, name);
+            }
+        } catch (Exception e) {
+            GlitchGuru.registerThrowable(e);
+        }
 
         return text_builder;
     }
