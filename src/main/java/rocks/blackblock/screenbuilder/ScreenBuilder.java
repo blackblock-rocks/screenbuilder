@@ -29,6 +29,7 @@ import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rocks.blackblock.bib.util.BibItem;
+import rocks.blackblock.bib.util.BibLog;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
 import rocks.blackblock.screenbuilder.items.GuiItem;
 import rocks.blackblock.screenbuilder.screen.ErrorAreaInfo;
@@ -54,7 +55,7 @@ import java.util.function.Consumer;
  * @since    0.1.0
  * @version  0.1.0
  */
-public class ScreenBuilder implements NamedScreenHandlerFactory {
+public class ScreenBuilder implements NamedScreenHandlerFactory, BibLog.Argable {
 
     public static HashMap<String, Item> gui_items = new HashMap<>();
 
@@ -72,10 +73,6 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
 
     // The namespace to use for the item
     private String namespace = null;
-
-    // The dimensions of this screen (always 9x6)
-    private int width = 9;
-    private int height = 6;
 
     // The texture to use for this GUI (if any)
     private String texture_path = null;
@@ -220,6 +217,11 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @since   0.1.1
      */
     public int getScreenTypeSlotCount() {
+
+        if (this.screen_info == null) {
+            return 9 * 6;
+        }
+
         return this.screen_info.getOwnSlotCount();
     }
 
@@ -229,7 +231,40 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @since   0.3.1
      */
     public int getVisibleSlotCount() {
+
+        if (this.screen_info == null) {
+            return (9 * 6) + 36;
+        }
+
         return this.screen_info.getTotalSlotCount();
+    }
+
+    /**
+     * Get the width of the screen
+     *
+     * @since   0.7.1
+     */
+    public int getColumns() {
+
+        if (this.screen_info == null) {
+            return 9;
+        }
+
+        return this.screen_info.getSlotsPerRow();
+    }
+
+    /**
+     * Get the height of the screen
+     *
+     * @since   0.7.1
+     */
+    public int getRows() {
+
+        if (this.screen_info == null) {
+            return 6;
+        }
+
+        return this.screen_info.getRows();
     }
 
     /**
@@ -485,7 +520,7 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      * @param    y   The Y-coordinate of the slot inside this GUI
      */
     public int calculateSlotIndex(int x, int y) {
-        return x + (y * this.width);
+        return x + (y * this.getColumns());
     }
 
     /**
@@ -1418,5 +1453,28 @@ public class ScreenBuilder implements NamedScreenHandlerFactory {
      */
     public ScreenInfo.Coordinates getSlotCoordinatesInVanillaGui(int slot_index) {
         return this.getScreenInfo().getSlotCoordinates(slot_index);
+    }
+
+    /**
+     * Return string representation
+     */
+    @Override
+    public String toString() {
+        return this.toBBLogArg().toString();
+    }
+
+    /**
+     * Return Argable representation
+     */
+    @Override
+    public BibLog.Arg toBBLogArg() {
+        return BibLog.createArg(this)
+                .add("name", this.name)
+                .add("title", this.title)
+                .add("namespace", this.namespace)
+                .add("columns", this.getColumns())
+                .add("rows", this.getRows())
+                .add("texture_path", this.texture_path)
+                .add("screen_info", this.screen_info);
     }
 }

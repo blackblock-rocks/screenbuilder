@@ -1,6 +1,7 @@
 package rocks.blackblock.screenbuilder.screen;
 
 import net.minecraft.screen.ScreenHandlerType;
+import rocks.blackblock.bib.util.BibLog;
 
 import java.util.HashMap;
 
@@ -9,7 +10,7 @@ import java.util.HashMap;
  *
  * @since   0.1.1
  */
-public class ScreenInfo {
+public class ScreenInfo implements BibLog.Argable {
 
     // All the registered screen info instances
     private static final HashMap<ScreenHandlerType<?>, ScreenInfo> SCREENS = new HashMap<>();
@@ -23,6 +24,7 @@ public class ScreenInfo {
     protected int slots_per_row = 0;
     protected int slot_row_x = 0;
     protected int slot_row_y = 0;
+    protected int rows = 0;
 
     /**
      * Creates a new ScreenInfo instance
@@ -154,6 +156,24 @@ public class ScreenInfo {
     }
 
     /**
+     * Set the amount of rows
+     *
+     * @since   0.7.1
+     */
+    public void setRows(int count) {
+        this.rows = count;
+    }
+
+    /**
+     * Get the amount of rows
+     *
+     * @since   0.7.1
+     */
+    public int getRows() {
+        return this.rows;
+    }
+
+    /**
      * Set the starting X position of a slot row
      *
      * @since   0.1.3
@@ -278,6 +298,29 @@ public class ScreenInfo {
     }
 
     /**
+     * Return string representation
+     */
+    @Override
+    public String toString() {
+        return this.toBBLogArg().toString();
+    }
+
+    /**
+     * Return Argable representation
+     */
+    @Override
+    public BibLog.Arg toBBLogArg() {
+        return BibLog.createArg(this)
+                .add("slots_per_row", this.slots_per_row)
+                .add("own_slot_count", this.slot_count)
+                .add("slot_row_x", this.slot_row_x)
+                .add("slot_row_y", this.slot_row_y)
+                .add("title_x", this.title_x)
+                .add("title_y", this.title_y)
+                .add("total_slot_count", this.getTotalSlotCount());
+    }
+
+    /**
      * Register info for a vanilla screen.
      * Assumes there are 9 slots per row.
      *
@@ -305,6 +348,7 @@ public class ScreenInfo {
         info.setTitlePosition(title_x, title_baseline_y);
         info.setSlotCount(slot_count);
         info.setSlotsPerRow(slots_per_row);
+        info.setRows(slot_count / slots_per_row);
 
         // @TODO: these values are only correct for the vanilla container screens with 9 slots per row
         info.setSlotRowX(7);

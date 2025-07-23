@@ -47,15 +47,13 @@ import java.util.OptionalInt;
  */
 public class TexturedScreenHandler extends ScreenHandler {
 
-    private int width = 9;
-    private int height = 6;
-
     private final Inventory inventory;
     private final ScreenBuilder builder;
     private final PlayerInventory player_inventory;
     private final PlayerEntity player;
     private final ServerPlayerEntity server_player;
     private InventoryChangedListener listener = null;
+    private int own_slot_count = 0;
 
     public BibInventory.Base base_inventory = null;
     public SimpleInventory simple_inventory = null;
@@ -115,6 +113,8 @@ public class TexturedScreenHandler extends ScreenHandler {
         // These screens are always defined using the 9x6 ScreenHandlerType
         // This is the biggest possible inventory screen Vanilla clients know about
         super(builder.screen_type, sync_id);
+
+        this.own_slot_count = builder.getScreenTypeSlotCount();
 
         this.player = player;
         this.player_inventory = player_inventory;
@@ -255,10 +255,9 @@ public class TexturedScreenHandler extends ScreenHandler {
      *
      * @author   Jelle De Loecker   <jelle@elevenways.be>
      * @since    0.1.0
-     * @version  0.1.0
      */
     public int getScreenSize() {
-        return this.width * this.height;
+        return this.own_slot_count;
     }
 
     /**
@@ -508,7 +507,7 @@ public class TexturedScreenHandler extends ScreenHandler {
 
         if (screen_slot.hasStack()) {
 
-            int screen_size = this.width * this.height;
+            int screen_size = this.getScreenSize();
 
             ItemStack visual_stack = screen_slot.getStack();
             ItemStack original_stack = visual_stack;
@@ -569,9 +568,11 @@ public class TexturedScreenHandler extends ScreenHandler {
                         }
                     }
 
+                    boolean can_insert = slot.canInsert(visual_stack);
+
                     // Can this slot take the type of stack?
                     // (canInsert methods mostly don't check the size of the stacks)
-                    if (slot.canInsert(visual_stack)) {
+                    if (can_insert) {
 
                         int max_screen_stack_size = slot.getMaxItemCount();
 
