@@ -2,7 +2,6 @@ package rocks.blackblock.screenbuilder.text;
 
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.screenbuilder.BBSB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +130,22 @@ public class TextGroup {
     }
 
     /**
+     * Set the current active font
+     *
+     * @since   0.8.0
+     */
+    public TextGroup setFont(StyleSpriteSource font) {
+
+        if (font instanceof StyleSpriteSource.Font(Identifier id)) {
+            this.setFont(id);
+        } else {
+            throw new RuntimeException("Non-identifier fonts are not supported");
+        }
+
+        return this;
+    }
+
+    /**
      * Set the style of the current group.
      * Warning: this will switch all the previous entries too
      *
@@ -150,7 +165,7 @@ public class TextGroup {
             this.setColor(new_color);
         }
 
-        Identifier new_font = style.getFont();
+        var new_font = style.getFont();
 
         if (new_font != null) {
             this.setFont(new_font);
@@ -174,9 +189,9 @@ public class TextGroup {
         }
 
         Identifier current_font = this.getFont();
-        Identifier new_font = style == null ? null : style.getFont();
+        var new_font = style == null ? null : style.getFont();
 
-        if (new_font != null && !new_font.equals(current_font)) {
+        if (new_font instanceof StyleSpriteSource.Font(Identifier id) && !id.equals(current_font)) {
             return false;
         }
 
@@ -220,7 +235,7 @@ public class TextGroup {
         }
 
         if (this.font != null) {
-            style = style.withFont(this.font);
+            style = style.withFont(new StyleSpriteSource.Font(this.font));
         }
 
         if (style == Style.EMPTY) {

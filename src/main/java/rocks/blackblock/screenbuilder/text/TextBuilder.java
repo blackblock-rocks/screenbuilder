@@ -738,7 +738,7 @@ public class TextBuilder {
      * @since   0.1.1
      */
     public TextGroup ensureSpaceGroup() {
-        TextGroup group = this.ensureGroup(Style.EMPTY.withFont(Font.SPACE.identifier).withColor(TextColor.fromFormatting(Formatting.WHITE)));
+        TextGroup group = this.ensureGroup(Font.SPACE.getFontStyle().withColor(TextColor.fromFormatting(Formatting.WHITE)));
         this.current_group = group;
         return group;
     }

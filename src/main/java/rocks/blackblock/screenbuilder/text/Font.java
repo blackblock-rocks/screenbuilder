@@ -2,6 +2,7 @@ package rocks.blackblock.screenbuilder.text;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
+import net.minecraft.text.StyleSpriteSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -63,6 +64,7 @@ public class Font {
     protected final int height;
     protected Font parent;
     protected Map<Character, Integer> widths = new HashMap<>();
+    protected StyleSpriteSource style_sprite_source;
 
     /**
      * @param id     the namespaced ID of the font, as used by the resource pack (i.e. "minecraft:default")
@@ -74,7 +76,8 @@ public class Font {
         this.id = id;
         this.height = height;
         this.identifier = Identifier.of(id);
-        this.font_style = Style.EMPTY.withFont(this.identifier);
+        this.style_sprite_source = new StyleSpriteSource.Font(this.identifier);
+        this.font_style = Style.EMPTY.withFont(this.style_sprite_source);
     }
 
     /**
@@ -175,6 +178,20 @@ public class Font {
     public static void register(Font font) {
         String id = font.getId();
         registeredFonts.put(id, font);
+    }
+
+    /**
+     * Get the StyleSpriteSource that is used since 1.21.9 to identify fonts
+     */
+    public StyleSpriteSource getStyleSpriteSource() {
+        return this.style_sprite_source;
+    }
+
+    /**
+     * Get the empty font style
+     */
+    public Style getFontStyle() {
+        return this.font_style;
     }
 
     /**

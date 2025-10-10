@@ -121,7 +121,9 @@ public class MiniText extends MutableText {
         Identifier font = null;
 
         if (style != null) {
-            font = style.getFont();
+            if (style.getFont() instanceof StyleSpriteSource.Font(Identifier id)) {
+                font = id;
+            }
         }
 
         if (font != null) {
@@ -166,7 +168,9 @@ public class MiniText extends MutableText {
         Identifier font = null;
 
         if (style != null) {
-            font = style.getFont();
+            if (style.getFont() instanceof StyleSpriteSource.Font(Identifier id)) {
+                font = id;
+            }
         }
 
         if (font != null) {
