@@ -50,6 +50,7 @@ println("Info: versionModifier = $versionModifier")
 println("Info: version = " + version)
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 
 	// Only during development
